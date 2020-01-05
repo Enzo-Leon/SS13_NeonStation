@@ -1,0 +1,19 @@
+<!-- Most valid html will work in here, excluding images. -->
+
+
+<h1>Welcome to Neon Station!</h1>
+
+
+<p><em>This server is running a /tg/station &amp; Shadow Station 13 Git build.</em></p>
+
+
+<p>We&rsquo;re currently setting things up fully so please bear with us!</p>
+
+
+<p>In the meantime you can find our discord <a title="Cow Station discord" href="https://discord.gg/MqmgY8a">here</a>.</p>
+
+<p>Our rules can be found over <a href="https://tgstation13.org/wiki/Rules">here</a>.</p>
+
+<p>This is a public server so feel free to invite your friends here or to the discord!</p>
+
+<p><strong>Have fun!</strong></p>
