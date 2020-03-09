@@ -88,7 +88,7 @@
 	restricted_roles = list("Head of Security","Captain","Head of Personnel","Chief Engineer","Research Director","Chief Medical Officer","Quartermaster",
 							"Medical Doctor","Chemist","Virologist","Geneticist","Scientist", "Roboticist",
 							"Atmospheric Technician","Station Engineer","Warden","Detective","Security Officer",
-							"Cargo Technician", "Shaft Miner") //everyone who actually deserves a job.
+							"Cargo Technician", "Shaft Miner", "EMT") //everyone who actually deserves a job.
 //Federation jackets from movies
 /datum/gear/trekcmdcap
 	name = "Fed (movie) uniform, Black"

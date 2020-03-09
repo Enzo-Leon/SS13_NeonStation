@@ -183,6 +183,25 @@
 	new /obj/item/reagent_containers/syringe/lethal/choral(src)
 	new /obj/item/clothing/glasses/hud/health/night(src)
 
+/obj/item/storage/firstaid/emtaid
+	name = "EMT kit"
+	desc = "First responders best friend...  And yours."
+	icon_state = "emtaid"
+
+/obj/item/storage/firstaid/emtaid/suicide_act(mob/living/carbon/user)
+	user.visible_message("<span class='suicide'>[user] begins beating [user.p_them()]self over the head with \the [src]! It looks like [user.p_theyre()] trying to commit suicide!</span>")
+	return EMTLOSS
+
+/obj/item/storage/firstaid/emtaid/PopulateContents()
+	if(empty)
+		return
+	new /obj/item/bodybag(src)
+	new /obj/item/stack/medical/gauze(src)
+	new /obj/item/stack/medical/gauze(src)
+	new /obj/item/reagent_containers/glass/bottle/epinephrine(src)
+	new /obj/item/reagent_containers/syringe/epinephrine(src)
+	new /obj/item/reagent_containers/hypospray/medipen(src)
+	new /obj/item/reagent_containers/hypospray/medipen(src)
 /*
  * Pill Bottles
  */
