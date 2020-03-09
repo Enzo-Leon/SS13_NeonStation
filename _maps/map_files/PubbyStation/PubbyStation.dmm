@@ -41,6 +41,246 @@
 	icon_state = "platingdmg3"
 	},
 /area/maintenance/department/science)
+"aae" = (
+/obj/structure/disposalpipe/junction/flip{
+	dir = 4
+	},
+/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden{
+	dir = 4
+	},
+/turf/open/floor/plasteel,
+/area/hallway/primary/central)
+"aaf" = (
+/obj/machinery/camera{
+	c_tag = "Central Primary Hallway Bathroom";
+	dir = 1
+	},
+/obj/machinery/atmospherics/pipe/simple/supply/hidden{
+	dir = 4
+	},
+/turf/open/floor/plasteel,
+/area/hallway/primary/central)
+"aag" = (
+/obj/effect/spawner/structure/window/reinforced,
+/turf/open/floor/plating,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aah" = (
+/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden,
+/obj/effect/spawner/structure/window/reinforced,
+/turf/open/floor/plating,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aai" = (
+/obj/structure/sign/departments/medbay/alt,
+/turf/closed/wall,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aaj" = (
+/obj/machinery/atmospherics/pipe/simple/supply/hidden,
+/obj/structure/cable{
+	icon_state = "1-2"
+	},
+/obj/machinery/door/firedoor,
+/obj/machinery/door/airlock/medical/glass{
+	id_tag = "EMT Office";
+	name = "EMT Office";
+	req_access_txt = "5"
+	},
+/turf/open/floor/plating,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aak" = (
+/turf/closed/wall,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aal" = (
+/obj/machinery/door/airlock/maintenance{
+	req_access_txt = "12"
+	},
+/turf/open/floor/plating,
+/area/maintenance/department/crew_quarters/bar)
+"aam" = (
+/obj/effect/landmark/start/emt,
+/obj/machinery/light{
+	dir = 8
+	},
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aan" = (
+/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden,
+/obj/machinery/computer/crew{
+	dir = 8
+	},
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aao" = (
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aap" = (
+/obj/machinery/atmospherics/pipe/simple/supply/hidden,
+/obj/structure/cable{
+	icon_state = "1-2"
+	},
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aaq" = (
+/obj/machinery/camera{
+	c_tag = "EMT office";
+	dir = 8;
+	name = "EMT office Camera"
+	},
+/obj/machinery/light_switch{
+	dir = 1;
+	pixel_y = 24
+	},
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aar" = (
+/obj/structure/chair/office/light,
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aas" = (
+/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden{
+	dir = 5
+	},
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aat" = (
+/obj/machinery/atmospherics/components/unary/vent_scrubber/on{
+	dir = 8
+	},
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aau" = (
+/obj/machinery/atmospherics/components/unary/vent_pump/on{
+	dir = 1
+	},
+/obj/structure/cable{
+	icon_state = "1-4"
+	},
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aav" = (
+/obj/machinery/power/apc{
+	areastring = "/area/medical/medbay/EMT Office";
+	dir = 4;
+	name = "EMT Office APC";
+	pixel_x = 24;
+	pixel_y = 0;
+	step_y = 0
+	},
+/obj/structure/cable{
+	icon_state = "0-8"
+	},
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aaw" = (
+/obj/structure/table/glass,
+/obj/item/pen,
+/obj/item/paper_bin{
+	layer = 2.9
+	},
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aax" = (
+/obj/structure/table/glass,
+/obj/item/key/emtkey,
+/obj/item/healthanalyzer,
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aay" = (
+/obj/structure/rack,
+/obj/item/storage/firstaid/emtaid,
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aaz" = (
+/obj/structure/bed/roller,
+/obj/machinery/airalarm{
+	dir = 1;
+	pixel_y = -22
+	},
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aaA" = (
+/obj/structure/bed/roller,
+/obj/machinery/firealarm{
+	dir = 1;
+	pixel_y = -26
+	},
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aaB" = (
+/obj/machinery/light{
+	dir = 4;
+	light_color = "#c1caff"
+	},
+/obj/vehicle/ridden/EMTcart,
+/turf/open/floor/plasteel/white,
+/area/medical/medbay{
+	name = "EMT Office"
+	})
+"aaC" = (
+/obj/structure/closet,
+/obj/effect/spawner/lootdrop/maintenance,
+/turf/open/floor/plating,
+/area/maintenance/department/crew_quarters/bar)
+"aaD" = (
+/obj/structure/cable{
+	icon_state = "4-8"
+	},
+/obj/structure/disposalpipe/segment{
+	dir = 4
+	},
+/turf/open/floor/plating{
+	icon_state = "panelscorched"
+	},
+/area/maintenance/department/crew_quarters/bar)
+"aaE" = (
+/obj/structure/table,
+/obj/item/surgical_drapes,
+/obj/effect/turf_decal/tile/blue,
+/obj/effect/turf_decal/tile/blue{
+	dir = 4
+	},
+/obj/item/healthanalyzer,
+/turf/open/floor/plasteel/white,
+/area/medical/surgery)
 "abf" = (
 /obj/structure/bed,
 /turf/open/floor/plating,
@@ -14297,15 +14537,6 @@
 	},
 /turf/open/floor/plasteel,
 /area/hallway/primary/central)
-"aHO" = (
-/obj/machinery/atmospherics/pipe/manifold/scrubbers/hidden{
-	dir = 1
-	},
-/obj/structure/disposalpipe/junction/flip{
-	dir = 4
-	},
-/turf/open/floor/plasteel,
-/area/hallway/primary/central)
 "aHP" = (
 /obj/structure/disposalpipe/segment{
 	dir = 4
@@ -15091,19 +15322,6 @@
 	},
 /turf/open/floor/plasteel,
 /area/hallway/primary/central)
-"aJM" = (
-/obj/machinery/camera{
-	c_tag = "Central Primary Hallway Bathroom";
-	dir = 1
-	},
-/obj/machinery/atmospherics/pipe/simple/supply/hidden{
-	dir = 4
-	},
-/obj/structure/sign/departments/restroom{
-	pixel_y = -32
-	},
-/turf/open/floor/plasteel,
-/area/hallway/primary/central)
 "aJN" = (
 /obj/machinery/atmospherics/pipe/simple/supply/hidden{
 	dir = 4
@@ -15451,48 +15669,6 @@
 /obj/machinery/door/firedoor,
 /turf/open/floor/plasteel,
 /area/storage/art)
-"aKM" = (
-/obj/effect/spawner/structure/window,
-/turf/open/floor/plating,
-/area/crew_quarters/cafeteria/lunchroom)
-"aKN" = (
-/obj/effect/spawner/structure/window,
-/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden,
-/turf/open/floor/plating,
-/area/crew_quarters/cafeteria/lunchroom)
-"aKO" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/public/glass{
-	name = "Lunchroom"
-	},
-/obj/structure/cable{
-	icon_state = "1-2"
-	},
-/obj/machinery/atmospherics/pipe/simple/supply/hidden,
-/turf/open/floor/plasteel,
-/area/crew_quarters/cafeteria/lunchroom)
-"aKP" = (
-/turf/closed/wall,
-/area/crew_quarters/cafeteria/lunchroom)
-"aKQ" = (
-/turf/closed/wall,
-/area/crew_quarters/toilet/auxiliary)
-"aKR" = (
-/obj/machinery/door/airlock{
-	id_tag = "Potty1";
-	name = "Unisex Restrooms"
-	},
-/obj/structure/cable{
-	icon_state = "1-2"
-	},
-/obj/machinery/atmospherics/pipe/simple/supply/hidden,
-/obj/machinery/door/firedoor,
-/turf/open/floor/plasteel/freezer,
-/area/crew_quarters/toilet/auxiliary)
-"aKS" = (
-/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden,
-/turf/closed/wall,
-/area/crew_quarters/toilet/auxiliary)
 "aKT" = (
 /turf/closed/wall,
 /area/maintenance/department/crew_quarters/bar)
@@ -15693,81 +15869,6 @@
 	},
 /turf/open/floor/plasteel,
 /area/storage/art)
-"aLA" = (
-/obj/structure/table,
-/obj/item/reagent_containers/food/snacks/friedegg,
-/obj/item/kitchen/fork,
-/turf/open/floor/plasteel/cafeteria,
-/area/crew_quarters/cafeteria/lunchroom)
-"aLB" = (
-/obj/structure/chair{
-	dir = 8;
-	name = "Defense"
-	},
-/obj/effect/landmark/start/assistant,
-/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden,
-/turf/open/floor/plasteel/cafeteria,
-/area/crew_quarters/cafeteria/lunchroom)
-"aLC" = (
-/obj/structure/cable{
-	icon_state = "1-2"
-	},
-/obj/machinery/atmospherics/components/unary/vent_pump/on{
-	dir = 1
-	},
-/turf/open/floor/plasteel/cafeteria,
-/area/crew_quarters/cafeteria/lunchroom)
-"aLD" = (
-/obj/machinery/airalarm{
-	pixel_y = 22
-	},
-/obj/machinery/vending/cola,
-/turf/open/floor/plasteel/cafeteria,
-/area/crew_quarters/cafeteria/lunchroom)
-"aLE" = (
-/obj/structure/sink{
-	dir = 8;
-	pixel_x = -12;
-	pixel_y = 2
-	},
-/obj/effect/landmark/xeno_spawn,
-/obj/machinery/airalarm{
-	dir = 4;
-	pixel_x = -22
-	},
-/turf/open/floor/plasteel/freezer,
-/area/crew_quarters/toilet/auxiliary)
-"aLF" = (
-/obj/structure/cable{
-	icon_state = "1-4"
-	},
-/obj/machinery/atmospherics/pipe/simple/supply/hidden,
-/turf/open/floor/plasteel/freezer,
-/area/crew_quarters/toilet/auxiliary)
-"aLG" = (
-/obj/structure/urinal{
-	pixel_y = 32
-	},
-/obj/structure/cable{
-	icon_state = "2-8"
-	},
-/obj/machinery/button/door{
-	id = "Potty1";
-	name = "Bathroom Bolt Control";
-	normaldoorcontrol = 1;
-	pixel_x = 25;
-	pixel_y = 4;
-	specialfunctions = 4
-	},
-/obj/machinery/atmospherics/components/unary/vent_scrubber/on{
-	dir = 1
-	},
-/obj/machinery/light_switch{
-	pixel_x = 36;
-	pixel_y = 6
-	},
-/turf/open/floor/plasteel/freezer,
-/area/crew_quarters/toilet/auxiliary)
 "aLH" = (
 /obj/machinery/portable_atmospherics/canister/air,
 /turf/open/floor/plating,
@@ -16346,75 +16447,6 @@
 	},
 /turf/open/floor/plasteel,
 /area/storage/art)
-"aMY" = (
-/obj/structure/chair{
-	dir = 1
-	},
-/obj/machinery/light_switch{
-	dir = 9;
-	pixel_x = -22
-	},
-/turf/open/floor/plasteel/cafeteria,
-/area/crew_quarters/cafeteria/lunchroom)
-"aMZ" = (
-/obj/machinery/light,
-/obj/machinery/camera{
-	c_tag = "Lunchroom";
-	dir = 1
-	},
-/obj/machinery/atmospherics/components/unary/vent_scrubber/on{
-	dir = 1
-	},
-/obj/item/radio/intercom{
-	name = "Station Intercom (General)";
-	pixel_y = -28
-	},
-/turf/open/floor/plasteel/cafeteria,
-/area/crew_quarters/cafeteria/lunchroom)
-"aNa" = (
-/obj/structure/cable,
-/obj/machinery/power/apc{
-	dir = 2;
-	name = "Cafeteria APC";
-	pixel_y = -24
-	},
-/turf/open/floor/plasteel/cafeteria,
-/area/crew_quarters/cafeteria/lunchroom)
-"aNb" = (
-/obj/machinery/vending/sustenance{
-	contraband = list(/obj/item/kitchen/knife = 6, /obj/item/reagent_containers/food/drinks/coffee = 12);
-	desc = "A vending machine which vends food.";
-	product_ads = "Sufficiently healthy."
-	},
-/turf/open/floor/plasteel/cafeteria,
-/area/crew_quarters/cafeteria/lunchroom)
-"aNc" = (
-/obj/structure/toilet{
-	dir = 4
-	},
-/obj/effect/landmark/start/assistant,
-/turf/open/floor/plasteel/freezer,
-/area/crew_quarters/toilet/auxiliary)
-"aNd" = (
-/obj/machinery/light/small,
-/obj/machinery/atmospherics/components/unary/vent_pump/on{
-	dir = 1
-	},
-/turf/open/floor/plasteel/freezer,
-/area/crew_quarters/toilet/auxiliary)
-"aNe" = (
-/obj/structure/cable,
-/obj/machinery/power/apc/highcap/five_k{
-	dir = 2;
-	name = "Auxiliary Restrooms APC";
-	pixel_y = -24
-	},
-/obj/item/soap/nanotrasen,
-/obj/machinery/shower{
-	dir = 8
-	},
-/turf/open/floor/plasteel/freezer,
-/area/crew_quarters/toilet/auxiliary)
 "aNf" = (
 /obj/structure/reagent_dispensers/watertank,
 /turf/open/floor/plating{
@@ -16449,10 +16481,6 @@
 	},
 /obj/structure/disposalpipe/segment,
 /obj/machinery/atmospherics/pipe/simple/supply/hidden,
-/turf/open/floor/plating,
-/area/maintenance/department/crew_quarters/bar)
-"aNm" = (
-/obj/structure/grille,
 /turf/open/floor/plating,
 /area/maintenance/department/crew_quarters/bar)
 "aNp" = (
@@ -17292,31 +17320,10 @@
 /obj/effect/turf_decal/tile/neutral,
 /turf/open/floor/plasteel,
 /area/hallway/primary/central)
-"aPx" = (
-/obj/machinery/light/small{
-	dir = 1
-	},
-/obj/item/twohanded/required/kirbyplants{
-	icon_state = "plant-22"
-	},
-/turf/open/floor/plating,
-/area/maintenance/department/crew_quarters/bar)
-"aPy" = (
-/obj/item/twohanded/required/kirbyplants{
-	icon_state = "plant-22"
-	},
-/turf/open/floor/plating{
-	icon_state = "platingdmg3"
-	},
-/area/maintenance/department/crew_quarters/bar)
 "aPz" = (
 /turf/open/floor/plating{
 	icon_state = "platingdmg3"
 	},
-/area/maintenance/department/crew_quarters/bar)
-"aPA" = (
-/obj/item/trash/cheesie,
-/turf/open/floor/plating,
 /area/maintenance/department/crew_quarters/bar)
 "aPB" = (
 /obj/structure/girder,
@@ -17750,19 +17757,6 @@
 	dir = 4
 	},
 /obj/effect/landmark/blobstart,
-/turf/open/floor/plating{
-	icon_state = "panelscorched"
-	},
-/area/maintenance/department/crew_quarters/bar)
-"aQJ" = (
-/obj/structure/closet,
-/obj/effect/spawner/lootdrop/maintenance,
-/obj/structure/cable{
-	icon_state = "4-8"
-	},
-/obj/structure/disposalpipe/segment{
-	dir = 4
-	},
 /turf/open/floor/plating{
 	icon_state = "panelscorched"
 	},
@@ -39336,15 +39330,6 @@
 "bLP" = (
 /obj/machinery/atmospherics/pipe/simple/supply/hidden{
 	dir = 9
-	},
-/turf/open/floor/plasteel/white,
-/area/medical/surgery)
-"bLQ" = (
-/obj/structure/table,
-/obj/item/surgical_drapes,
-/obj/effect/turf_decal/tile/blue,
-/obj/effect/turf_decal/tile/blue{
-	dir = 4
 	},
 /turf/open/floor/plasteel/white,
 /area/medical/surgery)
@@ -61309,13 +61294,6 @@
 	},
 /turf/open/floor/plasteel/white,
 /area/science/explab)
-"wBg" = (
-/obj/machinery/door/airlock/maintenance{
-	id_tag = "Potty1";
-	req_access_txt = "12"
-	},
-/turf/open/floor/plating,
-/area/maintenance/department/crew_quarters/bar)
 "wDl" = (
 /obj/machinery/atmospherics/pipe/simple/supply/hidden,
 /obj/effect/turf_decal/stripes/corner,
@@ -87831,11 +87809,11 @@ aBi
 aHK
 aIO
 aJI
-aKM
-aLA
-aMY
-aKP
-aNm
+aag
+aam
+aar
+aaw
+aak
 aQG
 aRL
 aSA
@@ -88088,11 +88066,11 @@ aBi
 aHL
 aIP
 aJK
-aKN
-aLB
-aMZ
-aKP
-aPx
+aah
+aan
+aas
+aax
+aak
 aQH
 aRM
 aSB
@@ -88343,13 +88321,13 @@ aFu
 lnn
 aGZ
 aHM
-aIQ
-aJL
-aKO
-aLC
-aNa
-aKP
-aPy
+aIO
+aJI
+aag
+aao
+aat
+aay
+aak
 aQI
 aRL
 aSC
@@ -88602,12 +88580,12 @@ onX
 qXH
 aIO
 aJI
-aKP
-aLD
-aNb
-aKP
-aPz
-aQJ
+aai
+aao
+aao
+aaz
+aak
+aaD
 aRL
 aSD
 aTT
@@ -88857,13 +88835,13 @@ aFv
 ulu
 aGX
 jYe
-aIO
-aJI
-aKQ
-aKQ
-aKQ
-aKQ
-aLL
+aIQ
+aJL
+aaj
+aap
+aau
+aaA
+aak
 aQK
 aRL
 aSE
@@ -89115,12 +89093,12 @@ awR
 aAN
 gNG
 aIO
-aJM
-aKQ
-aLE
-aNc
-aKQ
-aLL
+aaf
+aak
+aaq
+aav
+aaB
+aak
 aQL
 aRL
 aSF
@@ -89371,13 +89349,13 @@ aFw
 awR
 aHb
 jYe
-aIQ
-aJL
-aKR
-aLF
-aNd
-wBg
-aLL
+aIO
+aJI
+aak
+aak
+aak
+aak
+aak
 aQM
 aRL
 aSG
@@ -89627,14 +89605,14 @@ aza
 aza
 awR
 aHc
-aHO
-aIP
-aJK
-aKS
-aLG
-aNe
-aKQ
-aPA
+aae
+aIO
+aJI
+aal
+aLL
+aLL
+aLL
+aLL
 aQN
 aRN
 aRN
@@ -89887,11 +89865,11 @@ awR
 aHP
 aIO
 aJN
-aKQ
-aKQ
-aKQ
-aKQ
-aLL
+aKT
+aKT
+aKT
+aKT
+aKT
 aQN
 aRN
 aRN
@@ -90148,7 +90126,7 @@ aKT
 aLH
 aNf
 aKT
-aLL
+aaC
 aQO
 aRO
 aSH
@@ -93275,7 +93253,7 @@ bFU
 bIs
 bJy
 bKG
-bLQ
+aaE
 bMR
 bFU
 bCz
