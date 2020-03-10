@@ -34,6 +34,9 @@
 /obj/item/storage/firstaid/tactical
 	icon_state = "tactical"
 
+/obj/item/storage/firstaid/emtaid
+	icon_state = "emtaid"
+
 //hijacking the minature first aids for hypospray boxes. <3
 /obj/item/storage/hypospraykit
 	name = "hypospray kit"
