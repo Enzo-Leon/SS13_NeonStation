@@ -20,9 +20,9 @@
 	/// The required minimum account age for this ruleset.
 	var/minimum_required_age = 7
 	/// If set, and config flag protect_roles_from_antagonist is false, then the rule will not pick players from these roles.
-	var/list/protected_roles = list()
+	var/list/protected_roles = list("Security Officer", "Warden", "Detective", "Head of Security", "Captain", "Head of Personnel", "Chief Engineer", "Chief Medical Officer", "Research Director", "Quartermaster")
 	/// If set, rule will deny candidates from those roles always.
-	var/list/restricted_roles = list()
+	var/list/restricted_roles = list("Cyborg")
 	/// If set, rule will only accept candidates from those roles, IMPORTANT: DOES NOT WORK ON ROUNDSTART RULESETS.
 	var/list/exclusive_roles = list()
 	/// If set, there needs to be a certain amount of players doing those roles (among the players who won't be drafted) for the rule to be drafted IMPORTANT: DOES NOT WORK ON ROUNDSTART RULESETS.
