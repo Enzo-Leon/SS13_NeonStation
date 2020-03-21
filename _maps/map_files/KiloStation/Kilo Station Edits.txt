@@ -1,1 +1,2 @@
 Zaiaku - March 9th 2020 - Changed Medical break room into EMT start
+Zaiaku - March 17th 2020 - Replaced the "invisable" pipes, scrubbers and vents with proper icon states so they show up now.  Removed accedental wall.  Changed the space around the station so hopefully it doesnt have that funky lighting in space.  Removed light fixtures in airless cause it didnt make sense.  changed the APCs in a few areas to make more sense and to fix a runtime with EMT area.
