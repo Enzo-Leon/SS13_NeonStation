@@ -13,7 +13,7 @@ Captain
 	selection_color = "#ccccff"
 	req_admin_notify = 1
 	minimal_player_age = 14
-	exp_requirements = 180
+	exp_requirements = 1800
 	exp_type = EXP_TYPE_CREW
 
 	outfit = /datum/outfit/job/captain
