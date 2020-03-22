@@ -516,3 +516,20 @@
 		to_chat(user, "<span class='notice'>You ready your slapping hand.</span>")
 	else
 		to_chat(user, "<span class='warning'>You're incapable of slapping in your current state.</span>")
+
+
+////// New emotes below
+
+/datum/emote/living/squeak
+	key = "squeak"
+	key_third_person = "squeaks"
+	message = "squeaks!"
+	emote_type = EMOTE_AUDIBLE
+
+/datum/emote/living/squeak/run_emote(mob/living/user, params)
+	if(ishuman(user))
+		if(user.nextsoundemote >= world.time)
+			return
+		user.nextsoundemote = world.time + 7
+		playsound(user, 'sound/effects/mousesqueek.ogg', 50, 1, -1)
+	. = ..()
