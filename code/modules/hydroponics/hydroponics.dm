@@ -500,7 +500,6 @@
 	if(S.has_reagent("charcoal", 1))
 		adjustToxic(-round(S.get_reagent_amount("charcoal") * 2))
 
-	// NIGGA, YOU JUST WENT ON FULL RETARD.
 	if(S.has_reagent("toxin", 1))
 		adjustToxic(round(S.get_reagent_amount("toxin") * 2))
 
@@ -559,7 +558,7 @@
 		adjustHealth(round(S.get_reagent_amount("sodawater") * 0.1))
 		adjustNutri(round(S.get_reagent_amount("sodawater") * 0.1))
 
-	// Man, you guys are retards
+	// Man, you guys are dumb
 	if(S.has_reagent("sacid", 1))
 		adjustHealth(-round(S.get_reagent_amount("sacid") * 1))
 		adjustToxic(round(S.get_reagent_amount("sacid") * 1.5))
