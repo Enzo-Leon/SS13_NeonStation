@@ -30,10 +30,21 @@
 			loot_spawned++
 	return INITIALIZE_HINT_QDEL
 
+/obj/effect/spawner/lootdrop/bedsheet
+	icon = 'icons/obj/bedsheets.dmi'
+	icon_state = "random_bedsheet"
+	name = "random dorms bedsheet"
+	loot = list(/obj/item/bedsheet = 8, /obj/item/bedsheet/blue = 8, /obj/item/bedsheet/green = 8,
+				/obj/item/bedsheet/grey = 8, /obj/item/bedsheet/orange = 8, /obj/item/bedsheet/purple = 8,
+				/obj/item/bedsheet/red = 8, /obj/item/bedsheet/yellow = 8, /obj/item/bedsheet/brown = 8,
+				/obj/item/bedsheet/black = 8, /obj/item/bedsheet/patriot = 3, /obj/item/bedsheet/rainbow = 3,
+				/obj/item/bedsheet/ian = 3, /obj/item/bedsheet/runtime = 3, /obj/item/bedsheet/nanotrasen = 3,
+				/obj/item/bedsheet/pirate = 1, /obj/item/bedsheet/cosmos = 1, /obj/item/bedsheet/gondola = 1
+				)
+
 /obj/effect/spawner/lootdrop/armory_contraband
 	name = "armory contraband gun spawner"
 	lootdoubles = FALSE
-
 	loot = list(
 				/obj/item/gun/ballistic/automatic/pistol = 8,
 				/obj/item/gun/ballistic/shotgun/automatic/combat = 5,
@@ -108,10 +119,35 @@
 	loot = GLOB.maintenance_loot
 	. = ..()
 
+/obj/effect/spawner/lootdrop/glowstick
+	name = "random colored glowstick"
+	icon = 'icons/obj/lighting.dmi'
+	icon_state = "random_glowstick"
+
+/obj/effect/spawner/lootdrop/glowstick/Initialize()
+	loot = typesof(/obj/item/flashlight/glowstick)
+	. = ..()
+
+/obj/effect/spawner/lootdrop/gloves
+	name = "random gloves"
+	desc = "These gloves are supposed to be a random color..."
+	icon = 'icons/obj/clothing/gloves.dmi'
+	icon_state = "random_gloves"
+	loot = list(
+		/obj/item/clothing/gloves/color/orange = 1,
+		/obj/item/clothing/gloves/color/red = 1,
+		/obj/item/clothing/gloves/color/blue = 1,
+		/obj/item/clothing/gloves/color/purple = 1,
+		/obj/item/clothing/gloves/color/green = 1,
+		/obj/item/clothing/gloves/color/grey = 1,
+		/obj/item/clothing/gloves/color/light_brown = 1,
+		/obj/item/clothing/gloves/color/brown = 1,
+		/obj/item/clothing/gloves/color/white = 1,
+		/obj/item/clothing/gloves/color/rainbow = 1)
+
 /obj/effect/spawner/lootdrop/crate_spawner
 	name = "lootcrate spawner" //USE PROMO CODE "SELLOUT" FOR 20% OFF!
 	lootdoubles = FALSE
-
 	loot = list(
 				/obj/structure/closet/crate/secure/loot = 20,
 				"" = 80
@@ -126,7 +162,7 @@
 		/obj/item/organ/heart/gland/chem = 5,
 		/obj/item/organ/heart/gland/mindshock = 5,
 		/obj/item/organ/heart/gland/plasma = 7,
-		/obj/item/organ/heart/gland/pop = 5,
+		/obj/item/organ/heart/gland/transform = 5,
 		/obj/item/organ/heart/gland/slime = 4,
 		/obj/item/organ/heart/gland/spiderman = 5,
 		/obj/item/organ/heart/gland/ventcrawling = 1,
@@ -213,6 +249,20 @@
 				/obj/item/aiModule/core/full/thermurderdynamic,
 				/obj/item/aiModule/core/full/damaged
 				)
+
+/obj/effect/spawner/lootdrop/mre
+	name = "random MRE"
+	icon = 'icons/obj/storage.dmi'
+	icon_state = "mre"
+
+/obj/effect/spawner/lootdrop/mre/Initialize()
+	for(var/A in subtypesof(/obj/item/storage/box/mre))
+		var/obj/item/storage/box/mre/M = A
+		var/our_chance = initial(M.spawner_chance)
+		if(our_chance)
+			LAZYSET(loot, M, our_chance)
+	return ..()
+
 
 // Tech storage circuit board spawners
 // For these, make sure that lootcount equals the number of list items
@@ -325,3 +375,149 @@
 				/obj/item/circuitboard/computer/apc_control,
 				/obj/item/circuitboard/computer/robotics
 				)
+
+/obj/effect/spawner/lootdrop/keg
+	name = "random keg spawner"
+	lootcount = 1
+	loot = list(/obj/structure/reagent_dispensers/keg/mead = 5,
+		/obj/structure/reagent_dispensers/keg/aphro = 2,
+		/obj/structure/reagent_dispensers/keg/aphro/strong = 2,
+		/obj/structure/reagent_dispensers/keg/gargle = 1)
+
+/obj/effect/spawner/lootdrop/coin
+	lootcount = 1
+	loot = list(
+				/obj/item/coin/silver = 30,
+				/obj/item/coin/iron = 30,
+				/obj/item/coin/gold = 10,
+				/obj/item/coin/diamond = 10,
+				/obj/item/coin/plasma = 10,
+				/obj/item/coin/uranium = 10,
+				)
+
+/obj/effect/spawner/lootdrop/cig_packs
+	lootcount = 1
+	loot = list(
+				/obj/item/storage/fancy/cigarettes = 20,
+				/obj/item/storage/fancy/cigarettes/dromedaryco = 10,
+				/obj/item/storage/fancy/cigarettes/cigpack_robust = 5,
+				/obj/item/storage/fancy/cigarettes/cigpack_robustgold = 5,
+				/obj/item/storage/fancy/cigarettes/cigpack_carp = 15,
+				/obj/item/storage/fancy/cigarettes/cigpack_syndicate = 2,
+				/obj/item/storage/fancy/cigarettes/cigpack_midori = 10,
+				/obj/item/storage/fancy/cigarettes/cigpack_shadyjims = 5,
+				/obj/item/storage/fancy/cigarettes/cigpack_xeno = 3,
+				/obj/item/storage/fancy/cigarettes/cigpack_cannabis = 10,
+				/obj/item/storage/fancy/cigarettes/cigpack_mindbreaker = 10,
+				/obj/item/storage/fancy/rollingpapers = 10
+				)
+
+/obj/effect/spawner/lootdrop/cigars_cases
+	lootcount = 1
+	loot = list(
+				/obj/item/storage/fancy/cigarettes/cigars = 50,
+				/obj/item/storage/fancy/cigarettes/cigars/cohiba = 25,
+				/obj/item/storage/fancy/cigarettes/cigars/havana = 25,
+				)
+
+/obj/effect/spawner/lootdrop/space_cash
+	lootcount = 1
+	loot = list(
+				/obj/item/stack/spacecash/c1    = 1,
+				/obj/item/stack/spacecash/c10   = 9,
+				/obj/item/stack/spacecash/c20   = 10,
+				/obj/item/stack/spacecash/c50   = 15,
+				/obj/item/stack/spacecash/c100  = 25,
+				/obj/item/stack/spacecash/c200  = 20,
+				/obj/item/stack/spacecash/c500  = 19,
+				/obj/item/stack/spacecash/c1000 = 1,
+				)
+
+/obj/effect/spawner/lootdrop/druggie_pill
+	lootcount = 1
+	loot = list(
+				/obj/item/reagent_containers/pill/stimulant    = 1,
+				/obj/item/reagent_containers/pill/zoom   = 9,
+				/obj/item/reagent_containers/pill/happy   = 10,
+				/obj/item/reagent_containers/pill/lsd   = 15,
+				/obj/item/reagent_containers/pill/aranesp  = 25,
+				/obj/item/reagent_containers/pill/psicodine  = 20,
+				/obj/item/reagent_containers/pill/mannitol  = 19,
+				/obj/item/reagent_containers/pill/happiness = 1,
+				)
+
+/obj/effect/spawner/lootdrop/low_loot_toilet
+	name = "random low toilet spawner"
+	lootcount = 1
+//Note this is out of a 100 - Meaning the number you see is also the percent its going to pick that
+//This is ment for "low" loot that anyone could fine in a toilet, for better gear use high loot toilet
+	loot = list("" = 30,
+		/obj/item/lighter = 2,
+		/obj/item/tape/random = 1,
+		/obj/item/poster/random_contraband = 1,
+		/obj/item/clothing/glasses/sunglasses/blindfold = 4,
+		/obj/item/clothing/glasses/sunglasses = 1,
+		/obj/item/toy/plush/random = 5,
+		/obj/effect/spawner/lootdrop/gloves = 5,
+		/obj/effect/spawner/lootdrop/glowstick = 5,
+		/obj/effect/spawner/lootdrop/coin = 3,
+		/obj/effect/spawner/lootdrop/cig_packs = 10,
+		/obj/effect/spawner/lootdrop/cigars_cases = 2,
+		/obj/effect/spawner/lootdrop/space_cash = 5,
+		/obj/item/reagent_containers/food/snacks/grown/cannabis = 5,
+		/obj/item/storage/pill_bottle/dice = 5,
+		/obj/item/toy/cards/deck = 5,
+		/obj/effect/spawner/lootdrop/druggie_pill = 5
+		)
+
+/obj/effect/spawner/lootdrop/prison_loot_toilet
+	name = "random prison toilet spawner"
+	lootcount = 1
+//Note this is out of a 100 - Meaning the number you see is also the percent its going to pick that
+//This is ment for "prison" loot that is rather rare and ment for "prisoners if they get a crowbar to fine, or sec.
+	loot = list("" = 10,
+		/obj/item/lighter = 5,
+		/obj/item/poster/random_contraband = 5,
+		/obj/item/clothing/glasses/sunglasses = 5,
+		/obj/effect/spawner/lootdrop/coin = 5,
+		/obj/effect/spawner/lootdrop/cig_packs = 10,
+		/obj/effect/spawner/lootdrop/cigars_cases = 5,
+		/obj/item/reagent_containers/food/snacks/grown/cannabis = 5,
+		/obj/item/storage/pill_bottle/dice = 5,
+		/obj/item/toy/cards/deck = 5,
+		/obj/effect/spawner/lootdrop/druggie_pill = 5,
+		/obj/item/kitchen/knife = 5,
+		/obj/item/screwdriver = 5,
+		/obj/item/crowbar/red = 0.5, //Dont you need a crowbar to open this?
+		/obj/item/stack/medical/bruise_pack = 3,
+		/obj/item/reagent_containers/food/drinks/bottle/vodka = 2,
+		/obj/item/radio = 5,
+		/obj/item/flashlight = 4.5,
+		/obj/item/clothing/mask/breath = 2,
+		/obj/item/tank/internals/emergency_oxygen = 3,
+		/obj/item/storage/box/mre/menu4/safe = 3,
+		/obj/item/grenade/smokebomb = 2
+		)
+
+/obj/effect/spawner/lootdrop/high_loot_toilet
+	name = "random high toilet spawner"
+	lootcount = 1
+//Note this is out of a 100 - Meaning the number you see is also the percent its going to pick that
+//The items inside are always going to be something usefull, illegal and likely traitorous.
+	loot = list(
+		/obj/item/clothing/glasses/sunglasses = 5,
+		/obj/effect/spawner/lootdrop/coin = 5,
+		/obj/effect/spawner/lootdrop/space_cash = 5,
+		/obj/effect/spawner/lootdrop/druggie_pill = 5,
+		/obj/item/storage/fancy/cigarettes/cigpack_syndicate = 5,
+		/obj/item/suppressor = 5,
+		/obj/item/toy/cards/deck/syndicate = 5,
+		/obj/item/clothing/under/syndicate = 5,
+		/obj/item/clothing/mask/gas/syndicate = 5,
+		/obj/item/grenade/smokebomb = 10,
+		/obj/item/gun/ballistic/automatic/toy/pistol = 5,
+		/obj/item/firing_pin = 5,
+		/obj/item/grenade/empgrenade = 15,
+		/obj/item/clothing/gloves/combat = 10,
+		/obj/item/clothing/shoes/sneakers/noslip = 10
+		)

@@ -11,13 +11,13 @@
 	throw_speed = 2
 	throw_range = 7
 	force = 10
-	materials = list(MAT_METAL = 90)
+	custom_materials = list(/datum/material/iron = 90)
 	attack_verb = list("slammed", "whacked", "bashed", "thunked", "battered", "bludgeoned", "thrashed")
 	dog_fashion = /datum/dog_fashion/back
 	resistance_flags = FIRE_PROOF
 	var/max_water = 50
 	var/last_use = 1
-	var/chem = "water"
+	var/chem = /datum/reagent/water
 	var/safety = TRUE
 	var/refilling = FALSE
 	var/tanktype = /obj/structure/reagent_dispensers/watertank
@@ -36,7 +36,7 @@
 	throwforce = 2
 	w_class = WEIGHT_CLASS_SMALL
 	force = 3
-	materials = list(MAT_METAL = 50, MAT_GLASS = 40)
+	custom_materials = list(/datum/material/iron = 50, /datum/material/glass = 40)
 	max_water = 30
 	sprite_name = "miniFE"
 	dog_fashion = null
@@ -65,7 +65,7 @@
 	icon_state = "foam_extinguisher0"
 	//item_state = "foam_extinguisher" needs sprite
 	dog_fashion = null
-	chem = "firefighting_foam"
+	chem = /datum/reagent/firefighting_foam
 	tanktype = /obj/structure/reagent_dispensers/foamtank
 	sprite_name = "foam_extinguisher"
 	precision = TRUE
@@ -106,11 +106,11 @@
 		return ..()
 
 /obj/item/extinguisher/examine(mob/user)
-	..()
-	to_chat(user, "The safety is [safety ? "on" : "off"].")
+	. = ..()
+	. += "The safety is [safety ? "on" : "off"]."
 
 	if(reagents.total_volume)
-		to_chat(user, "<span class='notice'>Alt-click to empty it.</span>")
+		. += "<span class='notice'>You can loose its <b>screws</b> to empty it.</span>"
 
 /obj/item/extinguisher/proc/AttemptRefill(atom/target, mob/user)
 	if(istype(target, tanktype) && target.Adjacent(user))
@@ -244,7 +244,7 @@
 			var/turf/open/theturf = T
 			theturf.MakeSlippery(TURF_WET_WATER, min_wet_time = 10 SECONDS, wet_time_to_add = 5 SECONDS)
 
-		user.visible_message("[user] empties out \the [src] onto the floor using the release valve.", "<span class='info'>You quietly empty out \the [src] using its release valve.</span>")
+		user.visible_message("[user] empties out \the [src] onto the floor using the release valve.", "<span class='info'>You quietly empty out \the [src] by loosing the release valve's screws.</span>")
 
 //firebot assembly
 /obj/item/extinguisher/attackby(obj/O, mob/user, params)

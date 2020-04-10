@@ -16,6 +16,7 @@
 	armor = list("melee" = 50, "bullet" = 50, "laser" = 50, "energy" = 0, "bomb" = 50, "bio" = 0, "rad" = 0, "fire" = 100, "acid" = 100)
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 	force_string = "LORD SINGULOTH HIMSELF"
+	total_mass = TOTAL_MASS_MEDIEVAL_WEAPON
 
 /obj/item/twohanded/singularityhammer/New()
 	..()
@@ -30,7 +31,7 @@
 		charged++
 	return
 
-/obj/item/twohanded/singularityhammer/update_icon()  //Currently only here to fuck with the on-mob icons.
+/obj/item/twohanded/singularityhammer/update_icon_state()  //Currently only here to fuck with the on-mob icons.
 	icon_state = "mjollnir[wielded]"
 	return
 
@@ -84,6 +85,7 @@
 	throwforce = 30
 	throw_range = 7
 	w_class = WEIGHT_CLASS_HUGE
+	total_mass = TOTAL_MASS_MEDIEVAL_WEAPON
 
 /obj/item/twohanded/mjollnir/proc/shock(mob/living/target)
 	target.Stun(60)
@@ -103,11 +105,11 @@
 		playsound(src.loc, "sparks", 50, 1)
 		shock(M)
 
-/obj/item/twohanded/mjollnir/throw_impact(atom/target)
+/obj/item/twohanded/mjollnir/throw_impact(atom/hit_atom, datum/thrownthing/throwingdatum)
 	. = ..()
-	if(isliving(target))
-		shock(target)
+	if(isliving(hit_atom))
+		shock(hit_atom)
 
-/obj/item/twohanded/mjollnir/update_icon()  //Currently only here to fuck with the on-mob icons.
+/obj/item/twohanded/mjollnir/update_icon_state()  //Currently only here to fuck with the on-mob icons.
 	icon_state = "mjollnir[wielded]"
 	return

@@ -6,7 +6,6 @@
 	icon_keyboard = "tech_key"
 	req_access = list(ACCESS_HEADS)
 	circuit = /obj/item/circuitboard/computer/communications
-	var/authenticated = 0
 	var/auth_id = "Unknown" //Who is currently logged in?
 	var/list/datum/comm_message/messages = list()
 	var/datum/comm_message/currmsg
@@ -16,6 +15,7 @@
 	var/message_cooldown = 0
 	var/ai_message_cooldown = 0
 	var/tmp_alertlevel = 0
+	var/static/security_level_cd // used to stop mass spam.
 	var/const/STATE_DEFAULT = 1
 	var/const/STATE_CALLSHUTTLE = 2
 	var/const/STATE_CANCELSHUTTLE = 3
@@ -43,12 +43,6 @@
 	. = ..()
 	GLOB.shuttle_caller_list += src
 
-/obj/machinery/computer/communications/process()
-	if(..())
-		var/ai_autoupdate = aistate != STATE_STATUSDISPLAY && aistate != STATE_CALLSHUTTLE && aistate != STATE_PURCHASE && aistate != STATE_VIEWMESSAGE
-		var/machine_user_autoupdate = state != STATE_STATUSDISPLAY && state != STATE_CALLSHUTTLE && state != STATE_PURCHASE && state != STATE_VIEWMESSAGE
-		updateDialog(machine_user_autoupdate,ai_autoupdate)
-
 /obj/machinery/computer/communications/Topic(href, href_list)
 	if(..())
 		return
@@ -71,15 +65,13 @@
 		if("login")
 			var/mob/M = usr
 
-			var/obj/item/card/id/I = M.get_active_held_item()
-			if(!istype(I))
-				I = M.get_idcard()
+			var/obj/item/card/id/I = M.get_idcard(TRUE)
 
 			if(I && istype(I))
 				if(check_access(I))
 					authenticated = 1
 					auth_id = "[I.registered_name] ([I.assignment])"
-					if((20 in I.access))
+					if((ACCESS_CAPTAIN in I.access))
 						authenticated = 2
 					playsound(src, 'sound/machines/terminal_on.ogg', 50, 0)
 				if(obj_flags & EMAGGED)
@@ -103,16 +95,18 @@
 				I = pda.id
 			if (I && istype(I))
 				if(ACCESS_CAPTAIN in I.access)
+					if(security_level_cd > world.time)
+						to_chat(usr, "<span class='warning'>Security level protocols are currently on cooldown. Please stand by.</span>")
+						return
 					var/old_level = GLOB.security_level
 					if(!tmp_alertlevel)
 						tmp_alertlevel = SEC_LEVEL_GREEN
 					if(tmp_alertlevel < SEC_LEVEL_GREEN)
 						tmp_alertlevel = SEC_LEVEL_GREEN
-					if(tmp_alertlevel == SEC_LEVEL_BLUE)
-						tmp_alertlevel = SEC_LEVEL_BLUE
 					if(tmp_alertlevel > SEC_LEVEL_AMBER)
 						tmp_alertlevel = SEC_LEVEL_AMBER //Cannot engage delta with this
 					set_security_level(tmp_alertlevel)
+					security_level_cd = world.time + 15 SECONDS
 					if(GLOB.security_level != old_level)
 						to_chat(usr, "<span class='notice'>Authorization confirmed. Modifying security level.</span>")
 						playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, 0)
@@ -173,14 +167,15 @@
 							var/obj/machinery/shuttle_manipulator/M = locate() in GLOB.machines
 							if(M)
 								SSshuttle.shuttle_purchased = TRUE
-								M.unload_preview()
-								M.load_template(S)
-								M.existing_shuttle = SSshuttle.emergency
-								M.action_load(S)
 								SSshuttle.points -= S.credit_cost
 								minor_announce("[usr.real_name] has purchased [S.name] for [S.credit_cost] credits." , "Shuttle Purchase")
 								message_admins("[ADMIN_LOOKUPFLW(usr)] purchased [S.name].")
 								SSblackbox.record_feedback("text", "shuttle_purchase", 1, "[S.name]")
+								M.unload_preview()
+								M.load_template(S)
+								M.existing_shuttle = SSshuttle.emergency
+								M.action_load(S)
+								message_admins("[S.name] loaded, purchased by [usr]")
 							else
 								to_chat(usr, "Something went wrong! The shuttle exchange system seems to be down.")
 						else
@@ -202,7 +197,7 @@
 				state = STATE_CANCELSHUTTLE
 		if("cancelshuttle2")
 			if(authenticated)
-				if((world.realtime - SSshuttle.realtimeofstart) > SSshuttle.auto_call) //Citadel Edit Removing auto_call caused recall.
+				if(SSshuttle.endvote_passed) //Citadel Edit - endvote passing = no recalls
 					say("Warning: Emergency shuttle recalls have been blocked by Central Command due to ongoing crew transfer procedures.")
 				else
 					SSshuttle.cancelEvac(usr)
@@ -287,7 +282,7 @@
 
 		// OMG CENTCOM LETTERHEAD
 		if("MessageCentCom")
-			if(authenticated==2)
+			if(authenticated)
 				if(!checkCCcooldown())
 					to_chat(usr, "<span class='warning'>Arrays recycling.  Please stand by.</span>")
 					return
@@ -335,7 +330,7 @@
 				Nuke_request(input, usr)
 				to_chat(usr, "<span class='notice'>Request sent.</span>")
 				usr.log_message("has requested the nuclear codes from CentCom", LOG_SAY)
-				priority_announce("The codes for the on-station nuclear self-destruct have been requested by [usr]. Confirmation or denial of this request will be sent shortly.", "Nuclear Self Destruct Codes Requested",'sound/ai/commandreport.ogg')
+				priority_announce("The codes for the on-station nuclear self-destruct have been requested by [usr]. Confirmation or denial of this request will be sent shortly.", "Nuclear Self Destruct Codes Requested","commandreport")
 				CM.lastTimeUsed = world.time
 
 
@@ -384,19 +379,21 @@
 		if("ai-announce")
 			make_announcement(usr, 1)
 		if("ai-securitylevel")
+			if(security_level_cd > world.time)
+				to_chat(usr, "<span class='warning'>Security level protocols are currently on cooldown. Please stand by.</span>")
+				return
 			tmp_alertlevel = text2num( href_list["newalertlevel"] )
 			if(!tmp_alertlevel)
-				tmp_alertlevel = 0
+				tmp_alertlevel = SEC_LEVEL_GREEN
 			var/old_level = GLOB.security_level
 			if(!tmp_alertlevel)
 				tmp_alertlevel = SEC_LEVEL_GREEN
 			if(tmp_alertlevel < SEC_LEVEL_GREEN)
 				tmp_alertlevel = SEC_LEVEL_GREEN
-			if(tmp_alertlevel == SEC_LEVEL_BLUE)
-				tmp_alertlevel = SEC_LEVEL_BLUE
 			if(tmp_alertlevel > SEC_LEVEL_AMBER)
 				tmp_alertlevel = SEC_LEVEL_AMBER //Cannot engage delta with this
 			set_security_level(tmp_alertlevel)
+			security_level_cd = world.time + 15 SECONDS
 			if(GLOB.security_level != old_level)
 				//Only notify people if an actual change happened
 				var/security_level = get_security_level()
@@ -431,6 +428,7 @@
 		return ..()
 
 /obj/machinery/computer/communications/emag_act(mob/user)
+	. = ..()
 	if(obj_flags & EMAGGED)
 		return
 	obj_flags |= EMAGGED
@@ -439,6 +437,7 @@
 		authenticated = 2
 	to_chat(user, "<span class='danger'>You scramble the communication routing circuits!</span>")
 	playsound(src, 'sound/machines/terminal_alert.ogg', 50, 0)
+	return TRUE
 
 /obj/machinery/computer/communications/ui_interact(mob/user)
 	. = ..()
@@ -449,13 +448,13 @@
 	var/dat = ""
 	if(SSshuttle.emergency.mode == SHUTTLE_CALL)
 		var/timeleft = SSshuttle.emergency.timeLeft()
-		dat += "<B>Emergency shuttle</B>\n<BR>\nETA: [timeleft / 60 % 60]:[add_zero(num2text(timeleft % 60), 2)]"
+		dat += "<B>Emergency shuttle</B>\n<BR>\nETA: [timeleft / 60 % 60]:[add_leading(num2text(timeleft % 60), 2, "0")]"
 
 
 	var/datum/browser/popup = new(user, "communications", "Communications Console", 400, 500)
 	popup.set_title_image(user.browse_rsc_icon(icon, icon_state))
 
-	if(issilicon(user))
+	if(issilicon(user) || (hasSiliconAccessInArea(user) && !in_range(user,src)))
 		var/dat2 = interact_ai(user) // give the AI a different interact proc to limit its access
 		if(dat2)
 			dat +=  dat2
@@ -584,8 +583,6 @@
 
 	dat += "<BR><BR>\[ [(state != STATE_DEFAULT) ? "<A HREF='?src=[REF(src)];operation=main'>Main Menu</A> | " : ""]<A HREF='?src=[REF(user)];mach_close=communications'>Close</A> \]"
 
-	popup.set_content(dat)
-	popup.open()
 	popup.set_content(dat)
 	popup.open()
 

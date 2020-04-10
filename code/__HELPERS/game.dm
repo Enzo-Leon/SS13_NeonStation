@@ -1,21 +1,15 @@
 //supposedly the fastest way to do this according to https://gist.github.com/Giacom/be635398926bb463b42a
 #define RANGE_TURFS(RADIUS, CENTER) \
-  block( \
-    locate(max(CENTER.x-(RADIUS),1),          max(CENTER.y-(RADIUS),1),          CENTER.z), \
-    locate(min(CENTER.x+(RADIUS),world.maxx), min(CENTER.y+(RADIUS),world.maxy), CENTER.z) \
-  )
+	block( \
+		locate(max(CENTER.x-(RADIUS),1),          max(CENTER.y-(RADIUS),1),          CENTER.z), \
+		locate(min(CENTER.x+(RADIUS),world.maxx), min(CENTER.y+(RADIUS),world.maxy), CENTER.z) \
+	)
 
 #define Z_TURFS(ZLEVEL) block(locate(1,1,ZLEVEL), locate(world.maxx, world.maxy, ZLEVEL))
 #define CULT_POLL_WAIT 2400
 
-/proc/get_area(atom/A)
-	if(isarea(A))
-		return A
-	var/turf/T = get_turf(A)
-	return T ? T.loc : null
-
-/proc/get_area_name(atom/X, format_text = FALSE)
-	var/area/A = isarea(X) ? X : get_area(X)
+/proc/get_area_name(atom/X, format_text = FALSE, get_base_area = FALSE)
+	var/area/A = get_base_area ? get_base_area(X) : get_area(X)
 	if(!A)
 		return null
 	return format_text ? format_text(A.name) : A.name
@@ -151,21 +145,45 @@
 			turfs += T
 	return turfs
 
+/** recursive_organ_check
+  * inputs: O (object to start with)
+  * outputs:
+  * description: A pseudo-recursive loop based off of the recursive mob check, this check looks for any organs held
+  *				 within 'O', toggling their frozen flag. This check excludes items held within other safe organ
+  *				 storage units, so that only the lowest level of container dictates whether we do or don't decompose
+  */
+/proc/recursive_organ_check(atom/O)
 
-//This is the new version of recursive_mob_check, used for say().
-//The other proc was left intact because morgue trays use it.
-//Sped this up again for real this time
-/proc/recursive_hear_check(O)
 	var/list/processing_list = list(O)
-	. = list()
-	while(processing_list.len)
-		var/atom/A = processing_list[1]
-		if(A.flags_1 & HEAR_1)
-			. += A
-		processing_list.Cut(1, 2)
-		processing_list += A.contents
+	var/list/processed_list = list()
+	var/index = 1
+	var/obj/item/organ/found_organ
 
-// Better recursive loop, technically sort of not actually recursive cause that shit is dumb, enjoy.
+	while(index <= length(processing_list))
+
+		var/atom/A = processing_list[index]
+
+		if(istype(A, /obj/item/organ))
+			found_organ = A
+			found_organ.organ_flags ^= ORGAN_FROZEN
+
+		else if(istype(A, /mob/living/carbon))
+			var/mob/living/carbon/Q = A
+			for(var/organ in Q.internal_organs)
+				found_organ = organ
+				found_organ.organ_flags ^= ORGAN_FROZEN
+
+		for(var/atom/B in A)	//objects held within other objects are added to the processing list, unless that object is something that can hold organs safely
+			if(!processed_list[B] && !istype(B, /obj/structure/closet/crate/freezer) && !istype(B, /obj/structure/closet/secure_closet/freezer))
+				processing_list+= B
+
+		index++
+		processed_list[A] = A
+
+	return
+
+
+// Better recursive loop, technically sort of not actually recursive cause that shit is retarded, enjoy.
 //No need for a recursive limit either
 /proc/recursive_mob_check(atom/O,client_check=1,sight_check=1,include_radio=1)
 
@@ -206,34 +224,30 @@
 
 	return found_mobs
 
-
 /proc/get_hearers_in_view(R, atom/source)
-	// Returns a list of hearers in view(R) from source (ignoring luminosity). Used in saycode.
 	var/turf/T = get_turf(source)
 	. = list()
-
 	if(!T)
 		return
-
-	var/list/processing_list = list()
-	if (R == 0) // if the range is zero, we know exactly where to look for, we can skip view
-		processing_list += T.contents // We can shave off one iteration by assuming turfs cannot hear
-	else  // A variation of get_hear inlined here to take advantage of the compiler's fastpath for obj/mob in view
+	var/list/processing = list()
+	if(R == 0)
+		processing += T.contents
+	else
 		var/lum = T.luminosity
-		T.luminosity = 6 // This is the maximum luminosity
-		var/list/cachedview = view(R, T)
-		for(var/mob/M in cachedview)
-			processing_list += M
-		for(var/obj/O in cachedview)
-			processing_list += O
+		T.luminosity = 6
+		var/list/cached_view = view(R, T)
+		for(var/mob/M in cached_view)
+			processing += M
+		for(var/obj/O in cached_view)
+			processing += O
 		T.luminosity = lum
-
-	while(processing_list.len) // recursive_hear_check inlined here
-		var/atom/A = processing_list[1]
+	var/i = 0
+	while(i < length(processing))
+		var/atom/A = processing[++i]
 		if(A.flags_1 & HEAR_1)
 			. += A
-		processing_list.Cut(1, 2)
-		processing_list += A.contents
+			SEND_SIGNAL(A, COMSIG_ATOM_HEARER_IN_VIEW, processing, .)
+		processing += A.contents
 
 /proc/get_mobs_in_radio_ranges(list/obj/item/radio/radios)
 	. = list()
@@ -411,12 +425,7 @@
 			candidates -= M
 
 /proc/pollGhostCandidates(Question, jobbanType, datum/game_mode/gametypeCheck, be_special_flag = 0, poll_time = 300, ignore_category = null, flashwindow = TRUE)
-	var/list/candidates = list()
-
-	for(var/mob/dead/observer/G in GLOB.player_list)
-		if(G.can_reenter_round)
-			candidates += G
-
+	var/list/candidates = get_all_ghost_role_eligible()
 	return pollCandidates(Question, jobbanType, gametypeCheck, be_special_flag, poll_time, ignore_category, flashwindow, candidates)
 
 /proc/pollCandidates(Question, jobbanType, datum/game_mode/gametypeCheck, be_special_flag = 0, poll_time = 300, ignore_category = null, flashwindow = TRUE, list/group = null)
@@ -426,7 +435,7 @@
 	var/list/result = list()
 	for(var/m in group)
 		var/mob/M = m
-		if(!M.key || !M.client || (ignore_category && GLOB.poll_ignore[ignore_category] && M.ckey in GLOB.poll_ignore[ignore_category]))
+		if(!M.key || !M.client || (ignore_category && GLOB.poll_ignore[ignore_category] && (M.ckey in GLOB.poll_ignore[ignore_category])))
 			continue
 		if(be_special_flag)
 			if(!(M.client.prefs) || !(be_special_flag in M.client.prefs.be_special))
@@ -479,7 +488,7 @@
 
 	G_found.client.prefs.copy_to(new_character)
 	new_character.dna.update_dna_identity()
-	new_character.key = G_found.key
+	G_found.transfer_ckey(new_character, FALSE)
 
 	return new_character
 
@@ -541,35 +550,27 @@
 		. = TRUE
 
 /proc/ispipewire(item)
-	var/static/list/pire_wire = list(
+	var/static/list/pipe_wire = list(
 		/obj/machinery/atmospherics,
 		/obj/structure/disposalpipe,
 		/obj/structure/cable
 	)
-	return (is_type_in_list(item, pire_wire))
+	return (is_type_in_list(item, pipe_wire))
 
 // Find a obstruction free turf that's within the range of the center. Can also condition on if it is of a certain area type.
 /proc/find_obstruction_free_location(var/range, var/atom/center, var/area/specific_area)
 	var/list/turfs = RANGE_TURFS(range, center)
 	var/list/possible_loc = list()
-
 	for(var/turf/found_turf in turfs)
 		var/area/turf_area = get_area(found_turf)
-
-		// We check if both the turf is a floor, and that it's actually in the area.
-		// We also want a location that's clear of any obstructions.
-		if (specific_area)
-			if (!istype(turf_area, specific_area))
+		if(specific_area)	// We check if both the turf is a floor, and that it's actually in the area. // We also want a location that's clear of any obstructions.
+			if(!istype(turf_area, specific_area))
 				continue
-
-		if (!isspaceturf(found_turf))
-			if (!is_blocked_turf(found_turf))
+		if(!isspaceturf(found_turf))
+			if(!is_blocked_turf(found_turf))
 				possible_loc.Add(found_turf)
-
-	// Need at least one free location.
-	if (possible_loc.len < 1)
+	if(possible_loc.len < 1)	// Need at least one free location.
 		return FALSE
-
 	return pick(possible_loc)
 
 /proc/power_fail(duration_min, duration_max)
@@ -579,5 +580,4 @@
 			var/area/A = C.area
 			if(GLOB.typecache_powerfailure_safe_areas[A.type])
 				continue
-
 			C.energy_fail(rand(duration_min,duration_max))

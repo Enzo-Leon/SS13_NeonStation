@@ -8,14 +8,4 @@
 # NOTE: syntax was changed to allow hyphenation of ranknames, since spaces are stripped.      #
 ###############################################################################################
 
-Augzoi = Host
-Jizzard = Host
-Catochondria = Host
-Enzo_Leon = Game Admin
-Nonebody = Game Admin
-Pawoverlord = Trial Admin
-Willior13 = Moderator
-PeaceGiver = Moderator
-Slouista = Moderator
-Dirty Old Harry = Moderator
-Zaiakusin = Moderator
+yourckeygoeshere = Host

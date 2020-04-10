@@ -15,10 +15,9 @@
 	to_chat(user, "<span class='notice'>We begin our stasis, preparing energy to arise once more.</span>")
 	if(user.stat != DEAD)
 		user.emote("deathgasp")
-		user.tod = STATION_TIME_TIMESTAMP("hh:mm:ss")
+		user.tod = STATION_TIME_TIMESTAMP("hh:mm:ss", world.time)
 	user.fakedeath("changeling") //play dead
 	user.update_stat()
-	user.update_canmove()
 
 	addtimer(CALLBACK(src, .proc/ready_to_regenerate, user), LING_FAKEDEATH_TIME, TIMER_UNIQUE)
 	return TRUE
@@ -33,7 +32,7 @@
 			RV.action.Grant(user)
 
 /obj/effect/proc_holder/changeling/fakedeath/can_sting(mob/living/user)
-	if(user.has_trait(TRAIT_DEATHCOMA, "changeling"))
+	if(HAS_TRAIT_FROM(user, TRAIT_DEATHCOMA, "changeling"))
 		to_chat(user, "<span class='warning'>We are already reviving.</span>")
 		return
 	if(!user.stat) //Confirmation for living changelings if they want to fake their death

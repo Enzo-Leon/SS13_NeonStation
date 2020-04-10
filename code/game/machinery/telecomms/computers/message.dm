@@ -42,21 +42,23 @@
 		return ..()
 
 /obj/machinery/computer/message_monitor/emag_act(mob/user)
+	. = ..()
 	if(obj_flags & EMAGGED)
 		return
-	if(!isnull(linkedServer))
-		obj_flags |= EMAGGED
-		screen = 2
-		spark_system.set_up(5, 0, src)
-		spark_system.start()
-		var/obj/item/paper/monitorkey/MK = new(loc, linkedServer)
-		// Will help make emagging the console not so easy to get away with.
-		MK.info += "<br><br><font color='red'>�%@%(*$%&(�&?*(%&�/{}</font>"
-		var/time = 100 * length(linkedServer.decryptkey)
-		addtimer(CALLBACK(src, .proc/UnmagConsole), time)
-		message = rebootmsg
-	else
+	if(isnull(linkedServer))
 		to_chat(user, "<span class='notice'>A no server error appears on the screen.</span>")
+		return
+	obj_flags |= EMAGGED
+	screen = 2
+	spark_system.set_up(5, 0, src)
+	spark_system.start()
+	var/obj/item/paper/monitorkey/MK = new(loc, linkedServer)
+	// Will help make emagging the console not so easy to get away with.
+	MK.info += "<br><br><font color='red'>�%@%(*$%&(�&?*(%&�/{}</font>"
+	var/time = 100 * length(linkedServer.decryptkey)
+	addtimer(CALLBACK(src, .proc/UnmagConsole), time)
+	message = rebootmsg
+	return TRUE
 
 /obj/machinery/computer/message_monitor/New()
 	. = ..()
@@ -258,7 +260,7 @@
 	if(..())
 		return
 
-	if(usr.contents.Find(src) || (in_range(src, usr) && isturf(loc)) || issilicon(usr))
+	if(usr.contents.Find(src) || (in_range(src, usr) && isturf(loc)) || hasSiliconAccessInArea(usr))
 		//Authenticate
 		if (href_list["auth"])
 			if(LINKED_SERVER_NONRESPONSIVE)
@@ -419,11 +421,12 @@
 							"name" = "[customsender]",
 							"job" = "[customjob]",
 							"message" = custommessage,
+							"emojis" = TRUE,
 							"targets" = list("[customrecepient.owner] ([customrecepient.ownjob])")
 						))
 						// this will log the signal and transmit it to the target
 						linkedServer.receive_information(signal, null)
-						usr.log_message("(PDA: [name]) sent \"[custommessage]\" to [signal.format_target()]", LOG_PDA)
+						usr.log_message("(PDA: [name] | [usr.real_name]) sent \"[custommessage]\" to [signal.format_target()]", LOG_PDA)
 
 
 		//Request Console Logs - KEY REQUIRED

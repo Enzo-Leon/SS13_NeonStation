@@ -21,6 +21,7 @@
 	anchored = TRUE
 	layer = TABLE_LAYER
 	climbable = TRUE
+	obj_flags = CAN_BE_HIT|SHOVABLE_ONTO
 	pass_flags = LETPASSTHROW //You can throw objects over this, despite it's density.")
 	var/frame = /obj/structure/table_frame
 	var/framestack = /obj/item/stack/rods
@@ -30,16 +31,16 @@
 	var/framestackamount = 2
 	var/deconstruction_ready = 1
 	max_integrity = 100
-	integrity_failure = 30
+	integrity_failure = 0.33
 	smooth = SMOOTH_TRUE
-	canSmoothWith = list(/obj/structure/table, /obj/structure/table/reinforced)
+	canSmoothWith = list(/obj/structure/table, /obj/structure/table/reinforced, /obj/structure/table/greyscale)
 
 /obj/structure/table/examine(mob/user)
-	..()
-	deconstruction_hints(user)
+	. = ..()
+	. += deconstruction_hints(user)
 
 /obj/structure/table/proc/deconstruction_hints(mob/user)
-	to_chat(user, "<span class='notice'>The top is <b>screwed</b> on, but the main <b>bolts</b> are also visible.</span>")
+	return "<span class='notice'>The top is <b>screwed</b> on, but the main <b>bolts</b> are also visible.</span>"
 
 /obj/structure/table/update_icon()
 	if(smooth)
@@ -108,14 +109,13 @@
 
 /obj/structure/table/proc/tableplace(mob/living/user, mob/living/pushed_mob)
 	pushed_mob.forceMove(src.loc)
-	pushed_mob.resting = TRUE
-	pushed_mob.update_canmove()
+	pushed_mob.set_resting(TRUE, FALSE)
 	pushed_mob.visible_message("<span class='notice'>[user] places [pushed_mob] onto [src].</span>", \
 								"<span class='notice'>[user] places [pushed_mob] onto [src].</span>")
 	log_combat(user, pushed_mob, "placed")
 
 /obj/structure/table/proc/tablepush(mob/living/user, mob/living/pushed_mob)
-	if(user.has_trait(user, TRAIT_PACIFISM))
+	if(HAS_TRAIT(user, TRAIT_PACIFISM))
 		to_chat(user, "<span class='danger'>Throwing [pushed_mob] onto the table might hurt them!</span>")
 		return
 	var/added_passtable = FALSE
@@ -127,7 +127,7 @@
 		pushed_mob.pass_flags &= ~PASSTABLE
 	if(pushed_mob.loc != loc) //Something prevented the tabling
 		return
-	pushed_mob.Knockdown(40)
+	pushed_mob.DefaultCombatKnockdown(40)
 	pushed_mob.visible_message("<span class='danger'>[user] slams [pushed_mob] onto [src]!</span>", \
 								"<span class='userdanger'>[user] slams you onto [src]!</span>")
 	log_combat(user, pushed_mob, "tabled", null, "onto [src]")
@@ -135,6 +135,15 @@
 		return
 	var/mob/living/carbon/human/H = pushed_mob
 	SEND_SIGNAL(H, COMSIG_ADD_MOOD_EVENT, "table", /datum/mood_event/table)
+
+/obj/structure/table/shove_act(mob/living/target, mob/living/user)
+	if(CHECK_MOBILITY(target, MOBILITY_STAND))
+		target.DefaultCombatKnockdown(SHOVE_KNOCKDOWN_TABLE)
+	user.visible_message("<span class='danger'>[user.name] shoves [target.name] onto \the [src]!</span>",
+		"<span class='danger'>You shove [target.name] onto \the [src]!</span>", null, COMBAT_MESSAGE_RANGE)
+	target.forceMove(loc)
+	log_combat(user, target, "shoved", "onto [src] (table)")
+	return TRUE
 
 /obj/structure/table/attackby(obj/item/I, mob/user, params)
 	if(!(flags_1 & NODECONSTRUCT_1))
@@ -172,17 +181,38 @@
 	else
 		return ..()
 
+/obj/structure/table/alt_attack_hand(mob/user)
+	if(user && Adjacent(user) && !user.incapacitated())
+		user.setClickCooldown(4)
+		if(istype(user) && user.a_intent == INTENT_HARM)
+			user.visible_message("<span class='warning'>[user] slams [user.p_their()] palms down on [src].</span>", "<span class='warning'>You slam your palms down on [src].</span>")
+			playsound(src, 'sound/weapons/sonic_jackhammer.ogg', 50, 1)
+		else
+			user.visible_message("<span class='notice'>[user] slaps [user.p_their()] hands on [src].</span>", "<span class='notice'>You slap your hands on [src].</span>")
+			playsound(src, 'sound/weapons/tap.ogg', 50, 1)
+		user.do_attack_animation(src)
+		return TRUE
 
 /obj/structure/table/deconstruct(disassembled = TRUE, wrench_disassembly = 0)
 	if(!(flags_1 & NODECONSTRUCT_1))
 		var/turf/T = get_turf(src)
-		new buildstack(T, buildstackamount)
+		if(buildstack)
+			new buildstack(T, buildstackamount)
+		else
+			for(var/i in custom_materials)
+				var/datum/material/M = i
+				new M.sheet_type(T, FLOOR(custom_materials[M] / MINERAL_MATERIAL_AMOUNT, 1))
 		if(!wrench_disassembly)
 			new frame(T)
 		else
 			new framestack(T, framestackamount)
 	qdel(src)
 
+/obj/structure/table/greyscale
+	icon = 'icons/obj/smooth_structures/table_greyscale.dmi'
+	icon_state = "table"
+	material_flags = MATERIAL_ADD_PREFIX | MATERIAL_COLOR | MATERIAL_AFFECT_STATISTICS
+	buildstack = null //No buildstack, so generate from mat datums
 
 /*
  * Glass tables
@@ -239,7 +269,7 @@
 		debris -= AM
 		if(istype(AM, /obj/item/shard))
 			AM.throw_impact(L)
-	L.Knockdown(100)
+	L.DefaultCombatKnockdown(100)
 	qdel(src)
 
 /obj/structure/table/glass/deconstruct(disassembled = TRUE, wrench_disassembly = 0)
@@ -257,6 +287,53 @@
 	qdel(src)
 
 /obj/structure/table/glass/narsie_act()
+	color = NARSIE_WINDOW_COLOUR
+	for(var/obj/item/shard/S in debris)
+		S.color = NARSIE_WINDOW_COLOUR
+
+/*
+ * Plasmaglass tables
+ */
+/obj/structure/table/plasmaglass
+	name = "plasmaglass table"
+	desc = "A glasstable, but it's pink and more sturdy. What will Nanotrasen design next with plasma?"
+	icon = 'icons/obj/smooth_structures/plasmaglass_table.dmi'
+	icon_state = "plasmaglass_table"
+	climbable = TRUE
+	buildstack = /obj/item/stack/sheet/plasmaglass
+	canSmoothWith = null
+	max_integrity = 270
+	resistance_flags = ACID_PROOF
+	armor = list("melee" = 10, "bullet" = 5, "laser" = 0, "energy" = 0, "bomb" = 10, "bio" = 0, "rad" = 0, "fire" = 80, "acid" = 100)
+	var/list/debris = list()
+
+/obj/structure/table/plasmaglass/New()
+	. = ..()
+	debris += new frame
+	debris += new /obj/item/shard/plasma
+
+/obj/structure/table/plasmaglass/Destroy()
+	QDEL_LIST(debris)
+	. = ..()
+
+/obj/structure/table/plasmaglass/proc/check_break(mob/living/M)
+	return
+
+/obj/structure/table/plasmaglass/deconstruct(disassembled = TRUE, wrench_disassembly = 0)
+	if(!(flags_1 & NODECONSTRUCT_1))
+		if(disassembled)
+			..()
+			return
+		else
+			var/turf/T = get_turf(src)
+			playsound(T, "shatter", 50, 1)
+			for(var/X in debris)
+				var/atom/movable/AM = X
+				AM.forceMove(T)
+				debris -= AM
+	qdel(src)
+
+/obj/structure/table/plasmaglass/narsie_act()
 	color = NARSIE_WINDOW_COLOUR
 	for(var/obj/item/shard/S in debris)
 		S.color = NARSIE_WINDOW_COLOUR
@@ -301,44 +378,83 @@
 	frame = /obj/structure/table_frame
 	framestack = /obj/item/stack/rods
 	buildstack = /obj/item/stack/tile/carpet
-	canSmoothWith = list(/obj/structure/table/wood/fancy, /obj/structure/table/wood/fancy/black,	/obj/structure/table/wood/fancy/blackred,	/obj/structure/table/wood/fancy/monochrome)
+	canSmoothWith = list(/obj/structure/table/wood/fancy,
+		/obj/structure/table/wood/fancy/black,
+		/obj/structure/table/wood/fancy/blackred,
+		/obj/structure/table/wood/fancy/monochrome,
+		/obj/structure/table/wood/fancy/blue,
+		/obj/structure/table/wood/fancy/cyan,
+		/obj/structure/table/wood/fancy/green,
+		/obj/structure/table/wood/fancy/orange,
+		/obj/structure/table/wood/fancy/purple,
+		/obj/structure/table/wood/fancy/red,
+		/obj/structure/table/wood/fancy/royalblack,
+		/obj/structure/table/wood/fancy/royalblue)
+	var/smooth_icon = 'icons/obj/smooth_structures/fancy_table.dmi' // see Initialize()
 
-/obj/structure/table/wood/fancy/New()
-	// New() is used so that the /black subtype can override `icon` easily and
-	// the correct value will be used by the smoothing subsystem.
+/obj/structure/table/wood/fancy/Initialize()
 	. = ..()
 	// Needs to be set dynamically because table smooth sprites are 32x34,
 	// which the editor treats as a two-tile-tall object. The sprites are that
 	// size so that the north/south corners look nice - examine the detail on
 	// the sprites in the editor to see why.
-	icon = 'icons/obj/smooth_structures/fancy_table.dmi'
+	icon = smooth_icon
 
 /obj/structure/table/wood/fancy/black
 	icon_state = "fancy_table_black"
 	buildstack = /obj/item/stack/tile/carpet/black
+	smooth_icon = 'icons/obj/smooth_structures/fancy_table_black.dmi'
 
 /obj/structure/table/wood/fancy/blackred
-	icon =	'icons/obj/structures.dmi'
-	icon_state =	"fancy_table_blackred"
-	buildstack =	/obj/item/stack/tile/carpet/blackred
-
-/obj/structure/table/wood/fancy/blackred/New()
-	. = ..()
-	icon	=	'icons/obj/smooth_structures/fancy_table_blackred.dmi'
+	icon_state = "fancy_table_blackred"
+	buildstack = /obj/item/stack/tile/carpet/blackred
+	smooth_icon = 'icons/obj/smooth_structures/fancy_table_blackred.dmi'
 
 /obj/structure/table/wood/fancy/monochrome
-	icon =	'icons/obj/structures.dmi'
-	icon_state	=	"fancy_table_monochrome"
-	buildstack	=	/obj/item/stack/tile/carpet/monochrome
+	icon_state = "fancy_table_monochrome"
+	buildstack = /obj/item/stack/tile/carpet/monochrome
+	smooth_icon = 'icons/obj/smooth_structures/fancy_table_monochrome.dmi'
 
-/obj/structure/table/wood/fancy/monochrome/New()
-	. = ..()
-	icon	=	'icons/obj/smooth_structures/fancy_table_monochrome.dmi'
+/obj/structure/table/wood/fancy/blue
+	icon_state = "fancy_table_blue"
+	buildstack = /obj/item/stack/tile/carpet/blue
+	smooth_icon = 'icons/obj/smooth_structures/fancy_table_blue.dmi'
 
-/obj/structure/table/wood/fancy/black/New()
-	. = ..()
-	// Ditto above.
-	icon = 'icons/obj/smooth_structures/fancy_table_black.dmi'
+/obj/structure/table/wood/fancy/cyan
+	icon_state = "fancy_table_cyan"
+	buildstack = /obj/item/stack/tile/carpet/cyan
+	smooth_icon = 'icons/obj/smooth_structures/fancy_table_cyan.dmi'
+
+/obj/structure/table/wood/fancy/green
+	icon_state = "fancy_table_green"
+	buildstack = /obj/item/stack/tile/carpet/green
+	smooth_icon = 'icons/obj/smooth_structures/fancy_table_green.dmi'
+
+/obj/structure/table/wood/fancy/orange
+	icon_state = "fancy_table_orange"
+	buildstack = /obj/item/stack/tile/carpet/orange
+	smooth_icon = 'icons/obj/smooth_structures/fancy_table_orange.dmi'
+
+/obj/structure/table/wood/fancy/purple
+	icon_state = "fancy_table_purple"
+	buildstack = /obj/item/stack/tile/carpet/purple
+	smooth_icon = 'icons/obj/smooth_structures/fancy_table_purple.dmi'
+
+/obj/structure/table/wood/fancy/red
+	icon_state = "fancy_table_red"
+	buildstack = /obj/item/stack/tile/carpet/red
+	smooth_icon = 'icons/obj/smooth_structures/fancy_table_red.dmi'
+
+/obj/structure/table/wood/fancy/royalblack
+	icon_state = "fancy_table_royalblack"
+	buildstack = /obj/item/stack/tile/carpet/royalblack
+	smooth_icon = 'icons/obj/smooth_structures/fancy_table_royalblack.dmi'
+
+/obj/structure/table/wood/fancy/royalblue
+	icon_state = "fancy_table_royalblue"
+	buildstack = /obj/item/stack/tile/carpet/royalblue
+	smooth_icon = 'icons/obj/smooth_structures/fancy_table_royalblue.dmi'
+
 /*
  * Reinforced tables
  */
@@ -349,16 +465,14 @@
 	icon_state = "r_table"
 	deconstruction_ready = 0
 	buildstack = /obj/item/stack/sheet/plasteel
-	canSmoothWith = list(/obj/structure/table/reinforced, /obj/structure/table)
 	max_integrity = 200
-	integrity_failure = 50
+	integrity_failure = 0.25
 	armor = list("melee" = 10, "bullet" = 30, "laser" = 30, "energy" = 100, "bomb" = 20, "bio" = 0, "rad" = 0, "fire" = 80, "acid" = 70)
 
 /obj/structure/table/reinforced/deconstruction_hints(mob/user)
 	if(deconstruction_ready)
-		to_chat(user, "<span class='notice'>The top cover has been <i>welded</i> loose and the main frame's <b>bolts</b> are exposed.</span>")
-	else
-		to_chat(user, "<span class='notice'>The top cover is firmly <b>welded</b> on.</span>")
+		return "<span class='notice'>The top cover has been <i>welded</i> loose and the main frame's <b>bolts</b> are exposed.</span>"
+	return "<span class='notice'>The top cover is firmly <b>welded</b> on.</span>"
 
 /obj/structure/table/reinforced/attackby(obj/item/W, mob/user, params)
 	if(istype(W, /obj/item/weldingtool))
@@ -453,23 +567,20 @@
 			break
 
 /obj/structure/table/optable/tablepush(mob/living/user, mob/living/pushed_mob)
-	pushed_mob.forceMove(src.loc)
-	pushed_mob.resting = 1
-	pushed_mob.update_canmove()
+	pushed_mob.forceMove(loc)
+	pushed_mob.set_resting(TRUE, TRUE)
 	visible_message("<span class='notice'>[user] has laid [pushed_mob] on [src].</span>")
 	check_patient()
 
 /obj/structure/table/optable/proc/check_patient()
-	var/mob/M = locate(/mob/living/carbon/human, loc)
-	if(M)
-		if(M.resting)
-			patient = M
-			return 1
+	var/mob/living/carbon/human/H = locate() in loc
+	if(H)
+		if(!CHECK_MOBILITY(H, MOBILITY_STAND))
+			patient = H
+			return TRUE
 	else
 		patient = null
-		return 0
-
-
+		return FALSE
 
 /*
  * Racks
@@ -486,8 +597,8 @@
 	max_integrity = 20
 
 /obj/structure/rack/examine(mob/user)
-	..()
-	to_chat(user, "<span class='notice'>It's held together by a couple of <b>bolts</b>.</span>")
+	. = ..()
+	. += "<span class='notice'>It's held together by a couple of <b>bolts</b>.</span>"
 
 /obj/structure/rack/CanPass(atom/movable/mover, turf/target)
 	if(src.density == 0) //Because broken racks -Agouri |TODO: SPRITE!|
@@ -529,7 +640,7 @@
 	. = ..()
 	if(.)
 		return
-	if(user.IsKnockdown() || user.resting || user.lying || user.get_num_legs() < 2)
+	if(CHECK_MULTIPLE_BITFIELDS(user.mobility_flags, MOBILITY_STAND|MOBILITY_MOVE) || user.get_num_legs() < 2)
 		return
 	user.changeNext_move(CLICK_CD_MELEE)
 	user.do_attack_animation(src, ATTACK_EFFECT_KICK)
@@ -568,7 +679,7 @@
 	icon = 'icons/obj/items_and_weapons.dmi'
 	icon_state = "rack_parts"
 	flags_1 = CONDUCT_1
-	materials = list(MAT_METAL=2000)
+	custom_materials = list(/datum/material/iron=2000)
 	var/building = FALSE
 
 /obj/item/rack_parts/attackby(obj/item/W, mob/user, params)

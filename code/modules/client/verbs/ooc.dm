@@ -28,7 +28,7 @@ GLOBAL_VAR_INIT(normal_ooc_colour, "#002eb8")
 	if(QDELETED(src))
 		return
 
-	msg = copytext(sanitize(msg), 1, MAX_MESSAGE_LEN)
+	msg = copytext_char(sanitize(msg), 1, MAX_MESSAGE_LEN)
 	var/raw_msg = msg
 
 	if(!msg)
@@ -36,7 +36,7 @@ GLOBAL_VAR_INIT(normal_ooc_colour, "#002eb8")
 
 	msg = emoji_parse(msg)
 
-	if((copytext(msg, 1, 2) in list(".",";",":","#")) || (findtext(lowertext(copytext(msg, 1, 5)), "say")))
+	if((msg[1] in list(".",";",":","#")) || findtext_char(msg, "say", 1, 5))
 		if(alert("Your message \"[raw_msg]\" looks like it was meant for in game communication, say it in OOC?", "Meant for OOC?", "No", "Yes") != "Yes")
 			return
 
@@ -56,19 +56,9 @@ GLOBAL_VAR_INIT(normal_ooc_colour, "#002eb8")
 	mob.log_talk(raw_msg, LOG_OOC, tag="(OOC)")
 
 	var/keyname = key
-	if((prefs.unlock_content) && (prefs.donor_lvl != "0"))
-		if(prefs.toggles & MEMBER_PUBLIC & DONOR_PUBLIC)
-			keyname = "<font color='[prefs.ooccolor ? prefs.ooccolor : GLOB.normal_ooc_colour]'>[icon2html('icons/member_content.dmi', world, "blag")][icon2html('icons/member_content.dmi', world, "donor")][keyname]</font>"
+	if(prefs.unlock_content)
 		if(prefs.toggles & MEMBER_PUBLIC)
 			keyname = "<font color='[prefs.ooccolor ? prefs.ooccolor : GLOB.normal_ooc_colour]'>[icon2html('icons/member_content.dmi', world, "blag")][keyname]</font>"
-		if(prefs.toggles & DONOR_PUBLIC)
-			keyname = "<font color='[prefs.ooccolor ? prefs.ooccolor : GLOB.normal_ooc_colour]'>[icon2html('icons/member_content.dmi', world, "donor")][keyname]</font>"
-	else if((prefs.unlock_content) && (prefs.donor_lvl == "0"))
-		if(prefs.toggles & MEMBER_PUBLIC)
-			keyname = "<font color='[prefs.ooccolor ? prefs.ooccolor : GLOB.normal_ooc_colour]'>[icon2html('icons/member_content.dmi', world, "blag")][keyname]</font>"
-	else if((!prefs.unlock_content) && (prefs.donor_lvl != "0"))
-		if(prefs.toggles & DONOR_PUBLIC)
-			keyname = "<font color='[prefs.ooccolor ? prefs.ooccolor : GLOB.normal_ooc_colour]'>[icon2html('icons/member_content.dmi', world, "donor")][keyname]</font>"
 	//The linkify span classes and linkify=TRUE below make ooc text get clickable chat href links if you pass in something resembling a url
 	for(var/client/C in GLOB.clients)
 		if(C.prefs.chat_toggles & CHAT_OOC)
@@ -283,7 +273,7 @@ GLOBAL_VAR_INIT(normal_ooc_colour, "#002eb8")
 		return
 
 	var/list/body = list()
-	body += "<html><head><title>Playtime for [key]</title></head><BODY><BR>Playtime:"
+	body += "<html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'><title>Playtime for [key]</title></head><BODY><BR>Playtime:"
 	body += get_exp_report()
 	body += "</BODY></HTML>"
 	usr << browse(body.Join(), "window=playerplaytime[ckey];size=550x615")

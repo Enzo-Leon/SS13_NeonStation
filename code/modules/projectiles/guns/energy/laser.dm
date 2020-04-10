@@ -4,17 +4,32 @@
 	icon_state = "laser"
 	item_state = "laser"
 	w_class = WEIGHT_CLASS_NORMAL
-	materials = list(MAT_METAL=2000)
+	custom_materials = list(/datum/material/iron=2000)
 	ammo_type = list(/obj/item/ammo_casing/energy/lasergun)
 	ammo_x_offset = 1
 	shaded_charge = 1
 
 /obj/item/gun/energy/laser/practice
 	name = "practice laser gun"
+	icon_state = "laser-p"
 	desc = "A modified version of the basic laser gun, this one fires less concentrated energy bolts designed for target practice."
 	ammo_type = list(/obj/item/ammo_casing/energy/laser/practice)
 	clumsy_check = 0
 	item_flags = NONE
+
+/obj/item/gun/energy/laser/practice/hyperburst
+	name = "toy hyper-burst launcher"
+	desc = "A toy laser with a unique beam shaping lens that projects harmless bolts capable of going through objects. Compatible with existing laser tag systems."
+	ammo_type = list(/obj/item/ammo_casing/energy/laser/magtag)
+	icon_state = "toyburst"
+	obj_flags = NONE
+	fire_delay = 40
+	w_class = WEIGHT_CLASS_HUGE
+	weapon_weight = WEAPON_HEAVY
+	selfcharge = EGUN_SELFCHARGE
+	charge_delay = 2
+	recoil = 2
+	cell_type = /obj/item/stock_parts/cell/toymagburst
 
 /obj/item/gun/energy/laser/retro
 	name ="retro laser gun"
@@ -42,12 +57,14 @@
 /obj/item/gun/energy/laser/carbine
 	name = "laser carbine"
 	desc = "A ruggedized laser carbine featuring much higher capacity and improved handling when compared to a normal laser gun."
-	icon = 'icons/obj/guns/energy.dmi'
 	icon_state = "lasernew"
-	item_state = "laser"
+	item_state = "lasernew"
+	slot_flags = ITEM_SLOT_BACK
+	w_class = WEIGHT_CLASS_BULKY
+	weapon_weight = WEAPON_MEDIUM
+	inaccuracy_modifier = 0.5
 	force = 10
 	throwforce = 10
-	ammo_type = list(/obj/item/ammo_casing/energy/lasergun)
 	cell_type = /obj/item/stock_parts/cell/lascarbine
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 
@@ -64,6 +81,8 @@
 /obj/item/gun/energy/laser/cyborg
 	can_charge = FALSE
 	desc = "An energy-based laser gun that draws power from the cyborg's internal energy cell directly. So this is what freedom looks like?"
+	icon = 'icons/obj/items_cyborg.dmi'
+	icon_state = "laser_cyborg"
 	selfcharge = EGUN_SELFCHARGE_BORG
 	cell_type = /obj/item/stock_parts/cell/secborg
 	charge_delay = 3
@@ -159,3 +178,65 @@
 
 /obj/item/gun/energy/laser/redtag/hitscan
 	ammo_type = list(/obj/item/ammo_casing/energy/laser/redtag/hitscan)
+
+/obj/item/gun/energy/laser/redtag/hitscan/chaplain
+	name = "\improper holy lasrifle"
+	desc = "A lasrifle from the old Imperium. This one seems to be blessed by techpriests."
+	icon_state = "LaserAK"
+	item_state = null
+	force = 14
+	pin = /obj/item/firing_pin/holy
+	icon = 'modular_citadel/icons/obj/guns/VGguns.dmi'
+	ammo_x_offset = 4
+	ammo_type = list(/obj/item/ammo_casing/energy/laser/redtag/hitscan/holy)
+	lefthand_file = 'modular_citadel/icons/mob/citadel/guns_lefthand.dmi'
+	righthand_file = 'modular_citadel/icons/mob/citadel/guns_righthand.dmi'
+	var/chaplain_spawnable = TRUE
+	total_mass = TOTAL_MASS_MEDIEVAL_WEAPON
+	throw_speed = 3
+	throw_range = 4
+	throwforce = 10
+	obj_flags = UNIQUE_RENAME
+
+/obj/item/gun/energy/laser/redtag/hitscan/chaplain/Initialize()
+	. = ..()
+	AddComponent(/datum/component/anti_magic, TRUE, TRUE, FALSE, null, null, FALSE)
+
+/obj/item/gun/energy/laser/redtag/hitscan/chaplain/handle_suicide(mob/living/carbon/human/user, mob/living/carbon/human/target, params, bypass_timer)
+	if(!ishuman(user) || !ishuman(target))
+		return
+
+	if(on_cooldown())
+		return
+
+	if(user == target)
+		target.visible_message("<span class='warning'>[user] sticks [src] in [user.p_their()] mouth, ready to pull the trigger...</span>", \
+			"<span class='userdanger'>You stick [src] in your mouth, ready to pull the trigger...</span>")
+	else
+		target.visible_message("<span class='warning'>[user] points [src] at [target]'s head, ready to pull the trigger...</span>", \
+			"<span class='userdanger'>[user] points [src] at your head, ready to pull the trigger...</span>")
+
+	busy_action = TRUE
+
+	if(!bypass_timer && (!do_mob(user, target, 120) || user.zone_selected != BODY_ZONE_PRECISE_MOUTH))
+		if(user)
+			if(user == target)
+				user.visible_message("<span class='notice'>[user] decided not to shoot.</span>")
+			else if(target && target.Adjacent(user))
+				target.visible_message("<span class='notice'>[user] has decided to spare [target]</span>", "<span class='notice'>[user] has decided to spare your life!</span>")
+		busy_action = FALSE
+		return
+
+	busy_action = FALSE
+
+	target.visible_message("<span class='warning'>[user] pulls the trigger!</span>", "<span class='userdanger'>[user] pulls the trigger!</span>")
+
+	playsound('sound/weapons/dink.ogg', 30, 1)
+
+	if((iscultist(target)) || (is_servant_of_ratvar(target)))
+		chambered.BB.damage *= 1500
+
+	else if(chambered && chambered.BB)
+		chambered.BB.damage *= 5
+
+	process_fire(target, user, TRUE, params)

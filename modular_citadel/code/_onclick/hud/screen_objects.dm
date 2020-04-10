@@ -1,25 +1,3 @@
-/obj/screen/mov_intent
-	icon = 'modular_citadel/icons/ui/screen_midnight.dmi'
-
-/obj/screen/sprintbutton
-	name = "toggle sprint"
-	icon = 'modular_citadel/icons/ui/screen_midnight.dmi'
-	icon_state = "act_sprint"
-	layer = ABOVE_HUD_LAYER - 0.1
-
-/obj/screen/sprintbutton/Click()
-	if(ishuman(usr))
-		var/mob/living/carbon/human/H = usr
-		H.togglesprint()
-
-/obj/screen/sprintbutton/proc/insert_witty_toggle_joke_here(mob/living/carbon/human/H)
-	if(!H)
-		return
-	if(H.sprinting)
-		icon_state = "act_sprint_on"
-	else
-		icon_state = "act_sprint"
-
 /obj/screen/restbutton
 	name = "rest"
 	icon = 'modular_citadel/icons/ui/screen_midnight.dmi'
@@ -34,19 +12,36 @@
 	name = "toggle combat mode"
 	icon = 'modular_citadel/icons/ui/screen_midnight.dmi'
 	icon_state = "combat_off"
+	var/mutable_appearance/flashy
 
 /obj/screen/combattoggle/Click()
 	if(iscarbon(usr))
 		var/mob/living/carbon/C = usr
-		C.toggle_combat_mode()
+		C.user_toggle_intentional_combat_mode()
 
-/obj/screen/combattoggle/proc/rebasetointerbay(mob/living/carbon/C)
-	if(!C)
+/obj/screen/combattoggle/update_icon_state()
+	var/mob/living/carbon/user = hud?.mymob
+	if(!istype(user))
 		return
-	if(C.combatmode)
+	if((user.combat_flags & COMBAT_FLAG_COMBAT_ACTIVE))
 		icon_state = "combat"
+	else if(HAS_TRAIT(user, TRAIT_COMBAT_MODE_LOCKED))
+		icon_state = "combat_locked"
 	else
 		icon_state = "combat_off"
+
+/obj/screen/combattoggle/update_overlays()
+	. = ..()
+	var/mob/living/carbon/user = hud?.mymob
+	if(!istype(user) || !user.client)
+		return
+
+	if((user.combat_flags & COMBAT_FLAG_COMBAT_ACTIVE) && user.client.prefs.hud_toggle_flash)
+		if(!flashy)
+			flashy = mutable_appearance('icons/mob/screen_gen.dmi', "togglefull_flash")
+		if(flashy.color != user.client.prefs.hud_toggle_color)
+			flashy.color = user.client.prefs.hud_toggle_color
+		. += flashy //TODO - beg lummox jr for the ability to force mutable appearances or images to be created rendering from their first frame of animation rather than being based entirely around the client's frame count
 
 /obj/screen/voretoggle
 	name = "toggle vore mode"
@@ -58,10 +53,11 @@
 		var/mob/living/carbon/C = usr
 		C.toggle_vore_mode()
 
-/obj/screen/voretoggle/proc/rebaseintomygut(mob/living/carbon/C)
-	if(!C)
+/obj/screen/voretoggle/update_icon_state()
+	var/mob/living/carbon/user = hud?.mymob
+	if(!istype(user))
 		return
-	if(C.voremode && !C.combatmode)
+	if(user.voremode && !(user.combat_flags & COMBAT_FLAG_COMBAT_ACTIVE))
 		icon_state = "nom"
 	else
 		icon_state = "nom_off"

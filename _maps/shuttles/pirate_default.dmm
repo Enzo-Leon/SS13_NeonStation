@@ -89,7 +89,7 @@
 /turf/open/floor/pod/dark,
 /area/shuttle/pirate)
 "aj" = (
-/turf/closed/wall/mineral/plastitanium/nodiagonal,
+/turf/closed/wall/r_wall/syndicate/pirate/nodiagonal,
 /area/shuttle/pirate)
 "ak" = (
 /obj/machinery/airalarm/all_access{
@@ -239,6 +239,23 @@
 	},
 /turf/open/floor/plasteel,
 /area/shuttle/pirate)
+"as" = (
+/obj/machinery/atmospherics/components/unary/vent_pump/on,
+/obj/structure/closet/secure_closet/personal,
+/obj/effect/decal/cleanable/dirt,
+/obj/item/bedsheet/pirate,
+/turf/open/floor/plasteel,
+/area/shuttle/pirate)
+"at" = (
+/obj/structure/closet/secure_closet/personal,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/turf_decal/tile/neutral,
+/obj/effect/turf_decal/tile/neutral{
+	dir = 8
+	},
+/obj/item/bedsheet/pirate,
+/turf/open/floor/plasteel,
+/area/shuttle/pirate)
 "au" = (
 /obj/machinery/door/airlock/hatch{
 	id_tag = "piratebridgebolt";
@@ -313,6 +330,13 @@
 	dir = 1
 	},
 /turf/open/floor/plasteel,
+/area/shuttle/pirate)
+"aA" = (
+/obj/structure/closet/secure_closet/personal,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/turf_decal/stripes/line,
+/obj/item/bedsheet/pirate,
+/turf/open/floor/wood,
 /area/shuttle/pirate)
 "aB" = (
 /obj/machinery/light/small{
@@ -395,6 +419,7 @@
 /obj/effect/mapping_helpers/airlock/cyclelink_helper{
 	dir = 1
 	},
+/obj/structure/fans/tiny,
 /turf/open/floor/plating,
 /area/shuttle/pirate)
 "aK" = (
@@ -407,12 +432,6 @@
 	},
 /obj/effect/decal/cleanable/dirt,
 /turf/open/floor/plating,
-/area/shuttle/pirate)
-"aM" = (
-/obj/structure/closet/secure_closet/personal,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/turf_decal/stripes/line,
-/turf/open/floor/wood,
 /area/shuttle/pirate)
 "aN" = (
 /obj/machinery/light/small,
@@ -445,21 +464,19 @@
 /turf/open/floor/plating,
 /area/shuttle/pirate)
 "aQ" = (
-/obj/machinery/porta_turret/syndicate/energy{
+/obj/machinery/porta_turret/syndicate/energy/pirate{
 	dir = 1;
 	faction = list("pirate");
-	icon_state = "standard_lethal";
-	mode = 1
+	icon_state = "standard_lethal"
 	},
-/turf/closed/wall/mineral/plastitanium/nodiagonal,
+/turf/closed/wall/r_wall/syndicate/pirate/nodiagonal,
 /area/shuttle/pirate)
 "aR" = (
-/obj/machinery/porta_turret/syndicate/energy{
+/obj/machinery/porta_turret/syndicate/energy/pirate{
 	faction = list("pirate");
-	icon_state = "standard_lethal";
-	mode = 1
+	icon_state = "standard_lethal"
 	},
-/turf/closed/wall/mineral/plastitanium,
+/turf/closed/wall/r_wall/syndicate/pirate,
 /area/shuttle/pirate)
 "aS" = (
 /obj/effect/turf_decal/stripes/line,
@@ -468,7 +485,7 @@
 /area/shuttle/pirate)
 "aU" = (
 /obj/structure/sign/departments/engineering,
-/turf/closed/wall/mineral/plastitanium/nodiagonal,
+/turf/closed/wall/r_wall/syndicate/pirate/nodiagonal,
 /area/shuttle/pirate)
 "aV" = (
 /obj/effect/mob_spawn/human/pirate{
@@ -849,37 +866,36 @@
 	dir = 1
 	},
 /obj/docking_port/mobile/pirate{
-	callTime = 100;
-	dheight = 0;
-	dir = 1;
 	dwidth = 11;
 	height = 16;
-	id = "pirateship";
 	launch_status = 0;
 	movement_force = list("KNOCKDOWN" = 0, "THROW" = 0);
 	name = "Pirate Ship";
 	port_direction = 2;
-	preferred_direction = 1;
 	width = 17
 	},
 /obj/docking_port/stationary{
-	dir = 1;
 	dwidth = 11;
 	height = 16;
 	id = "pirateship_home";
 	name = "Deep Space";
 	width = 17
 	},
+/obj/structure/fans/tiny,
 /turf/open/floor/plating,
 /area/shuttle/pirate)
+"db" = (
+/obj/structure/shuttle/engine/heater,
+/obj/effect/spawner/structure/window/plastitanium/pirate,
+/turf/open/floor/plating/airless,
+/area/shuttle/pirate)
 "df" = (
-/obj/machinery/porta_turret/syndicate/energy{
+/obj/machinery/porta_turret/syndicate/energy/pirate{
 	dir = 4;
 	faction = list("pirate");
-	icon_state = "standard_lethal";
-	mode = 1
+	icon_state = "standard_lethal"
 	},
-/turf/closed/wall/mineral/plastitanium,
+/turf/closed/wall/r_wall/syndicate/pirate,
 /area/shuttle/pirate)
 "dy" = (
 /obj/structure/chair/wood/normal,
@@ -970,7 +986,7 @@
 	id = "piratebridge"
 	},
 /obj/structure/grille,
-/obj/structure/window/plastitanium,
+/obj/structure/window/plastitanium/pirate,
 /turf/open/floor/plating,
 /area/shuttle/pirate)
 "ez" = (
@@ -998,7 +1014,7 @@
 /turf/open/floor/plasteel,
 /area/shuttle/pirate)
 "fW" = (
-/turf/closed/wall/mineral/plastitanium,
+/turf/closed/wall/r_wall/syndicate/pirate,
 /area/shuttle/pirate)
 "fY" = (
 /obj/machinery/atmospherics/pipe/manifold/supply/hidden{
@@ -1021,12 +1037,6 @@
 	},
 /obj/effect/decal/cleanable/dirt,
 /turf/open/floor/plating,
-/area/shuttle/pirate)
-"mD" = (
-/obj/machinery/atmospherics/components/unary/vent_pump/on,
-/obj/structure/closet/secure_closet/personal,
-/obj/effect/decal/cleanable/dirt,
-/turf/open/floor/plasteel,
 /area/shuttle/pirate)
 "mU" = (
 /obj/machinery/atmospherics/pipe/simple/supply/hidden,
@@ -1072,13 +1082,12 @@
 /turf/open/floor/plasteel/showroomfloor,
 /area/shuttle/pirate)
 "wR" = (
-/obj/machinery/porta_turret/syndicate/energy{
+/obj/machinery/porta_turret/syndicate/energy/pirate{
 	dir = 8;
 	faction = list("pirate");
-	icon_state = "standard_lethal";
-	mode = 1
+	icon_state = "standard_lethal"
 	},
-/turf/closed/wall/mineral/plastitanium,
+/turf/closed/wall/r_wall/syndicate/pirate,
 /area/shuttle/pirate)
 "yi" = (
 /obj/machinery/atmospherics/pipe/simple/supply/hidden{
@@ -1172,15 +1181,6 @@
 	},
 /turf/open/floor/wood,
 /area/shuttle/pirate)
-"Ur" = (
-/obj/structure/closet/secure_closet/personal,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/turf_decal/tile/neutral,
-/obj/effect/turf_decal/tile/neutral{
-	dir = 8
-	},
-/turf/open/floor/plasteel,
-/area/shuttle/pirate)
 
 (1,1,1) = {"
 af
@@ -1231,7 +1231,7 @@ aq
 ar
 aj
 RY
-aM
+aA
 ep
 aH
 af
@@ -1323,7 +1323,7 @@ aU
 be
 aD
 aG
-ep
+db
 aH
 "}
 (9,1,1) = {"
@@ -1341,7 +1341,7 @@ mU
 aL
 bP
 bX
-ep
+db
 aK
 "}
 (10,1,1) = {"
@@ -1359,7 +1359,7 @@ aj
 bO
 bQ
 bk
-ep
+db
 er
 "}
 (11,1,1) = {"
@@ -1406,9 +1406,9 @@ af
 af
 af
 aj
-mD
+as
 bB
-Ur
+at
 aj
 aj
 aj

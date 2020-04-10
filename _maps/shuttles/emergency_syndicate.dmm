@@ -198,8 +198,7 @@
 /obj/item/radio/intercom{
 	dir = 4;
 	name = "Station Intercom (General)";
-	pixel_x = 27;
-	
+	pixel_x = 27
 	},
 /turf/open/floor/plasteel/dark,
 /area/shuttle/escape)
@@ -308,8 +307,7 @@
 /obj/item/radio/intercom{
 	dir = 4;
 	name = "Station Intercom (General)";
-	pixel_x = -27;
-	
+	pixel_x = -27
 	},
 /turf/open/floor/plasteel/dark,
 /area/shuttle/escape)
@@ -418,8 +416,7 @@
 /obj/item/radio/intercom{
 	dir = 4;
 	name = "Station Intercom (General)";
-	pixel_x = 27;
-	
+	pixel_x = 27
 	},
 /turf/open/floor/plasteel/dark,
 /area/shuttle/escape)
@@ -876,6 +873,7 @@
 /area/shuttle/escape)
 "bz" = (
 /obj/machinery/door/airlock/hatch,
+/obj/structure/fans/tiny,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "bA" = (
@@ -989,6 +987,7 @@
 /obj/docking_port/mobile/emergency{
 	name = "Syndicate Battlecruiser"
 	},
+/obj/structure/fans/tiny,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "bL" = (
@@ -1062,9 +1061,7 @@
 /area/shuttle/escape)
 "bR" = (
 /obj/structure/table/reinforced,
-/obj/item/storage/box/drinkingglasses{
-	
-	},
+/obj/item/storage/box/drinkingglasses,
 /obj/item/storage/box/drinkingglasses{
 	pixel_x = -3;
 	pixel_y = 3
@@ -1496,8 +1493,7 @@
 /obj/item/radio/intercom{
 	dir = 4;
 	name = "Station Intercom (General)";
-	pixel_x = 27;
-	
+	pixel_x = 27
 	},
 /turf/open/floor/plasteel/dark,
 /area/shuttle/escape)
@@ -1603,8 +1599,7 @@
 /obj/item/radio/intercom{
 	dir = 4;
 	name = "Station Intercom (General)";
-	pixel_x = 27;
-	
+	pixel_x = 27
 	},
 /turf/open/floor/plasteel/dark,
 /area/shuttle/escape)
@@ -1631,9 +1626,7 @@
 	pixel_x = 3;
 	pixel_y = -3
 	},
-/obj/item/storage/toolbox/emergency{
-	
-	},
+/obj/item/storage/toolbox/emergency,
 /obj/item/storage/toolbox/syndicate{
 	pixel_x = -3;
 	pixel_y = 3
@@ -1713,38 +1706,31 @@
 /obj/structure/window/reinforced{
 	dir = 8
 	},
-/obj/item/retractor,
-/obj/item/hemostat,
-/obj/item/cautery,
-/obj/effect/turf_decal/tile/neutral{
-	dir = 4
-	},
+/obj/item/storage/backpack/duffelbag/med/surgery,
 /obj/effect/turf_decal/tile/neutral{
 	dir = 8
 	},
 /obj/effect/turf_decal/tile/neutral{
 	dir = 1
+	},
+/obj/effect/turf_decal/tile/neutral{
+	dir = 4
 	},
 /obj/effect/turf_decal/tile/neutral,
 /turf/open/floor/plasteel/dark,
 /area/shuttle/escape)
 "cI" = (
 /obj/structure/table/reinforced,
-/obj/item/circular_saw,
-/obj/item/surgicaldrill,
-/obj/item/scalpel{
-	pixel_y = 15
-	},
-/obj/effect/turf_decal/tile/neutral,
-/obj/effect/turf_decal/tile/neutral{
-	dir = 1
-	},
 /obj/effect/turf_decal/tile/neutral{
 	dir = 8
 	},
 /obj/effect/turf_decal/tile/neutral{
 	dir = 4
 	},
+/obj/effect/turf_decal/tile/neutral{
+	dir = 1
+	},
+/obj/effect/turf_decal/tile/neutral,
 /turf/open/floor/plasteel/dark,
 /area/shuttle/escape)
 "cJ" = (

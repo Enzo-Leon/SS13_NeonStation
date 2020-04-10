@@ -32,7 +32,7 @@
 
 /obj/effect/particle_effect/smoke/Initialize()
 	. = ..()
-	create_reagents(500)
+	create_reagents(500, NONE, NO_REAGENTS_VALUE)
 	START_PROCESSING(SSobj, src)
 
 
@@ -172,10 +172,9 @@
 				qdel(H)
 			var/list/G_gases = G.gases
 			if(G_gases[/datum/gas/plasma])
-				G.assert_gas(/datum/gas/nitrogen)
-				G_gases[/datum/gas/nitrogen][MOLES] += (G_gases[/datum/gas/plasma][MOLES])
-				G_gases[/datum/gas/plasma][MOLES] = 0
-				G.garbage_collect()
+				G_gases[/datum/gas/nitrogen] += (G_gases[/datum/gas/plasma])
+				G_gases[/datum/gas/plasma] = 0
+				GAS_GARBAGE_COLLECT(G.gases)
 		if (weldvents)
 			for(var/obj/machinery/atmospherics/components/unary/U in T)
 				if(!isnull(U.welded) && !U.welded) //must be an unwelded vent pump or vent scrubber.
@@ -289,7 +288,7 @@
 			contained = "\[[contained]\]"
 
 		var/where = "[AREACOORD(location)]"
-		if(carry.my_atom.fingerprintslast)
+		if(carry.my_atom && carry.my_atom.fingerprintslast)
 			var/mob/M = get_mob_by_key(carry.my_atom.fingerprintslast)
 			var/more = ""
 			if(M)

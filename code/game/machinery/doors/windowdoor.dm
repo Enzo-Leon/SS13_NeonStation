@@ -48,7 +48,7 @@
 	electronics = null
 	return ..()
 
-/obj/machinery/door/window/update_icon()
+/obj/machinery/door/window/update_icon_state()
 	if(density)
 		icon_state = base_state
 	else
@@ -206,15 +206,20 @@
 	..()
 
 /obj/machinery/door/window/emag_act(mob/user)
-	if(!operating && density && !(obj_flags & EMAGGED))
-		obj_flags |= EMAGGED
-		operating = TRUE
-		flick("[src.base_state]spark", src)
-		playsound(src, "sparks", 75, 1)
-		sleep(6)
-		operating = FALSE
-		desc += "<BR><span class='warning'>Its access panel is smoking slightly.</span>"
-		open(2)
+	. = ..()
+	if(operating || !density || obj_flags & EMAGGED)
+		return
+	obj_flags |= EMAGGED
+	operating = TRUE
+	flick("[src.base_state]spark", src)
+	playsound(src, "sparks", 75, 1)
+	addtimer(CALLBACK(src, .proc/open_windows_me), 6)
+	return TRUE
+
+/obj/machinery/door/window/proc/open_windows_me()
+	operating = FALSE
+	desc += "<BR><span class='warning'>Its access panel is smoking slightly.</span>"
+	open(2)
 
 /obj/machinery/door/window/attackby(obj/item/I, mob/living/user, params)
 

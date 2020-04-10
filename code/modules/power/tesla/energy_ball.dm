@@ -33,8 +33,8 @@
 	return
 
 /obj/singularity/energy_ball/Destroy()
-	if(orbiting && istype(orbiting.orbiting, /obj/singularity/energy_ball))
-		var/obj/singularity/energy_ball/EB = orbiting.orbiting
+	if(orbiting && istype(orbiting.parent, /obj/singularity/energy_ball))
+		var/obj/singularity/energy_ball/EB = orbiting.parent
 		EB.orbiting_balls -= src
 
 	for(var/ball in orbiting_balls)
@@ -71,9 +71,9 @@
 		energy = 0 // ensure we dont have miniballs of miniballs
 
 /obj/singularity/energy_ball/examine(mob/user)
-	..()
+	. = ..()
 	if(orbiting_balls.len)
-		to_chat(user, "The amount of orbiting mini-balls is [orbiting_balls.len].")
+		. += "The amount of orbiting mini-balls is [orbiting_balls.len]."
 
 
 /obj/singularity/energy_ball/proc/move_the_basket_ball(var/move_amount)
@@ -132,11 +132,14 @@
 /obj/singularity/energy_ball/attack_tk(mob/user)
 	if(iscarbon(user))
 		var/mob/living/carbon/C = user
+		log_game("[key_name(C)] has been disintegrated by a telekenetic grab on a tesla ball.</span>")
 		to_chat(C, "<span class='userdanger'>That was a shockingly dumb idea.</span>")
+		C.visible_message("<span class='userdanger'>A bright flare of lightning is seen from [C]'s head, shortly before you hear a sickening sizzling!</span>")
 		var/obj/item/organ/brain/rip_u = locate(/obj/item/organ/brain) in C.internal_organs
-		C.ghostize(0)
+		rip_u.Remove()
 		qdel(rip_u)
-		C.death()
+		return
+	return ..()
 
 /obj/singularity/energy_ball/orbit(obj/singularity/energy_ball/target)
 	if (istype(target))
@@ -146,12 +149,12 @@
 
 	. = ..()
 /obj/singularity/energy_ball/stop_orbit()
-	if (orbiting && istype(orbiting.orbiting, /obj/singularity/energy_ball))
-		var/obj/singularity/energy_ball/orbitingball = orbiting.orbiting
+	if (orbiting && istype(orbiting.parent, /obj/singularity/energy_ball))
+		var/obj/singularity/energy_ball/orbitingball = orbiting.parent
 		orbitingball.orbiting_balls -= src
 		orbitingball.dissipate_strength = orbitingball.orbiting_balls.len
-	..()
-	if (!loc && !QDELETED(src))
+	. = ..()
+	if (!QDELETED(src))
 		qdel(src)
 
 
@@ -294,7 +297,7 @@
 
 	else if(closest_mob)
 		var/shock_damage = (tesla_flags & TESLA_MOB_DAMAGE)? (min(round(power/600), 90) + rand(-5, 5)) : 0
-		closest_mob.electrocute_act(shock_damage, source, 1, tesla_shock = 1, stun = (tesla_flags & TESLA_MOB_STUN))
+		closest_mob.electrocute_act(shock_damage, source, 1, SHOCK_TESLA | ((tesla_flags & TESLA_MOB_STUN) ? NONE : SHOCK_NOSTUN))
 		if(issilicon(closest_mob))
 			var/mob/living/silicon/S = closest_mob
 			if((tesla_flags & TESLA_MOB_STUN) && (tesla_flags & TESLA_MOB_DAMAGE))

@@ -62,7 +62,7 @@
 			location = get_turf(target)
 			target.cut_overlay(plastic_overlay, TRUE)
 			if(!ismob(target) || full_damage_on_mobs)
-				target.ex_act(2, target)
+				target.ex_act(EXPLODE_HEAVY, target)
 	else
 		location = get_turf(src)
 	if(location)
@@ -158,7 +158,7 @@
 	user.gib(1, 1)
 	qdel(src)
 
-/obj/item/grenade/plastic/update_icon()
+/obj/item/grenade/plastic/update_icon_state()
 	if(nadeassembly)
 		icon_state = "[item_state]1"
 	else
@@ -174,6 +174,7 @@
 	gender = PLURAL
 	var/open_panel = 0
 	can_attach_mob = TRUE
+	full_damage_on_mobs = TRUE
 
 /obj/item/grenade/plastic/c4/New()
 	wires = new /datum/wires/explosive/c4(src)

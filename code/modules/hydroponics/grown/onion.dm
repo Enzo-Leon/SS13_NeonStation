@@ -13,7 +13,7 @@
 	growthstages = 3
 	weed_chance = 3
 	growing_icon = 'icons/obj/hydroponics/growing_vegetables.dmi'
-	reagents_add = list("vitamin" = 0.04, "nutriment" = 0.1)
+	reagents_add = list(/datum/reagent/consumable/nutriment/vitamin = 0.04, /datum/reagent/consumable/nutriment = 0.1)
 	mutatelist = list(/obj/item/seeds/onion/red)
 
 /obj/item/reagent_containers/food/snacks/grown/onion
@@ -36,8 +36,7 @@
 	plantname = "Red Onion Sprouts"
 	weed_chance = 1
 	product = /obj/item/reagent_containers/food/snacks/grown/onion/red
-	reagents_add = list("vitamin" = 0.04, "nutriment" = 0.1, "tearjuice" = 0.05)
-	mutatelist = list(/obj/item/seeds/onion/burning)
+	reagents_add = list(/datum/reagent/consumable/nutriment/vitamin = 0.04, /datum/reagent/consumable/nutriment = 0.1, /datum/reagent/consumable/tearjuice = 0.05)
 
 /obj/item/reagent_containers/food/snacks/grown/onion/red
 	seed = /obj/item/seeds/onion/red
@@ -62,7 +61,7 @@
 	name = "onion slices"
 	desc = "Rings, not for wearing."
 	icon_state = "onionslice"
-	list_reagents = list("nutriment" = 5, "vitamin" = 2)
+	list_reagents = list(/datum/reagent/consumable/nutriment = 5, /datum/reagent/consumable/nutriment/vitamin = 2)
 	filling_color = "#C0C9A0"
 	gender = PLURAL
 	cooked_type = /obj/item/reagent_containers/food/snacks/onionrings
@@ -72,21 +71,4 @@
 	desc = "They shine like exceptionally low quality amethyst."
 	icon_state = "onionslice_red"
 	filling_color = "#C29ACF"
-	list_reagents = list("nutriment" = 5, "vitamin" = 2, "tearjuice" = 2.5)
-
-/obj/item/seeds/onion/burning
-	name ="pack of burning onion seeds"
-	desc = "For when you REALLY want to burn your eyes."
-	icon_state = "seed-onionburning"
-	species = "onion_burning"
-	plantname = "Burning Onion Sprouts"
-	product = /obj/item/reagent_containers/food/snacks/grown/onion/burning
-	reagents_add = list("phlogiston" = 0.05,"nutriment" = 0.05, "tearjuice" = 0.1, "condensedcapsaicin" = 0.04)
-
-/obj/item/reagent_containers/food/snacks/grown/onion/burning
-	seed = /obj/item/seeds/onion/burning
-	name = "burning onion"
-	desc = "Warm to the touch. Probably not safe to eat these."
-	icon_state = "onion_burning"
-	filling_color = "#F48E34"
-	list_reagents = list("phlogiston" = 2, "nutriment" = 2, "tearjuice" = 5, "condensedcapsaicin" = 1)
+	list_reagents = list(/datum/reagent/consumable/nutriment = 5, /datum/reagent/consumable/nutriment/vitamin = 2, /datum/reagent/consumable/tearjuice = 2.5)

@@ -55,7 +55,8 @@ As a Scientist, you can disable anomalies by scanning them with an analyzer, the
 As a Scientist, researchable stock parts can seriously improve the efficiency and speed of machines around the station. In some cases, it can even unlock new functions.
 As a Scientist, you can generate research points by letting the tachyon-doppler array record increasingly large explosions.
 As a Scientist, getting drunk just enough will speed up research. Skol!
-As a Scientist, you can get points by placing slime cores into the deconstructive analyzer! This even works with crossbred slime cores. 
+As a Scientist, you can get points by placing slime cores into the destructive analyzer! This even works with crossbred slime cores.
+As a Scientist, work with botanists to get different types of seeds, as each type of seed can be used in the destructive analyzer for a small amount of Rnd type points!
 As a Roboticist, keep an ear out for anomaly announcements. If you get your hands on an anomaly core, you can build a Phazon mech!
 As a Roboticist, you can repair your cyborgs with a welding tool. If they have taken burn damage from lasers, you can remove their battery, expose the wiring with a screwdriver and replace their wires with a cable coil.
 As a Roboticist, you can reset a cyborg's module by cutting and mending the reset wire with a wire cutter.
@@ -265,7 +266,3 @@ When crafting most items, you can either manually combine parts or use the craft
 Suit storage units not only remove blood and dirt from clothing, but also radiation!
 Remote devices will work when used through cameras. For example: Bluespace RPEDs and door remotes.
 Laser pointers can be upgraded by replacing its micro laser with a better one from RnD! Use a screwdriver on it to remove the old laser. Upgrading the laser pointer gives you better odds of stunning a cyborg, and even blinding people with sunglasses.
-A quick and filling treat can be scavenged from maintenance, craft two dead rats and a metal rod to make a double rat kabob!
-You can turn synthmeat from a gross meal into a tasty treat by first cutting it on a table with a sharp object, then grinding the meat cutlets in the meat grinder to form bacon!
-Try hooking a handcuffed monkey buckled to a seat up to an IV drip, clicking it to set it to drain, then attaching a beaker almost full of cryoxadone to the IV drip make synthmeat!
-You can put your ID into your PDA by putting your ID into your active hand then clicking on your PDA, then the PDA with the ID in it fits into the ID pocket on your UI saving you a slot!

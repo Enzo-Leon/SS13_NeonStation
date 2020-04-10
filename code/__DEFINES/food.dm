@@ -17,8 +17,4 @@
 #define DRINK_GOOD	2
 #define DRINK_VERYGOOD	3
 #define DRINK_FANTASTIC	4
-
-#define FOOD_NICE	1
-#define FOOD_GOOD	2
-#define FOOD_VERYGOOD	3
-#define FOOD_FANTASTIC	4
+#define FOOD_AMAZING 5

@@ -20,37 +20,34 @@
 		else
 			return "000"
 
-/proc/random_underwear(gender)//Cit change - makes random underwear always return nude
+/proc/random_underwear(gender)
 	if(!GLOB.underwear_list.len)
-		init_sprite_accessory_subtypes(/datum/sprite_accessory/underwear, GLOB.underwear_list, GLOB.underwear_m, GLOB.underwear_f)
-	return "Nude"
-	/*switch(gender)
+		init_sprite_accessory_subtypes(/datum/sprite_accessory/underwear/bottom, GLOB.underwear_list, GLOB.underwear_m, GLOB.underwear_f)
+	switch(gender)
 		if(MALE)
 			return pick(GLOB.underwear_m)
 		if(FEMALE)
 			return pick(GLOB.underwear_f)
 		else
-			return pick(GLOB.underwear_list)*/
+			return pick(GLOB.underwear_list)
 
-/proc/random_undershirt(gender)//Cit change - makes random undershirts always return nude
+/proc/random_undershirt(gender)
 	if(!GLOB.undershirt_list.len)
-		init_sprite_accessory_subtypes(/datum/sprite_accessory/undershirt, GLOB.undershirt_list, GLOB.undershirt_m, GLOB.undershirt_f)
-	return "Nude"
-	/*switch(gender)
+		init_sprite_accessory_subtypes(/datum/sprite_accessory/underwear/top, GLOB.undershirt_list, GLOB.undershirt_m, GLOB.undershirt_f)
+	switch(gender)
 		if(MALE)
 			return pick(GLOB.undershirt_m)
 		if(FEMALE)
 			return pick(GLOB.undershirt_f)
 		else
-			return pick(GLOB.undershirt_list)*/
+			return pick(GLOB.undershirt_list)
 
-/proc/random_socks()//Cit change - makes random socks always return nude
+/proc/random_socks()
 	if(!GLOB.socks_list.len)
-		init_sprite_accessory_subtypes(/datum/sprite_accessory/socks, GLOB.socks_list)
-	return "Nude"
-	//return pick(GLOB.socks_list)
+		init_sprite_accessory_subtypes(/datum/sprite_accessory/underwear/socks, GLOB.socks_list)
+	return pick(GLOB.socks_list)
 
-/proc/random_features()
+/proc/random_features(intendedspecies)
 	if(!GLOB.tails_list_human.len)
 		init_sprite_accessory_subtypes(/datum/sprite_accessory/tails/human, GLOB.tails_list_human)
 	if(!GLOB.tails_list_lizard.len)
@@ -60,7 +57,7 @@
 	if(!GLOB.horns_list.len)
 		init_sprite_accessory_subtypes(/datum/sprite_accessory/horns, GLOB.horns_list)
 	if(!GLOB.ears_list.len)
-		init_sprite_accessory_subtypes(/datum/sprite_accessory/ears, GLOB.horns_list)
+		init_sprite_accessory_subtypes(/datum/sprite_accessory/ears, GLOB.ears_list)
 	if(!GLOB.frills_list.len)
 		init_sprite_accessory_subtypes(/datum/sprite_accessory/frills, GLOB.frills_list)
 	if(!GLOB.spines_list.len)
@@ -71,8 +68,14 @@
 		init_sprite_accessory_subtypes(/datum/sprite_accessory/body_markings, GLOB.body_markings_list)
 	if(!GLOB.wings_list.len)
 		init_sprite_accessory_subtypes(/datum/sprite_accessory/wings, GLOB.wings_list)
-	if(!GLOB.moth_wings_list.len)
-		init_sprite_accessory_subtypes(/datum/sprite_accessory/moth_wings, GLOB.moth_wings_list)
+	if(!GLOB.deco_wings_list.len)
+		init_sprite_accessory_subtypes(/datum/sprite_accessory/deco_wings, GLOB.deco_wings_list)
+	if(!GLOB.insect_wings_list.len)
+		init_sprite_accessory_subtypes(/datum/sprite_accessory/insect_wings, GLOB.insect_wings_list)
+	if(!GLOB.insect_fluffs_list.len)
+		init_sprite_accessory_subtypes(/datum/sprite_accessory/insect_fluff, GLOB.insect_fluffs_list)
+	if(!GLOB.insect_markings_list.len)
+		init_sprite_accessory_subtypes(/datum/sprite_accessory/insect_markings, GLOB.insect_markings_list)
 
 	//CIT CHANGES - genitals and such
 	if(!GLOB.cock_shapes_list.len)
@@ -102,6 +105,8 @@
 		var/datum/sprite_accessory/mam_tails/instance = GLOB.mam_tails_list[mtpath]
 		if(istype(instance, /datum/sprite_accessory))
 			var/datum/sprite_accessory/S = instance
+			if(intendedspecies && S.recommended_species && !S.recommended_species.Find(intendedspecies))
+				continue
 			if(!S.ckeys_allowed)
 				snowflake_mam_tails_list[S.name] = mtpath
 	var/list/snowflake_markings_list = list()
@@ -109,6 +114,8 @@
 		var/datum/sprite_accessory/mam_body_markings/instance = GLOB.mam_body_markings_list[mmpath]
 		if(istype(instance, /datum/sprite_accessory))
 			var/datum/sprite_accessory/S = instance
+			if(intendedspecies && S.recommended_species && !S.recommended_species.Find(intendedspecies))
+				continue
 			if(!S.ckeys_allowed)
 				snowflake_markings_list[S.name] = mmpath
 	var/list/snowflake_ears_list = list()
@@ -116,6 +123,8 @@
 		var/datum/sprite_accessory/mam_ears/instance = GLOB.mam_ears_list[mepath]
 		if(istype(instance, /datum/sprite_accessory))
 			var/datum/sprite_accessory/S = instance
+			if(intendedspecies && S.recommended_species && !S.recommended_species.Find(intendedspecies))
+				continue
 			if(!S.ckeys_allowed)
 				snowflake_ears_list[S.name] = mepath
 	var/list/snowflake_mam_snouts_list = list()
@@ -123,88 +132,85 @@
 		var/datum/sprite_accessory/mam_snouts/instance = GLOB.mam_snouts_list[mspath]
 		if(istype(instance, /datum/sprite_accessory))
 			var/datum/sprite_accessory/S = instance
+			if(intendedspecies && S.recommended_species && !S.recommended_species.Find(intendedspecies))
+				continue
 			if(!S.ckeys_allowed)
 				snowflake_mam_snouts_list[S.name] = mspath
+	var/list/snowflake_ipc_antenna_list = list()
+	for(var/mspath in GLOB.ipc_antennas_list)
+		var/datum/sprite_accessory/mam_snouts/instance = GLOB.ipc_antennas_list[mspath]
+		if(istype(instance, /datum/sprite_accessory))
+			var/datum/sprite_accessory/S = instance
+			if(intendedspecies && S.recommended_species && !S.recommended_species.Find(intendedspecies))
+				continue
+			if(!S.ckeys_allowed)
+				snowflake_ipc_antenna_list[S.name] = mspath
 	var/color1 = random_short_color()
 	var/color2 = random_short_color()
 	var/color3 = random_short_color()
 
 	//CIT CHANGE - changes this entire return to support cit's snowflake parts
 	return(list(
-		"mcolor" = color1,
-		"mcolor2" = color2,
-		"mcolor3" = color3,
-		"tail_lizard" = pick(GLOB.tails_list_lizard),
-		"tail_human" = "None",
-		"wings" = "None",
-		"snout" = pick(GLOB.snouts_list),
-		"horns" = pick(GLOB.horns_list),
-		"ears" = "None",
-		"frills" = pick(GLOB.frills_list),
-		"spines" = pick(GLOB.spines_list),
-		"body_markings" = pick(GLOB.body_markings_list),
-		"legs" = pick("Normal Legs","Digitigrade Legs"),
-		"caps" = pick(GLOB.caps_list),
-		"moth_wings" = pick(GLOB.moth_wings_list),
-		"taur" = "None",
-		"mam_body_markings" = pick(snowflake_markings_list),
-		"mam_ears" 			= pick(snowflake_ears_list),
-		"mam_snouts"		= pick(snowflake_mam_snouts_list),
-		"mam_tail"			= pick(snowflake_mam_tails_list),
+		"mcolor"			= color1,
+		"mcolor2"			= color2,
+		"mcolor3"			= color3,
+		"tail_lizard"		= pick(GLOB.tails_list_lizard),
+		"tail_human"		= "None",
+		"wings"				= "None",
+		"deco_wings"		= "None",
+		"snout"				= pick(GLOB.snouts_list),
+		"horns"				= pick(GLOB.horns_list),
+		"ears"				= "None",
+		"frills"			= pick(GLOB.frills_list),
+		"spines"			= pick(GLOB.spines_list),
+		"body_markings"		= pick(GLOB.body_markings_list),
+		"legs"				= pick("Plantigrade","Digitigrade"),
+		"caps"				= pick(GLOB.caps_list),
+		"insect_wings"		= pick(GLOB.insect_wings_list),
+		"insect_fluff"		= "None",
+		"insect_markings"     = pick(GLOB.insect_markings_list),
+		"taur"				= "None",
+		"mam_body_markings" = snowflake_markings_list.len ? pick(snowflake_markings_list) : "None",
+		"mam_ears" 			= snowflake_ears_list ? pick(snowflake_ears_list) : "None",
+		"mam_snouts"		= snowflake_mam_snouts_list ? pick(snowflake_mam_snouts_list) : "None",
+		"mam_tail"			= snowflake_mam_tails_list ? pick(snowflake_mam_tails_list) : "None",
 		"mam_tail_animated" = "None",
 		"xenodorsal" 		= "Standard",
 		"xenohead" 			= "Standard",
 		"xenotail" 			= "Xenomorph Tail",
-		"exhibitionist" 	= FALSE,
 		"genitals_use_skintone"	= FALSE,
 		"has_cock"			= FALSE,
 		"cock_shape"		= pick(GLOB.cock_shapes_list),
-		"cock_length"		= 6,
-		"cock_girth_ratio"	= COCK_GIRTH_RATIO_DEF,
+		"cock_length"		= COCK_SIZE_DEF,
+		"cock_diameter_ratio"	= COCK_DIAMETER_RATIO_DEF,
 		"cock_color"		= pick("FFFFFF","7F7F7F", "7FFF7F", "7F7FFF", "FF7F7F", "7FFFFF", "FF7FFF", "FFFF7F"),
-		"has_sheath"		= FALSE,
-		"sheath_color"		= pick("FFFFFF","7F7F7F", "7FFF7F", "7F7FFF", "FF7F7F", "7FFFFF", "FF7FFF", "FFFF7F"),
+		"cock_taur"			= FALSE,
 		"has_balls" 		= FALSE,
-		"balls_internal" 	= FALSE,
 		"balls_color" 		= pick("FFFFFF","7F7F7F", "7FFF7F", "7F7FFF", "FF7F7F", "7FFFFF", "FF7FFF", "FFFF7F"),
-		"balls_amount"		= 2,
-		"balls_sack_size"	= BALLS_SACK_SIZE_DEF,
 		"balls_size"		= BALLS_SIZE_DEF,
-		"balls_shape"		= "Pair",
+		"balls_shape"		= DEF_BALLS_SHAPE,
 		"balls_cum_rate"	= CUM_RATE,
 		"balls_cum_mult"	= CUM_RATE_MULT,
 		"balls_efficiency"	= CUM_EFFICIENCY,
-		"balls_fluid" 		= "semen",
-		"has_ovi"			= FALSE,
-		"ovi_shape"			= "knotted",
-		"ovi_length"		= 6,
-		"ovi_color"			= pick("FFFFFF","7F7F7F", "7FFF7F", "7F7FFF", "FF7F7F", "7FFFFF", "FF7FFF", "FFFF7F"),
-		"has_eggsack" 		= FALSE,
-		"eggsack_internal" 	= TRUE,
-		"eggsack_color" 	= pick("FFFFFF","7F7F7F", "7FFF7F", "7F7FFF", "FF7F7F", "7FFFFF", "FF7FFF", "FFFF7F"),
-		"eggsack_size" 		= BALLS_SACK_SIZE_DEF,
-		"eggsack_egg_color" = pick("FFFFFF","7F7F7F", "7FFF7F", "7F7FFF", "FF7F7F", "7FFFFF", "FF7FFF", "FFFF7F"),
-		"eggsack_egg_size" 	= EGG_GIRTH_DEF,
 		"has_breasts" 		= FALSE,
 		"breasts_color" 	= pick("FFFFFF","7F7F7F", "7FFF7F", "7F7FFF", "FF7F7F", "7FFFFF", "FF7FFF", "FFFF7F"),
-		"breasts_size" 		= pick(GLOB.breasts_size_list),
-		"breasts_shape"		= "Pair",
-		"breasts_shape"		= pick(GLOB.breasts_shapes_list),
-		"breasts_fluid" 	= "milk",
+		"breasts_size" 		= pick(CONFIG_GET(keyed_list/breasts_cups_prefs)),
+		"breasts_shape"		= DEF_BREASTS_SHAPE,
+		"breasts_producing" = FALSE,
 		"has_vag"			= FALSE,
 		"vag_shape"			= pick(GLOB.vagina_shapes_list),
 		"vag_color"			= pick("FFFFFF","7F7F7F", "7FFF7F", "7F7FFF", "FF7F7F", "7FFFFF", "FF7FFF", "FFFF7F"),
-		"vag_clits"			= 1,
-		"vag_clit_diam"		= 0.25,
-		"vag_clit_len"		= 0.25,
 		"has_womb"			= FALSE,
-		"womb_cum_rate"		= CUM_RATE,
-		"womb_cum_mult"		= CUM_RATE_MULT,
-		"womb_efficiency"	= CUM_EFFICIENCY,
-		"womb_fluid" 		= "femcum",
-		"ipc_screen" = "Sunburst",
-		"ipc_antenna" = "None",
-		"flavor_text"		= ""))
+		"balls_visibility"	= GEN_VISIBLE_NO_UNDIES,
+		"breasts_visibility"= GEN_VISIBLE_NO_UNDIES,
+		"cock_visibility"	= GEN_VISIBLE_NO_UNDIES,
+		"vag_visibility"	= GEN_VISIBLE_NO_UNDIES,
+		"ipc_screen"		= snowflake_ipc_antenna_list ? pick(snowflake_ipc_antenna_list) : "None",
+		"ipc_antenna"		= "None",
+		"flavor_text"		= "",
+		"meat_type"			= "Mammalian",
+		"body_model"		= MALE
+		))
 
 /proc/random_hair_style(gender)
 	switch(gender)
@@ -352,7 +358,7 @@ GLOBAL_LIST_EMPTY(species_list)
 		checked_health["health"] = health
 	return ..()
 
-/proc/do_after(mob/user, var/delay, needhand = 1, atom/target = null, progress = 1, datum/callback/extra_checks = null)
+/proc/do_after(mob/user, var/delay, needhand = 1, atom/target = null, progress = 1, datum/callback/extra_checks = null, required_mobility_flags = (MOBILITY_USE|MOBILITY_MOVE))
 	if(!user)
 		return 0
 	var/atom/Tloc = null
@@ -380,6 +386,7 @@ GLOBAL_LIST_EMPTY(species_list)
 	var/endtime = world.time + delay
 	var/starttime = world.time
 	. = 1
+	var/mob/living/L = isliving(user) && user			//evals to last thing eval'd
 	while (world.time < endtime)
 		stoplag(1)
 		if (progress)
@@ -389,7 +396,11 @@ GLOBAL_LIST_EMPTY(species_list)
 			drifting = 0
 			Uloc = user.loc
 
-		if(QDELETED(user) || user.stat || user.IsKnockdown() || user.IsStun() || (!drifting && user.loc != Uloc) || (extra_checks && !extra_checks.Invoke()))
+		if(L && !CHECK_ALL_MOBILITY(L, required_mobility_flags))
+			. = 0
+			break
+
+		if(QDELETED(user) || user.stat || (!drifting && user.loc != Uloc) || (extra_checks && !extra_checks.Invoke()))
 			. = 0
 			break
 
@@ -510,14 +521,16 @@ GLOBAL_LIST_EMPTY(species_list)
 		else
 			prefs = new
 
-		var/adminoverride = 0
+		var/override = FALSE
 		if(M.client && M.client.holder && (prefs.chat_toggles & CHAT_DEAD))
-			adminoverride = 1
-		if(isnewplayer(M) && !adminoverride)
+			override = TRUE
+		if(HAS_TRAIT(M, TRAIT_SIXTHSENSE))
+			override = TRUE
+		if(isnewplayer(M) && !override)
 			continue
-		if(M.stat != DEAD && !adminoverride)
+		if(M.stat != DEAD && !override)
 			continue
-		if(speaker_key && speaker_key in prefs.ignoring)
+		if(speaker_key && (speaker_key in prefs.ignoring))
 			continue
 
 		switch(message_type)
@@ -567,3 +580,16 @@ GLOBAL_LIST_EMPTY(species_list)
 		chosen = pick(mob_spawn_meancritters)
 	var/mob/living/simple_animal/C = new chosen(spawn_location)
 	return C
+
+/proc/passtable_on(target, source)
+	var/mob/living/L = target
+	if(!HAS_TRAIT(L, TRAIT_PASSTABLE) && L.pass_flags & PASSTABLE)
+		ADD_TRAIT(L, TRAIT_PASSTABLE, INNATE_TRAIT)
+	ADD_TRAIT(L, TRAIT_PASSTABLE, source)
+	L.pass_flags |= PASSTABLE
+
+/proc/passtable_off(target, source)
+	var/mob/living/L = target
+	REMOVE_TRAIT(L, TRAIT_PASSTABLE, source)
+	if(!HAS_TRAIT(L, TRAIT_PASSTABLE))
+		L.pass_flags &= ~PASSTABLE

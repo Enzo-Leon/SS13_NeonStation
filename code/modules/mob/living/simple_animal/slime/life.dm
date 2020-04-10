@@ -41,7 +41,7 @@
 	AIproc = 1
 
 	while(AIproc && stat != DEAD && (attacked || hungry || rabid || buckled))
-		if(buckled) // can't eat AND have this little process at the same time
+		if(!CHECK_MOBILITY(src, MOBILITY_MOVE)) //also covers buckling. Not sure why buckled is in the while condition if we're going to immediately break, honestly
 			break
 
 		if(!Target || client)
@@ -61,7 +61,7 @@
 				break
 
 			if(Target in view(1,src))
-				if(issilicon(Target))
+				if(!CanFeedon(Target)) //If they're not able to be fed upon, ignore them.
 					if(!Atkcool)
 						Atkcool = 1
 						spawn(45)
@@ -69,7 +69,7 @@
 
 						if(Target.Adjacent(src))
 							Target.attack_slime(src)
-					return
+					break
 				if(!Target.lying && prob(80))
 
 					if(Target.client && Target.health >= 20)
@@ -132,7 +132,7 @@
 	if(stat != DEAD)
 		var/bz_percentage =0
 		if(environment.gases[/datum/gas/bz])
-			bz_percentage = environment.gases[/datum/gas/bz][MOLES] / environment.total_moles()
+			bz_percentage = environment.gases[/datum/gas/bz] / environment.total_moles()
 		var/stasis = (bz_percentage >= 0.05 && bodytemperature < (T0C + 100)) || force_stasis
 
 		if(stat == CONSCIOUS && stasis)
@@ -140,12 +140,12 @@
 			stat = UNCONSCIOUS
 			powerlevel = 0
 			rabid = 0
-			update_canmove()
+			update_mobility()
 			regenerate_icons()
 		else if(stat == UNCONSCIOUS && !stasis)
 			to_chat(src, "<span class='notice'>You wake up from the stasis.</span>")
 			stat = CONSCIOUS
-			update_canmove()
+			update_mobility()
 			regenerate_icons()
 
 	updatehealth()
@@ -186,12 +186,13 @@
 	if(M.stat == DEAD) // our victim died
 		if(!client)
 			if(!rabid && !attacked)
-				if(M.LAssailant && M.LAssailant != M)
+				var/mob/living/carbon/their_attacker = M.getLAssailant()
+				if(their_attacker != M)
 					if(prob(50))
-						if(!(M.LAssailant in Friends))
-							Friends[M.LAssailant] = 1
+						if(!(their_attacker in Friends))
+							Friends[their_attacker] = 1
 						else
-							++Friends[M.LAssailant]
+							++Friends[their_attacker]
 		else
 			to_chat(src, "<i>This subject does not have a strong enough life energy anymore...</i>")
 
@@ -272,15 +273,8 @@
 			if(prob(25-powerlevel*5))
 				powerlevel++
 
-
-
-
 /mob/living/simple_animal/slime/proc/handle_targets()
-	if(Tempstun)
-		if(!buckled) // not while they're eating!
-			canmove = 0
-	else
-		canmove = 1
+	update_mobility()
 
 	if(attacked > 50)
 		attacked = 50
@@ -298,7 +292,7 @@
 			Discipline--
 
 	if(!client)
-		if(!canmove)
+		if(!CHECK_MOBILITY(src, MOBILITY_MOVE))
 			return
 
 		if(buckled)
@@ -383,13 +377,13 @@
 			if (Leader)
 				if(holding_still)
 					holding_still = max(holding_still - 1, 0)
-				else if(canmove && isturf(loc))
+				else if(CHECK_MOBILITY(src, MOBILITY_MOVE) && isturf(loc))
 					step_to(src, Leader)
 
 			else if(hungry)
 				if (holding_still)
 					holding_still = max(holding_still - hungry, 0)
-				else if(canmove && isturf(loc) && prob(50))
+				else if(CHECK_MOBILITY(src, MOBILITY_MOVE) && isturf(loc) && prob(50))
 					step(src, pick(GLOB.cardinals))
 
 			else
@@ -397,7 +391,7 @@
 					holding_still = max(holding_still - 1, 0)
 				else if (docile && pulledby)
 					holding_still = 10
-				else if(canmove && isturf(loc) && prob(33))
+				else if(CHECK_MOBILITY(src, MOBILITY_MOVE) && isturf(loc) && prob(33))
 					step(src, pick(GLOB.cardinals))
 		else if(!AIproc)
 			INVOKE_ASYNC(src, .proc/AIprocess)
@@ -600,7 +594,8 @@
 				phrases += "[M]... friend..."
 				if (nutrition < get_hunger_nutrition())
 					phrases += "[M]... feed me..."
-			say (pick(phrases))
+			if(!stat)
+				say (pick(phrases))
 
 /mob/living/simple_animal/slime/proc/get_max_nutrition() // Can't go above it
 	if (is_adult)

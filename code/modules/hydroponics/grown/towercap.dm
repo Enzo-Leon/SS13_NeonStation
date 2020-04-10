@@ -27,9 +27,6 @@
 	mutatelist = list()
 	rarity = 20
 
-
-
-
 /obj/item/grown/log
 	seed = /obj/item/seeds/tower
 	name = "tower-cap log"
@@ -51,7 +48,7 @@
 
 /obj/item/grown/log/attackby(obj/item/W, mob/user, params)
 	if(W.sharpness)
-		user.show_message("<span class='notice'>You make [plank_name] out of \the [src]!</span>", 1)
+		user.show_message("<span class='notice'>You make [plank_name] out of \the [src]!</span>", MSG_VISUAL)
 		var/seed_modifier = 0
 		if(seed)
 			seed_modifier = round(seed.potency / 25)
@@ -191,7 +188,7 @@
 				add_overlay("bonfire_grill")
 			else
 				return ..()
-	if(W.is_hot())
+	if(W.get_temperature())
 		StartBurning()
 	if(grill)
 		if(user.a_intent != INTENT_HARM && !(W.item_flags & ABSTRACT))
@@ -230,7 +227,7 @@
 		var/turf/open/O = loc
 		if(O.air)
 			var/loc_gases = O.air.gases
-			if(loc_gases[/datum/gas/oxygen][MOLES] > 13)
+			if(loc_gases[/datum/gas/oxygen] > 13)
 				return TRUE
 	return FALSE
 
@@ -275,6 +272,9 @@
 		else if(istype(A, /obj/item) && prob(20))
 			var/obj/item/O = A
 			O.microwave_act()
+		else if(istype(A, /obj/item/grown/log))
+			qdel(A)
+			new /obj/item/stack/sheet/mineral/coal(loc, 1)
 
 /obj/structure/bonfire/process()
 	if(!CheckOxygen())

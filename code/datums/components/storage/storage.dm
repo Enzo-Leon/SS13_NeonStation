@@ -41,6 +41,7 @@
 
 	var/obj/screen/storage/boxes					//storage display object
 	var/obj/screen/close/closer						//close button object
+	var/current_maxscreensize
 
 	var/allow_big_nesting = FALSE					//allow storage objects of the same or greater size.
 
@@ -57,6 +58,10 @@
 	var/screen_start_x = 4								//These two are where the storage starts being rendered, screen_loc wise.
 	var/screen_start_y = 2
 	//End
+
+	var/limited_random_access = FALSE					//Quick if statement in accessible_items to determine if we care at all about what people can access at once.
+	var/limited_random_access_stack_position = 0					//If >0, can only access top <x> items
+	var/limited_random_access_stack_bottom_up = FALSE				//If TRUE, above becomes bottom <x> items
 
 /datum/component/storage/Initialize(datum/component/storage/concrete/master)
 	if(!isatom(parent))
@@ -96,6 +101,7 @@
 	RegisterSignal(parent, COMSIG_ITEM_PICKUP, .proc/signal_on_pickup)
 
 	RegisterSignal(parent, COMSIG_MOVABLE_POST_THROW, .proc/close_all)
+	RegisterSignal(parent, COMSIG_MOVABLE_MOVED, .proc/check_views)
 
 	RegisterSignal(parent, COMSIG_CLICK_ALT, .proc/on_alt_click)
 	RegisterSignal(parent, COMSIG_MOUSEDROP_ONTO, .proc/mousedrop_onto)
@@ -145,6 +151,19 @@
 	var/datum/component/storage/concrete/master = master()
 	return master? master.real_location() : null
 
+//What players can access
+//this proc can probably eat a refactor at some point.
+/datum/component/storage/proc/accessible_items(random_access = TRUE)
+	var/list/contents = contents()
+	if(contents)
+		if(limited_random_access && random_access)
+			if(limited_random_access_stack_position && (length(contents) > limited_random_access_stack_position))
+				if(limited_random_access_stack_bottom_up)
+					contents.Cut(1, limited_random_access_stack_position + 1)
+				else
+					contents.Cut(1, length(contents) - limited_random_access_stack_position + 1)
+	return contents
+
 /datum/component/storage/proc/canreach_react(datum/source, list/next)
 	var/datum/component/storage/concrete/master = master()
 	if(!master)
@@ -156,8 +175,7 @@
 		next += slave.parent
 
 /datum/component/storage/proc/attack_self(datum/source, mob/M)
-	if(locked)
-		to_chat(M, "<span class='warning'>[parent] seems to be locked!</span>")
+	if(check_locked(source, M, TRUE))
 		return FALSE
 	if((M.get_active_held_item() == parent) && allow_quick_empty)
 		quick_empty(M)
@@ -166,8 +184,7 @@
 	if(!isitem(O) || !click_gather || SEND_SIGNAL(O, COMSIG_CONTAINS_STORAGE))
 		return FALSE
 	. = COMPONENT_NO_ATTACK
-	if(locked)
-		to_chat(M, "<span class='warning'>[parent] seems to be locked!</span>")
+	if(check_locked(source, M, TRUE))
 		return FALSE
 	var/atom/A = parent
 	var/obj/item/I = O
@@ -236,10 +253,9 @@
 
 /datum/component/storage/proc/quick_empty(mob/M)
 	var/atom/A = parent
-	if((!ishuman(M) && (A.loc != M)) || (M.stat != CONSCIOUS) || M.restrained() || !M.canmove)
+	if(!M.canUseStorage() || !A.Adjacent(M) || M.incapacitated())
 		return
-	if(locked)
-		to_chat(M, "<span class='warning'>[parent] seems to be locked!</span>")
+	if(check_locked(null, M, TRUE))
 		return FALSE
 	A.add_fingerprint(M)
 	to_chat(M, "<span class='notice'>You start dumping out [parent].</span>")
@@ -281,13 +297,12 @@
 
 /datum/component/storage/proc/set_locked(datum/source, new_state)
 	locked = new_state
-	if(locked)
+	if(check_locked())
 		close_all()
 
 /datum/component/storage/proc/_process_numerical_display()
 	. = list()
-	var/atom/real_location = real_location()
-	for(var/obj/item/I in real_location.contents)
+	for(var/obj/item/I in accessible_items())
 		if(QDELETED(I))
 			continue
 		if(!.[I.type])
@@ -295,11 +310,12 @@
 		else
 			var/datum/numbered_display/ND = .[I.type]
 			ND.number++
+	. = sortTim(., /proc/cmp_numbered_displays_name_asc, associative = TRUE)
 
 //This proc determines the size of the inventory to be displayed. Please touch it only if you know what you're doing.
 /datum/component/storage/proc/orient2hud(mob/user, maxcolumns)
-	var/atom/real_location = real_location()
-	var/adjusted_contents = real_location.contents.len
+	var/list/accessible_contents = accessible_items()
+	var/adjusted_contents = length(accessible_contents)
 
 	//Numbered contents display
 	var/list/datum/numbered_display/numbered_contents
@@ -331,8 +347,7 @@
 				if(cy - screen_start_y >= rows)
 					break
 	else
-		var/atom/real_location = real_location()
-		for(var/obj/O in real_location)
+		for(var/obj/O in accessible_items())
 			if(QDELETED(O))
 				continue
 			O.mouse_opacity = MOUSE_OPACITY_OPAQUE //This is here so storage items that spawn with contents correctly have the "click around item to equip"
@@ -348,14 +363,17 @@
 					break
 	closer.screen_loc = "[screen_start_x + cols]:[screen_pixel_x],[screen_start_y]:[screen_pixel_y]"
 
-/datum/component/storage/proc/show_to(mob/M)
+/datum/component/storage/proc/show_to(mob/M, set_screen_size = TRUE)
 	if(!M.client)
 		return FALSE
 	var/list/cview = getviewsize(M.client.view)
 	var/maxallowedscreensize = cview[1]-8
-	var/atom/real_location = real_location()
+	if(set_screen_size)
+		current_maxscreensize = maxallowedscreensize
+	else if(current_maxscreensize)
+		maxallowedscreensize = current_maxscreensize
 	if(M.active_storage != src && (M.stat == CONSCIOUS))
-		for(var/obj/item/I in real_location)
+		for(var/obj/item/I in accessible_items())
 			if(I.on_found(M))
 				return FALSE
 	if(M.active_storage)
@@ -363,7 +381,7 @@
 	orient2hud(M, (isliving(M) ? maxallowedscreensize : 7))
 	M.client.screen |= boxes
 	M.client.screen |= closer
-	M.client.screen |= real_location.contents
+	M.client.screen |= accessible_items()
 	M.active_storage = src
 	LAZYOR(is_using, M)
 	return TRUE
@@ -388,6 +406,11 @@
 	for(var/mob/M in can_see_contents())
 		close(M)
 		. = TRUE //returns TRUE if any mobs actually got a close(M) call
+
+/datum/component/storage/proc/check_views()
+	for(var/mob/M in can_see_contents())
+		if(!isobserver(M) && !M.CanReach(parent, view_only = TRUE))
+			close(M)
 
 /datum/component/storage/proc/emp_act(datum/source, severity)
 	if(emp_shielded)
@@ -456,8 +479,7 @@
 	var/atom/A = parent
 	var/atom/dump_destination = dest_object.get_dumping_location()
 	if(A.Adjacent(M) && dump_destination && M.Adjacent(dump_destination))
-		if(locked)
-			to_chat(M, "<span class='warning'>[parent] seems to be locked!</span>")
+		if(check_locked(null, M, TRUE))
 			return FALSE
 		if(dump_destination.storage_contents_dump_act(src, M))
 			playsound(A, "rustle", 50, 1, -5)
@@ -530,16 +552,14 @@
 				return
 			A.add_fingerprint(M)
 
-/datum/component/storage/proc/user_show_to_mob(mob/M, force = FALSE)
+/datum/component/storage/proc/user_show_to_mob(mob/M, force = FALSE, ghost = FALSE)
 	var/atom/A = parent
 	if(!istype(M))
 		return FALSE
 	A.add_fingerprint(M)
-	if(locked && !force)
-		to_chat(M, "<span class='warning'>[parent] seems to be locked!</span>")
+	if(!force && (check_locked(null, M) || !M.CanReach(parent, view_only = TRUE)))
 		return FALSE
-	if(force || M.CanReach(parent, view_only = TRUE))
-		show_to(M)
+	show_to(M, !ghost)
 
 /datum/component/storage/proc/mousedrop_receive(datum/source, atom/movable/O, mob/M)
 	if(isitem(O))
@@ -563,10 +583,9 @@
 	var/atom/host = parent
 	if(real_location == I.loc)
 		return FALSE //Means the item is already in the storage item
-	if(locked)
+	if(check_locked(null, M, !stop_messages))
 		if(M && !stop_messages)
 			host.add_fingerprint(M)
-			to_chat(M, "<span class='warning'>[host] seems to be locked!</span>")
 		return FALSE
 	if(real_location.contents.len >= max_items)
 		if(!stop_messages)
@@ -594,12 +613,12 @@
 		return FALSE
 	if(isitem(host))
 		var/obj/item/IP = host
-		GET_COMPONENT_FROM(STR_I, /datum/component/storage, I)
+		var/datum/component/storage/STR_I = I.GetComponent(/datum/component/storage)
 		if((I.w_class >= IP.w_class) && STR_I && !allow_big_nesting)
 			if(!stop_messages)
 				to_chat(M, "<span class='warning'>[IP] cannot hold [I] as it's a storage item of the same size!</span>")
 			return FALSE //To prevent the stacking of same sized storage items.
-	if(I.item_flags & NODROP) //SHOULD be handled in unEquip, but better safe than sorry.
+	if(HAS_TRAIT(I, TRAIT_NODROP)) //SHOULD be handled in unEquip, but better safe than sorry.
 		to_chat(M, "<span class='warning'>\the [I] is stuck to your hand, you can't put it in \the [host]!</span>")
 		return FALSE
 	var/datum/component/storage/concrete/master = master()
@@ -633,9 +652,9 @@
 		if(M == viewing)
 			to_chat(usr, "<span class='notice'>You put [I] [insert_preposition]to [parent].</span>")
 		else if(in_range(M, viewing)) //If someone is standing close enough, they can tell what it is...
-			viewing.show_message("<span class='notice'>[M] puts [I] [insert_preposition]to [parent].</span>", 1)
+			viewing.show_message("<span class='notice'>[M] puts [I] [insert_preposition]to [parent].</span>", MSG_VISUAL)
 		else if(I && I.w_class >= 3) //Otherwise they can only see large or normal items from a distance...
-			viewing.show_message("<span class='notice'>[M] puts [I] [insert_preposition]to [parent].</span>", 1)
+			viewing.show_message("<span class='notice'>[M] puts [I] [insert_preposition]to [parent].</span>", MSG_VISUAL)
 
 /datum/component/storage/proc/update_icon()
 	if(isobj(parent))
@@ -651,7 +670,7 @@
 	return can_be_inserted(I, silent, M)
 
 /datum/component/storage/proc/show_to_ghost(datum/source, mob/dead/observer/M)
-	return user_show_to_mob(M, TRUE)
+	return user_show_to_mob(M, TRUE, TRUE)
 
 /datum/component/storage/proc/signal_show_attempt(datum/source, mob/showto, force = FALSE)
 	return user_show_to_mob(showto, force)
@@ -659,8 +678,10 @@
 /datum/component/storage/proc/on_check()
 	return TRUE
 
-/datum/component/storage/proc/check_locked()
-	return locked
+/datum/component/storage/proc/check_locked(datum/source, mob/user, message = FALSE)
+	. = locked
+	if(message && . && user)
+		to_chat(user, "<span class='warning'>[parent] seems to be locked!</span>")
 
 /datum/component/storage/proc/signal_take_type(datum/source, type, atom/destination, amount = INFINITY, check_adjacent = FALSE, force = FALSE, mob/user, list/inserted)
 	if(!force)
@@ -720,9 +741,7 @@
 
 	if(A.loc == user)
 		. = COMPONENT_NO_ATTACK_HAND
-		if(locked)
-			to_chat(user, "<span class='warning'>[parent] seems to be locked!</span>")
-		else
+		if(!check_locked(source, user, TRUE))
 			show_to(user)
 			A.do_jiggle()
 
@@ -747,28 +766,29 @@
 /datum/component/storage/proc/on_alt_click(datum/source, mob/user)
 	if(!isliving(user) || !user.CanReach(parent))
 		return
-	if(locked)
-		to_chat(user, "<span class='warning'>[parent] seems to be locked!</span>")
-		return
+	if(check_locked(source, user, TRUE))
+		return TRUE
 
 	var/atom/A = parent
 	if(!quickdraw)
 		A.add_fingerprint(user)
 		user_show_to_mob(user)
-		playsound(A, "rustle", 50, 1, -5)
-		return
+		if(rustle_sound)
+			playsound(A, "rustle", 50, 1, -5)
+		return TRUE
 
-	if(!user.incapacitated())
+	if(user.can_hold_items() && !user.incapacitated())
 		var/obj/item/I = locate() in real_location()
 		if(!I)
 			return
 		A.add_fingerprint(user)
 		remove_from_storage(I, get_turf(user))
 		if(!user.put_in_hands(I))
-			to_chat(user, "<span class='notice'>You fumble for [I] and it falls on the floor.</span>")
-			return
+			user.visible_message("<span class='warning'>[user] fumbles with the [parent], letting [I] fall on the floor.</span>", \
+								"<span class='notice'>You fumble with [parent], letting [I] fall on the floor.</span>")
+			return TRUE
 		user.visible_message("<span class='warning'>[user] draws [I] from [parent]!</span>", "<span class='notice'>You draw [I] from [parent].</span>")
-		return
+		return TRUE
 
 /datum/component/storage/proc/action_trigger(datum/signal_source, datum/action/source)
 	gather_mode_switch(source.owner)

@@ -16,7 +16,7 @@
 		{{#if data.logged_in}}
 			{{#if data.page == "CONTRACTS"}}
 				<div style="position:absolute; top:2px; right:2px">
-					<ui-button action='PRG_contractor_hub'>Contractor Hub</ui-button>
+					<ui-button action='PRG_contractor_hub'><div style="padding-top:6px; padding-bottom:3px"><i class="fas fa-satellite-dish fa-3x"></i></div></ui-button>
 				</div>
 				<div style="text-align:center">
 					<h1>Welcome Agent...</h1>
@@ -44,8 +44,8 @@
 				</p>
 
 				<p>
-					Targets extracted will be ransomed back to the station once their use to us is fulfilled, with us providing
-					you a small percentage cut. You may want to be mindful of them identifying you when they come back. 
+					Targets extracted will be ransomed back to the station once their use to us is fulfilled.
+					You may want to be mindful of them identifying you when they come back.
 					We provide you with the standard contractor loadout, which will help cover your identity.
 				</p>
 				
@@ -105,7 +105,7 @@
 					</div>
 				{{/if}}
 			{{else}}
-				<div style="position:absolute; top:2px; left:2px"><ui-button action='PRG_hub_back'>Back</ui-button></div>
+				<div style="position:absolute; top:2px; left:2px"><ui-button action='PRG_hub_back'><i class="fas fa-arrow-left"></i> Back</ui-button></div>
 				<div style="position:absolute; top:2px; right:2px">Contractor Rep: {{data.contract_rep}}</div>
 
 				<br>

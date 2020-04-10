@@ -29,7 +29,7 @@
 #define MOLE_HEAT_PENALTY 350                 //Heat damage scales around this. Too hot setups with this amount of moles do regular damage, anything above and below is scaled
 #define POWER_PENALTY_THRESHOLD 5000          //Higher == Engine can generate more power before triggering the high power penalties.
 #define SEVERE_POWER_PENALTY_THRESHOLD 7000   //Same as above, but causes more dangerous effects
-#define CRITICAL_POWER_PENALTY_THRESHOLD 9000 //Even more dangerous effects, threshold for tesla delamination
+#define CRITICAL_POWER_PENALTY_THRESHOLD 12000 //Even more dangerous effects, threshold for tesla delamination
 #define HEAT_PENALTY_THRESHOLD 40             //Higher == Crystal safe operational temperature is higher.
 #define DAMAGE_HARDCAP 0.002
 #define DAMAGE_INCREASE_MULTIPLIER 0.25
@@ -66,6 +66,8 @@
 
 #define SUPERMATTER_COUNTDOWN_TIME 30 SECONDS
 
+#define SUPERMATTER_INTEGRITY_MULT 1.3 //(loss of integrity / 10) ^ 1.3
+
 GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 
 /obj/machinery/power/supermatter_crystal
@@ -75,6 +77,7 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 	icon_state = "darkmatter"
 	density = TRUE
 	anchored = TRUE
+	flags_1 = PREVENT_CONTENTS_EXPLOSION_1
 	var/uid = 1
 	var/static/gl_uid = 1
 	light_range = 4
@@ -95,7 +98,7 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 	var/warning_alert = "Danger! Crystal hyperstructure integrity faltering!"
 	var/damage_penalty_point = 550
 	var/emergency_point = 700
-	var/emergency_alert = "CRYSTAL DELAMINATION IMMINENT. EVACUATE ENGINEERING AND SURROUNDING AREAS."
+	var/emergency_alert = "CRYSTAL DELAMINATION IMMINENT."
 	var/explosion_point = 900
 
 	var/emergency_issued = FALSE
@@ -157,6 +160,8 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 	var/datum/looping_sound/supermatter/soundloop
 
 	var/moveable = FALSE
+	var/min_damage = 0
+	var/power_calc = 0
 
 /obj/machinery/power/supermatter_crystal/Initialize()
 	. = ..()
@@ -187,20 +192,11 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 	return ..()
 
 /obj/machinery/power/supermatter_crystal/examine(mob/user)
-	..()
-	if(!ishuman(user))
-		return
-
-	var/range = HALLUCINATION_RANGE(power)
-	for(var/mob/living/carbon/human/H in viewers(range, src))
-		if(H != user)
-			continue
-		if(!istype(H.glasses, /obj/item/clothing/glasses/meson))
-			to_chat(H, "<span class='danger'>You get headaches just from looking at it.</span>")
-		return
-
-/obj/machinery/power/supermatter_crystal/get_spans()
-	return list(SPAN_ROBOT)
+	. = ..()
+	if (iscarbon(user))
+		var/mob/living/carbon/C = user
+		if (!istype(C.glasses, /obj/item/clothing/glasses/meson) && (get_dist(user, src) < HALLUCINATION_RANGE(power)))
+			. += "<span class='danger'>You get headaches just from looking at it.</span>"
 
 /obj/machinery/power/supermatter_crystal/proc/get_status()
 	var/turf/T = get_turf(src)
@@ -257,10 +253,10 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 	add_overlay(causality_field, TRUE)
 
 	var/speaking = "[emergency_alert] The supermatter has reached critical integrity failure. Emergency causality destabilization field has been activated."
-	radio.talk_into(src, speaking, common_channel, get_spans(), get_default_language())
+	radio.talk_into(src, speaking, common_channel, language = get_default_language())
 	for(var/i in SUPERMATTER_COUNTDOWN_TIME to 0 step -10)
 		if(damage < explosion_point) // Cutting it a bit close there engineers
-			radio.talk_into(src, "[safe_alert] Failsafe has been disengaged.", common_channel, get_spans(), get_default_language())
+			radio.talk_into(src, "[safe_alert] Failsafe has been disengaged.", common_channel)
 			cut_overlay(causality_field, TRUE)
 			final_countdown = FALSE
 			return
@@ -271,7 +267,7 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 			speaking = "[DisplayTimeText(i, TRUE)] remain before causality stabilization."
 		else
 			speaking = "[i*0.1]..."
-		radio.talk_into(src, speaking, common_channel, get_spans(), get_default_language())
+		radio.talk_into(src, speaking, common_channel)
 		sleep(10)
 
 	explode()
@@ -308,6 +304,16 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 			E.energy = power
 		qdel(src)
 
+/obj/machinery/power/supermatter_crystal/proc/consume_turf(turf/T)
+	var/oldtype = T.type
+	var/turf/newT = T.ScrapeAway()
+	if(newT.type == oldtype)
+		return
+	playsound(T, 'sound/effects/supermatter.ogg', 50, 1)
+	T.visible_message("<span class='danger'>[T] smacks into [src] and rapidly flashes to ash.</span>",\
+	"<span class='italics'>You hear a loud crack as you are washed with a wave of heat.</span>")
+	CALCULATE_ADJACENT_TURFS(T)
+
 /obj/machinery/power/supermatter_crystal/process_atmos()
 	var/turf/T = loc
 
@@ -316,6 +322,8 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 
 	if(!istype(T)) 	//We are in a crate or somewhere that isn't turf, if we return to turf resume processing but for now.
 		return  //Yeah just stop.
+	if(istype(T, /turf/closed))
+		consume_turf(T)
 
 	if(power)
 		soundloop.volume = min(40, (round(power/100)/50)+1) // 5 +1 volume per 20 power. 2500 power is max
@@ -331,7 +339,6 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 	else
 		// Pass all the gas related code an empty gas container
 		removed = new()
-
 	damage_archived = damage
 	if(!removed || !removed.total_moles() || isspaceturf(T)) //we're in space or there is no gas to process
 		if(takes_damage)
@@ -349,22 +356,22 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 
 			//capping damage
 			damage = min(damage_archived + (DAMAGE_HARDCAP * explosion_point),damage)
+			damage = max(min_damage, damage) //max integrity
 			if(damage > damage_archived && prob(10))
 				playsound(get_turf(src), 'sound/effects/empulse.ogg', 50, 1)
 
-		removed.assert_gases(/datum/gas/oxygen, /datum/gas/plasma, /datum/gas/carbon_dioxide, /datum/gas/nitrous_oxide, /datum/gas/nitrogen, /datum/gas/pluoxium, /datum/gas/tritium, /datum/gas/bz)
 		//calculating gas related values
 		combined_gas = max(removed.total_moles(), 0)
 
-		plasmacomp = max(removed.gases[/datum/gas/plasma][MOLES]/combined_gas, 0)
-		o2comp = max(removed.gases[/datum/gas/oxygen][MOLES]/combined_gas, 0)
-		co2comp = max(removed.gases[/datum/gas/carbon_dioxide][MOLES]/combined_gas, 0)
-		pluoxiumcomp = max(removed.gases[/datum/gas/pluoxium][MOLES]/combined_gas, 0)
-		tritiumcomp = max(removed.gases[/datum/gas/tritium][MOLES]/combined_gas, 0)
-		bzcomp = max(removed.gases[/datum/gas/bz][MOLES]/combined_gas, 0)
+		plasmacomp = max(removed.gases[/datum/gas/plasma]/combined_gas, 0)
+		o2comp = max(removed.gases[/datum/gas/oxygen]/combined_gas, 0)
+		co2comp = max(removed.gases[/datum/gas/carbon_dioxide]/combined_gas, 0)
+		pluoxiumcomp = max(removed.gases[/datum/gas/pluoxium]/combined_gas, 0)
+		tritiumcomp = max(removed.gases[/datum/gas/tritium]/combined_gas, 0)
+		bzcomp = max(removed.gases[/datum/gas/bz]/combined_gas, 0)
 
-		n2ocomp = max(removed.gases[/datum/gas/nitrous_oxide][MOLES]/combined_gas, 0)
-		n2comp = max(removed.gases[/datum/gas/nitrogen][MOLES]/combined_gas, 0)
+		n2ocomp = max(removed.gases[/datum/gas/nitrous_oxide]/combined_gas, 0)
+		n2comp = max(removed.gases[/datum/gas/nitrogen]/combined_gas, 0)
 
 		if(pluoxiumcomp >= 0.15)
 			pluoxiumbonus = 1	//makes pluoxium only work at 15%+
@@ -389,7 +396,7 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 
 		if(matter_power)
 			var/removed_matter = max(matter_power/MATTER_POWER_CONVERSION, 40)
-			power = max(power + removed_matter, 0)
+			power_calc = max(power_calc + removed_matter, 0)
 			matter_power = max(matter_power - removed_matter, 0)
 
 		var/temp_factor = 50
@@ -402,12 +409,12 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 			temp_factor = 30
 			icon_state = base_icon_state
 
-		power = max( (removed.temperature * temp_factor / T0C) * gasmix_power_ratio + power, 0) //Total laser power plus an overload
+		power_calc = max( (removed.temperature * temp_factor / T0C) * gasmix_power_ratio + power_calc, 0) //Total laser power plus an overload
 
 		if(prob(50))
 			radiation_pulse(src, power * (1 + (tritiumcomp * TRITIUM_RADIOACTIVITY_MODIFIER) + ((pluoxiumcomp * PLUOXIUM_RADIOACTIVITY_MODIFIER) * pluoxiumbonus) * (power_transmission_bonus/(10-(bzcomp * BZ_RADIOACTIVITY_MODIFIER)))))	// Rad Modifiers BZ(500%), Tritium(300%), and Pluoxium(-200%)
 		if(bzcomp >= 0.4 && prob(30 * bzcomp))
-			src.fire_nuclear_particles()		// Start to emit radballs at a maximum of 30% chance per tick
+			fire_nuclear_particle()		// Start to emit radballs at a maximum of 30% chance per tick
 
 		var/device_energy = power * REACTION_POWER_MODIFIER
 
@@ -423,9 +430,9 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 		removed.temperature = max(0, min(removed.temperature, 2500 * dynamic_heat_modifier))
 
 		//Calculate how much gas to release
-		removed.gases[/datum/gas/plasma][MOLES] += max((device_energy * dynamic_heat_modifier) / PLASMA_RELEASE_MODIFIER, 0)
+		removed.gases[/datum/gas/plasma] += max((device_energy * dynamic_heat_modifier) / PLASMA_RELEASE_MODIFIER, 0)
 
-		removed.gases[/datum/gas/oxygen][MOLES] += max(((device_energy + removed.temperature * dynamic_heat_modifier) - T0C) / OXYGEN_RELEASE_MODIFIER, 0)
+		removed.gases[/datum/gas/oxygen] += max(((device_energy + removed.temperature * dynamic_heat_modifier) - T0C) / OXYGEN_RELEASE_MODIFIER, 0)
 
 		if(produces_gas)
 			env.merge(removed)
@@ -434,15 +441,19 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 	for(var/mob/living/carbon/human/l in view(src, HALLUCINATION_RANGE(power))) // If they can see it without mesons on.  Bad on them.
 		if(!istype(l.glasses, /obj/item/clothing/glasses/meson))
 			var/D = sqrt(1 / max(1, get_dist(l, src)))
-			l.hallucination += power * config_hallucination_power * D
+			l.hallucination += power_calc * config_hallucination_power * D
 			l.hallucination = CLAMP(0, 200, l.hallucination)
 
 	for(var/mob/living/l in range(src, round((power / 100) ** 0.25)))
 		var/rads = (power / 10) * sqrt( 1 / max(get_dist(l, src),1) )
 		l.rad_act(rads)
 
-	power -= ((power/500)**3) * powerloss_inhibitor
-
+	power_calc -= ((power_calc/500)**3) * powerloss_inhibitor
+	if ((100-get_integrity()) < 75)
+		power = (power_calc * ((100 - (0.15*(100-get_integrity()) - 5)**2) / 100)) + power_calc*0.1
+	else
+		power = power_calc * (((100-get_integrity())^((3*(100-get_integrity()))/1000) + 2*(100-get_integrity()))/100) //new and improved, more linear
+		//power = power_calc * ((((100-get_integrity())**1.3)-(2*(100-get_integrity())))/100)
 	if(power > POWER_PENALTY_THRESHOLD || damage > damage_penalty_point)
 
 		if(power > POWER_PENALTY_THRESHOLD)
@@ -465,33 +476,34 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 			supermatter_anomaly_gen(src, GRAVITATIONAL_ANOMALY, rand(5, 10))
 		if(power > SEVERE_POWER_PENALTY_THRESHOLD && prob(2) || prob(0.3) && power > POWER_PENALTY_THRESHOLD)
 			supermatter_anomaly_gen(src, PYRO_ANOMALY, rand(5, 10))
-
-	if(damage > warning_point) // while the core is still damaged and it's still worth noting its status
+	if (damage - damage_archived > 0)
+		min_damage += ((damage - damage_archived) / 9) * SUPERMATTER_INTEGRITY_MULT
+	if(damage > (min_damage < 200 ? min_damage : 0) + warning_point) // while the core is still damaged and it's still worth noting its status
 		if((REALTIMEOFDAY - lastwarning) / 10 >= WARNING_DELAY)
 			alarm()
 
 			if(damage > emergency_point)
-				radio.talk_into(src, "[emergency_alert] Integrity: [get_integrity()]%", common_channel, get_spans(), get_default_language())
+				radio.talk_into(src, "[emergency_alert] Integrity: [get_integrity()]%", common_channel)
 				lastwarning = REALTIMEOFDAY
 				if(!has_reached_emergency)
 					investigate_log("has reached the emergency point for the first time.", INVESTIGATE_SUPERMATTER)
 					message_admins("[src] has reached the emergency point [ADMIN_JMP(src)].")
 					has_reached_emergency = TRUE
 			else if(damage >= damage_archived) // The damage is still going up
-				radio.talk_into(src, "[warning_alert] Integrity: [get_integrity()]%", engineering_channel, get_spans(), get_default_language())
+				radio.talk_into(src, "[warning_alert] Integrity: [get_integrity()]%", engineering_channel)
 				lastwarning = REALTIMEOFDAY - (WARNING_DELAY * 5)
 
 			else                                                 // Phew, we're safe
-				radio.talk_into(src, "[safe_alert] Integrity: [get_integrity()]%", engineering_channel, get_spans(), get_default_language())
+				radio.talk_into(src, "[safe_alert] Integrity: [get_integrity()]%", engineering_channel)
 				lastwarning = REALTIMEOFDAY
 
 			if(power > POWER_PENALTY_THRESHOLD)
-				radio.talk_into(src, "Warning: Hyperstructure has reached dangerous power level.", engineering_channel, get_spans(), get_default_language())
+				radio.talk_into(src, "Warning: Hyperstructure has reached dangerous power level.", engineering_channel)
 				if(powerloss_inhibitor < 0.5)
-					radio.talk_into(src, "DANGER: CHARGE INERTIA CHAIN REACTION IN PROGRESS.", engineering_channel, get_spans(), get_default_language())
+					radio.talk_into(src, "DANGER: CHARGE INERTIA CHAIN REACTION IN PROGRESS.", engineering_channel)
 
 			if(combined_gas > MOLE_PENALTY_THRESHOLD)
-				radio.talk_into(src, "Warning: Critical coolant mass reached.", engineering_channel, get_spans(), get_default_language())
+				radio.talk_into(src, "Warning: Critical coolant mass reached.", engineering_channel)
 
 		if(damage > explosion_point)
 			countdown()
@@ -505,14 +517,14 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 	if(!istype(Proj.firer, /obj/machinery/power/emitter))
 		investigate_log("has been hit by [Proj] fired by [key_name(Proj.firer)]", INVESTIGATE_SUPERMATTER)
 	if(Proj.flag != "bullet")
-		power += Proj.damage * config_bullet_energy
+		power_calc += Proj.damage * config_bullet_energy
 		if(!has_been_powered)
 			investigate_log("has been powered for the first time.", INVESTIGATE_SUPERMATTER)
 			message_admins("[src] has been powered for the first time [ADMIN_JMP(src)].")
 			has_been_powered = TRUE
 	else if(takes_damage)
-		damage += Proj.damage * config_bullet_energy
-	return FALSE
+		matter_power += Proj.damage * config_bullet_energy
+	return BULLET_ACT_HIT
 
 /obj/machinery/power/supermatter_crystal/singularity_act()
 	var/gain = 100
@@ -542,11 +554,14 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 /obj/machinery/power/supermatter_crystal/attack_tk(mob/user)
 	if(iscarbon(user))
 		var/mob/living/carbon/C = user
+		log_game("[key_name(C)] has been disintegrated by a telekenetic grab on a supermatter crystal.</span>")
 		to_chat(C, "<span class='userdanger'>That was a really dense idea.</span>")
-		C.ghostize()
+		C.visible_message("<span class='userdanger'>A bright flare of radiation is seen from [C]'s head, shortly before you hear a sickening sizzling!</span>")
 		var/obj/item/organ/brain/rip_u = locate(/obj/item/organ/brain) in C.internal_organs
-		rip_u.Remove(C)
+		rip_u.Remove()
 		qdel(rip_u)
+		return
+	return ..()
 
 /obj/machinery/power/supermatter_crystal/attack_paw(mob/user)
 	dust_mob(user, cause = "monkey attack")
@@ -603,6 +618,17 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 			to_chat(user, "<span class='notice'>You extract a sliver from \the [src]. \The [src] begins to react violently!</span>")
 			new /obj/item/nuke_core/supermatter_sliver(drop_location())
 			matter_power += 200
+	if (istype(W, /obj/item/supermatterspray))
+		var/obj/item/supermatterspray/S = W
+		if (S.usesleft > 0 && do_after(user, 60, target=src))
+			min_damage = max(0,min_damage - 10)
+			to_chat(user, "<span class='notice'>You spray \the [src] with [S].</span>")
+			playsound(user.loc,'sound/effects/spray2.ogg',50,1,-6)
+			S.usesleft--
+			if (prob(10))
+				to_chat(user, "<span class='warning'>Your hands slip and you drop [S] into \the [src]!</span>")
+				Consume(S)
+			return
 	else if(user.dropItemToGround(W))
 		user.visible_message("<span class='danger'>As [user] touches \the [src] with \a [W], silence fills the room...</span>",\
 			"<span class='userdanger'>You touch \the [src] with \the [W], and everything suddenly goes silent.</span>\n<span class='notice'>\The [W] flashes into dust as you flinch away from \the [src].</span>",\
@@ -633,6 +659,11 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 
 	Consume(AM)
 
+/obj/machinery/power/supermatter_crystal/intercept_zImpact(atom/movable/AM, levels)
+	. = ..()
+	Bumped(AM)
+	. |= FALL_STOP_INTERCEPTING | FALL_INTERCEPTED
+
 /obj/machinery/power/supermatter_crystal/proc/Consume(atom/movable/AM)
 	if(isliving(AM))
 		var/mob/living/user = AM
@@ -660,10 +691,14 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 	for(var/mob/living/L in range(10))
 		investigate_log("has irradiated [key_name(L)] after consuming [AM].", INVESTIGATE_SUPERMATTER)
 		if(L in view())
-			L.show_message("<span class='danger'>As \the [src] slowly stops resonating, you find your skin covered in new radiation burns.</span>", 1,\
-				"<span class='danger'>The unearthly ringing subsides and you notice you have new radiation burns.</span>", 2)
+			L.show_message("<span class='danger'>As \the [src] slowly stops resonating, you find your skin covered in new radiation burns.</span>", MSG_VISUAL,\
+				"<span class='danger'>The unearthly ringing subsides and you notice you have new radiation burns.</span>", MSG_AUDIBLE)
 		else
-			L.show_message("<span class='italics'>You hear an unearthly ringing and notice your skin is covered in fresh radiation burns.</span>", 2)
+			L.show_message("<span class='italics'>You hear an unearthly ringing and notice your skin is covered in fresh radiation burns.</span>", MSG_AUDIBLE)
+
+//Do not blow up our internal radio
+/obj/machinery/power/supermatter_crystal/contents_explosion(severity, target)
+	return
 
 /obj/machinery/power/supermatter_crystal/engine
 	is_main_engine = TRUE
@@ -771,7 +806,7 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 			. = zapdir
 
 	if(target_mob)
-		target_mob.electrocute_act(rand(5,10), "Supermatter Discharge Bolt", 1, stun = 0)
+		target_mob.electrocute_act(rand(5,10), "Supermatter Discharge Bolt", 1, SHOCK_NOSTUN)
 		if(prob(15))
 			supermatter_zap(target_mob, 5, power / 2)
 			supermatter_zap(target_mob, 5, power / 2)

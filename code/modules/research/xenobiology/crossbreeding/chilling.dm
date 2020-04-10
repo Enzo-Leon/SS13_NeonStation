@@ -14,10 +14,10 @@ Chilling extracts:
 	create_reagents(10, INJECTABLE | DRAWABLE)
 
 /obj/item/slimecross/chilling/attack_self(mob/user)
-	if(!reagents.has_reagent("plasma",10))
+	if(!reagents.has_reagent(/datum/reagent/toxin/plasma,10))
 		to_chat(user, "<span class='warning'>This extract needs to be full of plasma to activate!</span>")
 		return
-	reagents.remove_reagent("plasma",10)
+	reagents.remove_reagent(/datum/reagent/toxin/plasma,10)
 	to_chat(user, "<span class='notice'>You squeeze the extract, and it absorbs the plasma!</span>")
 	playsound(src, 'sound/effects/bubbles.ogg', 50, 1)
 	playsound(src, 'sound/effects/glassbr1.ogg', 50, 1)
@@ -56,7 +56,7 @@ Chilling extracts:
 		return
 	user.visible_message("<span class='notice'>[src] shatters, and a healing aura fills the room briefly.</span>")
 	for(var/mob/living/carbon/C in A)
-		C.reagents.add_reagent("regen_jelly",10)
+		C.reagents.add_reagent(/datum/reagent/medicine/regen_jelly,10)
 	..()
 
 /obj/item/slimecross/chilling/blue
@@ -100,10 +100,9 @@ Chilling extracts:
 	for(var/turf/open/T in A)
 		var/datum/gas_mixture/G = T.air
 		if(istype(G))
-			G.assert_gas(/datum/gas/plasma)
-			G.gases[/datum/gas/plasma][MOLES] = 0
+			G.gases[/datum/gas/plasma] = 0
 			filtered = TRUE
-			G.garbage_collect()
+			GAS_GARBAGE_COLLECT(G.gases)
 			T.air_update_turf()
 	if(filtered)
 		user.visible_message("<span class='notice'>Cracks spread throughout [src], and some air is sucked in!</span>")
@@ -187,6 +186,7 @@ Chilling extracts:
 
 /obj/item/slimecross/chilling/sepia/do_effect(mob/user)
 	user.visible_message("<span class='warning'>[src] shatters, freezing time itself!</span>")
+	allies -= user //support class
 	new /obj/effect/timestop(get_turf(user), 2, 300, allies)
 	..()
 
@@ -268,7 +268,7 @@ Chilling extracts:
 	addtimer(CALLBACK(src, .proc/boom), 50)
 
 /obj/item/slimecross/chilling/oil/proc/boom()
-	explosion(get_turf(src), -1, -1, 3, 10) //Large radius, but mostly light damage.
+	explosion(get_turf(src), -1, -1, 10, 0) //Large radius, but mostly light damage, and no flash.
 	qdel(src)
 
 /obj/item/slimecross/chilling/black

@@ -16,6 +16,13 @@
 	heat_capacity = 1e+006
 	},
 /area/awaymission/moonoutpost19/hive)
+"ae" = (
+/obj/machinery/computer/arcade{
+	icon_state = "arcade";
+	dir = 1
+	},
+/turf/open/floor/plasteel/dark,
+/area/awaymission/moonoutpost19/arrivals)
 "ag" = (
 /obj/structure/alien/weeds,
 /obj/structure/alien/weeds{
@@ -167,7 +174,7 @@
 /obj/structure/bed/nest,
 /obj/effect/decal/cleanable/blood/gibs,
 /obj/item/clothing/mask/facehugger/impregnated,
-/obj/item/clothing/under/rank/security,
+/obj/item/clothing/under/rank/security/officer,
 /obj/item/clothing/suit/armor/vest,
 /obj/item/melee/baton/loaded,
 /obj/item/clothing/head/helmet,
@@ -754,7 +761,7 @@
 	},
 /area/awaymission/moonoutpost19/syndicate)
 "bF" = (
-/obj/structure/toilet{
+/obj/structure/toilet/secret/high_loot{
 	dir = 1
 	},
 /turf/open/floor/plasteel/freezer{
@@ -2026,7 +2033,13 @@
 /obj/effect/mapping_helpers/airlock/cyclelink_helper{
 	dir = 1
 	},
-/turf/open/floor/plating,
+/turf/open/floor/plating{
+	initial_gas_mix = "co2=48.7;n2=13.2;o2=32.4;TEMP=251";
+	heat_capacity = 1e+006;
+	icon_plating = "asteroidplating";
+	icon_state = "asteroidplating";
+	temperature = 251
+	},
 /area/awaymission/moonoutpost19/syndicate)
 "dJ" = (
 /obj/item/storage/bag/ore,
@@ -2047,13 +2060,19 @@
 	dir = 1
 	},
 /turf/open/floor/plating{
+	initial_gas_mix = "co2=48.7;n2=13.2;o2=32.4;TEMP=251";
 	heat_capacity = 1e+006;
-	icon_state = "platingdmg1"
+	icon_plating = "asteroidplating";
+	icon_state = "asteroidplating";
+	temperature = 251
 	},
 /area/awaymission/moonoutpost19/syndicate)
 "dM" = (
 /turf/open/floor/plating{
 	initial_gas_mix = "co2=48.7;n2=13.2;o2=32.4;TEMP=251";
+	heat_capacity = 1e+006;
+	icon_plating = "asteroidplating";
+	icon_state = "asteroidplating";
 	temperature = 251
 	},
 /area/awaymission/moonoutpost19/main)
@@ -4102,7 +4121,7 @@
 	},
 /area/awaymission/moonoutpost19/research)
 "hP" = (
-/obj/structure/toilet{
+/obj/structure/toilet/secret/high_loot{
 	dir = 4
 	},
 /obj/effect/decal/cleanable/dirt,
@@ -4454,7 +4473,7 @@
 	},
 /area/awaymission/moonoutpost19/research)
 "iw" = (
-/obj/structure/toilet{
+/obj/structure/toilet/secret/high_loot{
 	dir = 4
 	},
 /obj/machinery/light/small{
@@ -4745,7 +4764,7 @@
 	},
 /area/awaymission/moonoutpost19/arrivals)
 "iZ" = (
-/obj/structure/toilet{
+/obj/structure/toilet/secret/high_loot{
 	dir = 1
 	},
 /turf/open/floor/plasteel/freezer{
@@ -5371,7 +5390,7 @@
 "kn" = (
 /obj/structure/table/reinforced,
 /obj/machinery/door/firedoor,
-/obj/item/reagent_containers/glass/rag{
+/obj/item/reagent_containers/rag{
 	pixel_y = 5
 	},
 /obj/machinery/door/poddoor/shutters{
@@ -5585,8 +5604,8 @@
 	},
 /area/awaymission/moonoutpost19/arrivals)
 "kK" = (
-/obj/effect/decal/cleanable/xenoblood,
-/obj/effect/decal/cleanable/xenoblood/xgibs,
+/obj/effect/decal/cleanable/blood/xeno,
+/obj/effect/decal/cleanable/blood/gibs/xeno,
 /obj/effect/turf_decal/tile/bar,
 /obj/effect/turf_decal/tile/bar{
 	dir = 1
@@ -5596,7 +5615,7 @@
 	},
 /area/awaymission/moonoutpost19/arrivals)
 "kL" = (
-/obj/effect/decal/cleanable/xenoblood,
+/obj/effect/decal/cleanable/blood/xeno,
 /obj/effect/decal/remains/xeno{
 	desc = "They look like the remains of something... alien. The front of skull appears to have been completely obliterated."
 	},
@@ -5699,7 +5718,7 @@
 	name = "personal closet";
 	req_access_txt = "201"
 	},
-/obj/item/clothing/under/suit_jacket/navy,
+/obj/item/clothing/under/suit/navy,
 /turf/open/floor/carpet{
 	heat_capacity = 1e+006
 	},
@@ -5989,7 +6008,7 @@
 	name = "Kitchen Crate"
 	},
 /obj/item/storage/box/mousetraps,
-/obj/item/clothing/under/waiter,
+/obj/item/clothing/under/suit/waiter,
 /turf/open/floor/plasteel/showroomfloor{
 	heat_capacity = 1e+006;
 	temperature = 273.15
@@ -6396,10 +6415,6 @@
 	heat_capacity = 1e+006
 	},
 /area/awaymission/moonoutpost19/arrivals)
-"mB" = (
-/obj/machinery/computer/arcade,
-/turf/open/floor/plasteel/dark,
-/area/awaymission/moonoutpost19/arrivals)
 "mC" = (
 /obj/machinery/vending/cigarette,
 /obj/structure/sign/poster/contraband/smoke{
@@ -6640,7 +6655,7 @@
 	name = "personal closet";
 	req_access_txt = "201"
 	},
-/obj/item/clothing/under/assistantformal,
+/obj/item/clothing/under/misc/assistantformal,
 /turf/open/floor/carpet{
 	heat_capacity = 1e+006
 	},
@@ -6775,7 +6790,13 @@
 /obj/machinery/light/small{
 	dir = 8
 	},
-/turf/open/floor/plating,
+/turf/open/floor/plating{
+	initial_gas_mix = "co2=48.7;n2=13.2;o2=32.4;TEMP=251";
+	heat_capacity = 1e+006;
+	icon_plating = "asteroidplating";
+	icon_state = "asteroidplating";
+	temperature = 251
+	},
 /area/awaymission/moonoutpost19/arrivals)
 "nw" = (
 /obj/machinery/washing_machine,
@@ -6802,7 +6823,7 @@
 /obj/structure/table,
 /obj/structure/bedsheetbin,
 /obj/item/clothing/neck/tie/black,
-/obj/item/clothing/under/lawyer/blacksuit,
+/obj/item/clothing/under/suit/black,
 /obj/effect/turf_decal/tile/blue{
 	dir = 4
 	},
@@ -7047,7 +7068,7 @@
 	name = "personal closet";
 	req_access_txt = "201"
 	},
-/obj/item/clothing/under/suit_jacket/burgundy,
+/obj/item/clothing/under/suit/burgundy,
 /turf/open/floor/carpet{
 	heat_capacity = 1e+006
 	},
@@ -7071,7 +7092,13 @@
 /obj/machinery/light/small{
 	dir = 1
 	},
-/turf/open/floor/plating,
+/turf/open/floor/plating{
+	initial_gas_mix = "co2=48.7;n2=13.2;o2=32.4;TEMP=251";
+	heat_capacity = 1e+006;
+	icon_plating = "asteroidplating";
+	icon_state = "asteroidplating";
+	temperature = 251
+	},
 /area/awaymission/moonoutpost19/arrivals)
 "nX" = (
 /obj/structure/chair/comfy/black{
@@ -7101,7 +7128,13 @@
 /area/awaymission/moonoutpost19/arrivals)
 "nZ" = (
 /obj/structure/disposalpipe/segment,
-/turf/open/floor/plating,
+/turf/open/floor/plating{
+	initial_gas_mix = "co2=48.7;n2=13.2;o2=32.4;TEMP=251";
+	heat_capacity = 1e+006;
+	icon_plating = "asteroidplating";
+	icon_state = "asteroidplating";
+	temperature = 251
+	},
 /area/awaymission/moonoutpost19/main)
 "oa" = (
 /obj/structure/chair/comfy/black,
@@ -7130,7 +7163,13 @@
 /obj/structure/disposalpipe/trunk{
 	dir = 1
 	},
-/turf/open/floor/plating,
+/turf/open/floor/plating{
+	initial_gas_mix = "co2=48.7;n2=13.2;o2=32.4;TEMP=251";
+	heat_capacity = 1e+006;
+	icon_plating = "asteroidplating";
+	icon_state = "asteroidplating";
+	temperature = 251
+	},
 /area/awaymission/moonoutpost19/main)
 "od" = (
 /obj/item/shard{
@@ -7176,10 +7215,6 @@
 	heat_capacity = 1e+006
 	},
 /area/awaymission/moonoutpost19/research)
-"oV" = (
-/obj/effect/mapping_helpers/planet_z,
-/turf/open/space,
-/area/space)
 "vV" = (
 /obj/machinery/door/airlock/external,
 /obj/effect/mapping_helpers/airlock/cyclelink_helper{
@@ -7189,9 +7224,6 @@
 	heat_capacity = 1e+006
 	},
 /area/awaymission/moonoutpost19/arrivals)
-"zc" = (
-/turf/open/floor/plating,
-/area/awaymission/moonoutpost19/main)
 "zZ" = (
 /obj/machinery/door/airlock/external,
 /obj/effect/mapping_helpers/airlock/cyclelink_helper,
@@ -7211,33 +7243,6 @@
 	heat_capacity = 1e+006
 	},
 /area/awaymission/moonoutpost19/research)
-"MC" = (
-/turf/open/floor/plating{
-	heat_capacity = 1e+006;
-	icon_state = "platingdmg3"
-	},
-/area/awaymission/moonoutpost19/main)
-"Na" = (
-/turf/open/floor/plating{
-	initial_gas_mix = "co2=48.7;n2=13.2;o2=32.4;TEMP=251";
-	heat_capacity = 1e+006;
-	temperature = 251
-	},
-/area/awaymission/moonoutpost19/main)
-"PP" = (
-/turf/open/floor/plating{
-	initial_gas_mix = "co2=48.7;n2=13.2;o2=32.4;TEMP=251";
-	heat_capacity = 1e+006;
-	icon_state = "platingdmg1";
-	temperature = 251
-	},
-/area/awaymission/moonoutpost19/main)
-"Vz" = (
-/turf/open/floor/plating{
-	heat_capacity = 1e+006;
-	icon_state = "platingdmg1"
-	},
-/area/awaymission/moonoutpost19/main)
 "Wf" = (
 /obj/machinery/door/airlock/external,
 /obj/effect/mapping_helpers/airlock/cyclelink_helper{
@@ -7503,7 +7508,7 @@ aa
 aa
 aa
 aa
-oV
+aa
 "}
 (2,1,1) = {"
 aa
@@ -36706,7 +36711,7 @@ zZ
 nA
 nK
 Wf
-Vz
+dM
 ba
 ba
 ba
@@ -36963,7 +36968,7 @@ zZ
 lM
 lN
 Wf
-PP
+dM
 ba
 ba
 ba
@@ -41589,13 +41594,13 @@ hJ
 lM
 lN
 hI
-MC
+dM
 ba
 ba
 ba
-Vz
-Vz
-Vz
+dM
+dM
+dM
 od
 ba
 ba
@@ -41852,7 +41857,7 @@ nZ
 nZ
 nZ
 oc
-PP
+dM
 ba
 ba
 ba
@@ -42103,13 +42108,13 @@ hI
 nJ
 nR
 hJ
-MC
+dM
 ba
 ba
 ba
-PP
-PP
-PP
+dM
+dM
+dM
 ba
 oe
 ba
@@ -42867,8 +42872,8 @@ lN
 hJ
 ba
 ba
-zc
-Na
+dM
+dM
 nu
 ba
 ba
@@ -43379,7 +43384,7 @@ la
 lq
 jk
 mj
-mB
+ae
 hJ
 ba
 ba
@@ -43636,7 +43641,7 @@ jN
 lr
 jj
 mj
-mB
+ae
 hI
 ba
 ba

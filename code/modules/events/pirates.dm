@@ -5,7 +5,7 @@
 	max_occurrences = 1
 	min_players = 10
 	earliest_start = 30 MINUTES
-	gamemode_blacklist = list("nuclear")
+	gamemode_blacklist = list("nuclear","dynamic")
 
 /datum/round_event_control/pirates/preRunEvent()
 	if (!SSmapping.empty_space)
@@ -15,7 +15,7 @@
 
 /datum/round_event/pirates
 	startWhen = 60 //2 minutes to answer
-	var/datum/comm_message/threat
+	var/datum/comm_message/threat_message
 	var/payoff = 0
 	var/paid_off = FALSE
 	var/ship_name = "Space Privateers Association"
@@ -25,19 +25,19 @@
 	ship_name = pick(strings(PIRATE_NAMES_FILE, "ship_names"))
 
 /datum/round_event/pirates/announce(fake)
-	priority_announce("A report has been downloaded and printed out at all communications consoles.", "Incoming Classified Message", 'sound/ai/commandreport.ogg') // CITADEL EDIT metabreak
+	priority_announce("A report has been downloaded and printed out at all communications consoles.", "Incoming Classified Message", "commandreport") // CITADEL EDIT metabreak
 	if(fake)
 		return
-	threat = new
+	threat_message = new
 	payoff = round(SSshuttle.points * 0.80)
-	threat.title = "Business proposition"
-	threat.content = "This is [ship_name]. Pay up [payoff] credits or you'll walk the plank."
-	threat.possible_answers = list("We'll pay.","No way.")
-	threat.answer_callback = CALLBACK(src,.proc/answered)
-	SScommunications.send_message(threat,unique = TRUE)
+	threat_message.title = "Business proposition"
+	threat_message.content = "This is [ship_name]. Pay up [payoff] credits or you'll walk the plank."
+	threat_message.possible_answers = list("We'll pay.","No way.")
+	threat_message.answer_callback = CALLBACK(src,.proc/answered)
+	SScommunications.send_message(threat_message,unique = TRUE)
 
 /datum/round_event/pirates/proc/answered()
-	if(threat && threat.answered == 1)
+	if(threat_message && threat_message.answered == 1)
 		if(SSshuttle.points >= payoff)
 			SSshuttle.points -= payoff
 			priority_announce("Thanks for the credits, landlubbers.",sender_override = ship_name)
@@ -47,8 +47,6 @@
 			priority_announce("Trying to cheat us? You'll regret this!",sender_override = ship_name)
 	if(!shuttle_spawned)
 		spawn_shuttle()
-
-
 
 /datum/round_event/pirates/start()
 	if(!paid_off && !shuttle_spawned)
@@ -77,9 +75,9 @@
 				spawner.create(M.ckey)
 				candidates -= M
 			else
-				notify_ghosts("Space pirates are waking up!", source = spawner, action=NOTIFY_ATTACK, flashwindow = FALSE)
+				notify_ghosts("Space pirates are waking up!", source = spawner, action=NOTIFY_ATTACK, flashwindow = FALSE, ignore_dnr_observers = TRUE)
 
-	priority_announce("A report has been downloaded and printed out at all communications consoles.", "Incoming Classified Message", 'sound/ai/commandreport.ogg') //CITADEL EDIT also metabreak here too
+	priority_announce("A report has been downloaded and printed out at all communications consoles.", "Incoming Classified Message", "commandreport") //CITADEL EDIT also metabreak here too
 
 //Shuttle equipment
 
@@ -150,7 +148,6 @@
 	to_chat(user,"<span class='notice'>You retrieve the siphoned credits!</span>")
 	credits_stored = 0
 
-
 /obj/machinery/shuttle_scrambler/proc/send_notification()
 	priority_announce("Data theft signal detected, source registered on local gps units.")
 
@@ -160,7 +157,7 @@
 	active = FALSE
 	STOP_PROCESSING(SSobj,src)
 
-/obj/machinery/shuttle_scrambler/update_icon()
+/obj/machinery/shuttle_scrambler/update_icon_state()
 	if(active)
 		icon_state = "dominator-blue"
 	else
@@ -180,6 +177,7 @@
 	shuttleId = "pirateship"
 	icon_screen = "syndishuttle"
 	icon_keyboard = "syndie_key"
+	resistance_flags = INDESTRUCTIBLE
 	light_color = LIGHT_COLOR_RED
 	possible_destinations = "pirateship_away;pirateship_home;pirateship_custom"
 
@@ -187,6 +185,7 @@
 	name = "pirate shuttle navigation computer"
 	desc = "Used to designate a precise transit location for the pirate shuttle."
 	shuttleId = "pirateship"
+	resistance_flags = INDESTRUCTIBLE
 	lock_override = CAMERA_LOCK_STATION
 	shuttlePortId = "pirateship_custom"
 	x_offset = 9
@@ -222,14 +221,14 @@
 	suit_type = /obj/item/clothing/suit/space
 	helmet_type = /obj/item/clothing/head/helmet/space
 	mask_type = /obj/item/clothing/mask/breath
-	storage_type = /obj/item/tank/internals/oxygen
-
+	storage_type = /obj/item/tank/jetpack/void
 
 /obj/machinery/loot_locator
 	name = "Booty Locator"
 	desc = "This sophisticated machine scans the nearby space for items of value."
 	icon = 'icons/obj/machines/research.dmi'
 	icon_state = "tdoppler"
+	resistance_flags = INDESTRUCTIBLE
 	density = TRUE
 	var/cooldown = 300
 	var/next_use = 0
@@ -263,6 +262,7 @@
 	name = "cargo hold pad"
 	icon = 'icons/obj/telescience.dmi'
 	icon_state = "lpad-idle-o"
+	resistance_flags = INDESTRUCTIBLE
 	var/idle_state = "lpad-idle-o"
 	var/warmup_state = "lpad-idle"
 	var/sending_state = "lpad-beam"
@@ -276,6 +276,7 @@
 
 /obj/machinery/computer/piratepad_control
 	name = "cargo hold control terminal"
+	resistance_flags = INDESTRUCTIBLE
 	var/status_report = "Idle"
 	var/obj/machinery/piratepad/pad
 	var/warmup_time = 100

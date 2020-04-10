@@ -25,6 +25,9 @@
 "ag" = (
 /turf/closed/wall/mineral/titanium,
 /area/awaymission/undergroundoutpost45/central)
+"ah" = (
+/turf/open/space,
+/area/space/nearstation)
 "aj" = (
 /obj/effect/decal/cleanable/dirt,
 /turf/open/floor/plasteel{
@@ -309,7 +312,7 @@
 	name = "personal closet";
 	req_access_txt = "201"
 	},
-/obj/item/clothing/under/pj/blue,
+/obj/item/clothing/under/misc/pj/blue,
 /turf/open/floor/carpet{
 	heat_capacity = 1e+006
 	},
@@ -359,7 +362,7 @@
 	name = "personal closet";
 	req_access_txt = "201"
 	},
-/obj/item/clothing/under/suit_jacket/female,
+/obj/item/clothing/under/suit/black/skirt,
 /turf/open/floor/carpet{
 	heat_capacity = 1e+006
 	},
@@ -2124,12 +2127,15 @@
 /area/awaymission/undergroundoutpost45/central)
 "eu" = (
 /turf/open/floor/plating{
+	initial_gas_mix = "co2=173.4;n2=135.1;plasma=229.8;TEMP=351.9";
 	heat_capacity = 1e+006;
-	icon_state = "platingdmg1"
+	icon_plating = "asteroidplating";
+	icon_state = "asteroidplating";
+	temperature = 363.9
 	},
 /area/awaymission/undergroundoutpost45/caves)
 "ev" = (
-/obj/item/clothing/under/pj/red,
+/obj/item/clothing/under/misc/pj/red,
 /obj/structure/closet/secure_closet{
 	desc = "It's a secure locker for personnel. The first card swiped gains control.";
 	icon_state = "cabinet";
@@ -3124,7 +3130,7 @@
 	name = "Kitchen Crate"
 	},
 /obj/item/storage/box/mousetraps,
-/obj/item/clothing/under/waiter,
+/obj/item/clothing/under/suit/waiter,
 /obj/effect/decal/cleanable/dirt,
 /turf/open/floor/plasteel/showroomfloor{
 	heat_capacity = 1e+006
@@ -3598,7 +3604,7 @@
 "hn" = (
 /obj/structure/table,
 /obj/item/stack/packageWrap,
-/obj/item/reagent_containers/glass/rag,
+/obj/item/reagent_containers/rag,
 /obj/effect/turf_decal/tile/bar,
 /obj/effect/turf_decal/tile/bar{
 	dir = 1
@@ -5257,7 +5263,7 @@
 	},
 /area/awaymission/undergroundoutpost45/gateway)
 "km" = (
-/obj/item/clothing/under/suit_jacket/navy,
+/obj/item/clothing/under/suit/navy,
 /obj/structure/closet/secure_closet{
 	desc = "It's a secure locker for personnel. The first card swiped gains control.";
 	icon_state = "cabinet";
@@ -9700,7 +9706,7 @@
 	name = "personal closet";
 	req_access_txt = "201"
 	},
-/obj/item/clothing/under/pj/red,
+/obj/item/clothing/under/misc/pj/red,
 /turf/open/floor/carpet{
 	heat_capacity = 1e+006
 	},
@@ -13942,19 +13948,6 @@
 	temperature = 363.9
 	},
 /area/awaymission/undergroundoutpost45/caves)
-"zi" = (
-/obj/effect/mapping_helpers/planet_z,
-/turf/open/space,
-/area/space/nearstation)
-"Hn" = (
-/turf/open/floor/plating{
-	heat_capacity = 1e+006;
-	icon_state = "panelscorched"
-	},
-/area/awaymission/undergroundoutpost45/caves)
-"Jt" = (
-/turf/open/floor/plating,
-/area/awaymission/undergroundoutpost45/caves)
 "KE" = (
 /obj/machinery/atmospherics/components/unary/vent_pump/on{
 	dir = 4
@@ -14217,7 +14210,7 @@ aa
 aa
 aa
 aa
-zi
+ah
 "}
 (2,1,1) = {"
 aa
@@ -42633,7 +42626,7 @@ tT
 gy
 uN
 hH
-Jt
+eu
 eJ
 ad
 ad
@@ -43147,7 +43140,7 @@ tV
 ux
 uP
 hH
-Jt
+eu
 eJ
 eJ
 eJ
@@ -48818,7 +48811,7 @@ ww
 xZ
 yc
 ww
-Jt
+eu
 eJ
 eJ
 eJ
@@ -49332,7 +49325,7 @@ xY
 yb
 ye
 ww
-Jt
+eu
 eJ
 eJ
 eJ
@@ -51334,8 +51327,8 @@ ad
 ad
 ad
 eu
-Hn
-Jt
+eu
+eu
 fn
 eJ
 eJ

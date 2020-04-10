@@ -19,8 +19,8 @@
 	store_file(new/datum/computer_file/program/filemanager(src))		// File manager, allows text editor functions and basic file manipulation.
 
 /obj/item/computer_hardware/hard_drive/examine(user)
-	..()
-	to_chat(user, "<span class='notice'>It has [max_capacity] GQ of storage capacity.</span>")
+	. = ..()
+	. += "<span class='notice'>It has [max_capacity] GQ of storage capacity.</span>"
 
 /obj/item/computer_hardware/hard_drive/diagnostics(var/mob/user)
 	..()
@@ -158,8 +158,7 @@
 	icon_state = "ssd_mini"
 	w_class = WEIGHT_CLASS_TINY
 
-// Syndicate variant - very slight better
-/obj/item/computer_hardware/hard_drive/small/syndicate
+/obj/item/computer_hardware/hard_drive/small/syndicate	// Syndicate variant - very slight better
 	desc = "An efficient SSD for portable devices developed by a rival organisation."
 	power_usage = 8
 	max_capacity = 70

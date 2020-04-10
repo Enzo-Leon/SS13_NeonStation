@@ -2,7 +2,7 @@
 	name = "gas mask"
 	desc = "A face-covering mask that can be connected to an air supply. While good for concealing your identity, it isn't good for blocking gas flow." //More accurate
 	icon_state = "gas_alt"
-	clothing_flags = BLOCK_GAS_SMOKE_EFFECT | MASKINTERNALS
+	clothing_flags = BLOCK_GAS_SMOKE_EFFECT | ALLOWINTERNALS
 	flags_inv = HIDEEARS|HIDEEYES|HIDEFACE|HIDEFACIALHAIR|HIDESNOUT
 	w_class = WEIGHT_CLASS_NORMAL
 	item_state = "gas_alt"
@@ -10,7 +10,7 @@
 	permeability_coefficient = 0.01
 	flags_cover = MASKCOVERSEYES | MASKCOVERSMOUTH
 	resistance_flags = NONE
-	mutantrace_variation = MUTANTRACE_VARIATION
+	mutantrace_variation = STYLE_MUZZLE
 
 /obj/item/clothing/mask/gas/glass
 	name = "glass gas mask"
@@ -25,7 +25,7 @@
 	name = "welding mask"
 	desc = "A gas mask with built-in welding goggles and a face shield. Looks like a skull - clearly designed by a nerd."
 	icon_state = "weldingmask"
-	materials = list(MAT_METAL=4000, MAT_GLASS=2000)
+	custom_materials = list(/datum/material/iron=4000, /datum/material/glass=2000)
 	flash_protect = 2
 	tint = 2
 	armor = list("melee" = 10, "bullet" = 0, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 100, "acid" = 55)
@@ -38,6 +38,12 @@
 
 /obj/item/clothing/mask/gas/welding/attack_self(mob/user)
 	weldingvisortoggle(user)
+
+/obj/item/clothing/mask/gas/welding/up
+
+/obj/item/clothing/mask/gas/welding/up/Initialize()
+	..()
+	visor_toggling()
 
 
 // ********************************************************************
@@ -59,7 +65,7 @@
 /obj/item/clothing/mask/gas/clown_hat
 	name = "clown wig and mask"
 	desc = "A true prankster's facial attire. A clown is incomplete without his wig and mask."
-	clothing_flags = MASKINTERNALS
+	clothing_flags = ALLOWINTERNALS
 	icon_state = "clown"
 	item_state = "clown_hat"
 	flags_cover = MASKCOVERSEYES
@@ -91,7 +97,7 @@
 /obj/item/clothing/mask/gas/sexyclown
 	name = "sexy-clown wig and mask"
 	desc = "A feminine clown mask for the dabbling crossdressers or female entertainers."
-	clothing_flags = MASKINTERNALS
+	clothing_flags = ALLOWINTERNALS
 	icon_state = "sexyclown"
 	item_state = "sexyclown"
 	flags_cover = MASKCOVERSEYES
@@ -100,7 +106,7 @@
 /obj/item/clothing/mask/gas/mime
 	name = "mime mask"
 	desc = "The traditional mime's mask. It has an eerie facial posture."
-	clothing_flags = MASKINTERNALS
+	clothing_flags = ALLOWINTERNALS
 	icon_state = "mime"
 	item_state = "mime"
 	flags_cover = MASKCOVERSEYES
@@ -132,7 +138,7 @@
 /obj/item/clothing/mask/gas/monkeymask
 	name = "monkey mask"
 	desc = "A mask used when acting as a monkey."
-	clothing_flags = MASKINTERNALS
+	clothing_flags = ALLOWINTERNALS
 	icon_state = "monkeymask"
 	item_state = "monkeymask"
 	flags_cover = MASKCOVERSEYES
@@ -141,7 +147,7 @@
 /obj/item/clothing/mask/gas/sexymime
 	name = "sexy mime mask"
 	desc = "A traditional female mime's mask."
-	clothing_flags = MASKINTERNALS
+	clothing_flags = ALLOWINTERNALS
 	icon_state = "sexymime"
 	item_state = "sexymime"
 	flags_cover = MASKCOVERSEYES
@@ -162,7 +168,7 @@
 	name = "owl mask"
 	desc = "Twoooo!"
 	icon_state = "owl"
-	clothing_flags = MASKINTERNALS
+	clothing_flags = ALLOWINTERNALS
 	flags_cover = MASKCOVERSEYES
 	resistance_flags = FLAMMABLE
 

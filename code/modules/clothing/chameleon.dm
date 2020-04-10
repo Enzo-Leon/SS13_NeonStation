@@ -60,7 +60,7 @@
 		to_chat(owner, "<span class='warning'>You shouldn't be able to toggle a camogear helmetmask if you're not wearing it</span>")
 	if(new_headgear)
 		// Force drop the item in the headslot, even though
-		// it's NODROP_1
+		// it's TRAIT_NODROP
 		D.dropItemToGround(target, TRUE)
 		qdel(old_headgear)
 		// where is `SLOT_HEAD` defined? WHO KNOWS
@@ -220,11 +220,28 @@
 		var/obj/item/I = target
 		I.item_state = initial(picked_item.item_state)
 		I.item_color = initial(picked_item.item_color)
-		if(istype(I, /obj/item/clothing) && istype(initial(picked_item), /obj/item/clothing))
-			var/obj/item/clothing/CL = I
-			var/obj/item/clothing/PCL = picked_item
-			CL.flags_cover = initial(PCL.flags_cover)
+	var/obj/item/clothing/CL = target
+	var/obj/item/clothing/PCL = new picked_item
+	if(istype(CL) && istype(PCL))
+		CL.flags_cover = PCL.flags_cover
+		CL.flags_inv = PCL.flags_inv
+		CL.mutantrace_variation = PCL.mutantrace_variation
+		CL.alternate_worn_icon = PCL.alternate_worn_icon
+		qdel(PCL)
 	target.icon = initial(picked_item.icon)
+
+/datum/action/item_action/chameleon/change/pda/update_item(obj/item/pda/picked_item)
+	if(!istype(target, /obj/item/pda))
+		return ..()
+	var/obj/item/pda/P = target
+	P.name = initial(picked_item.name)
+	P.desc = initial(picked_item.desc)
+	P.icon_state = initial(picked_item.icon_state)
+	P.item_state = initial(picked_item.item_state)
+	P.item_color = initial(picked_item.item_color)
+	P.overlays_offsets = initial(picked_item.overlays_offsets)
+	P.set_new_overlays()
+	P.update_icon()
 
 /datum/action/item_action/chameleon/change/Trigger()
 	if(!IsAvailable())
@@ -405,12 +422,12 @@
 /obj/item/clothing/head/chameleon/drone
 	// The camohat, I mean, holographic hat projection, is part of the
 	// drone itself.
-	item_flags = NODROP
 	armor = list("melee" = 0, "bullet" = 0, "laser" = 0, "energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
 	// which means it offers no protection, it's just air and light
 
 /obj/item/clothing/head/chameleon/drone/Initialize()
 	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, ABSTRACT_ITEM_TRAIT)
 	chameleon_action.random_look()
 	var/datum/action/item_action/chameleon/drone/togglehatmask/togglehatmask_action = new(src)
 	togglehatmask_action.UpdateButtonIcon()
@@ -424,13 +441,13 @@
 	item_state = "gas_alt"
 	resistance_flags = NONE
 	armor = list("melee" = 5, "bullet" = 5, "laser" = 5, "energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 50, "acid" = 50)
-	clothing_flags = BLOCK_GAS_SMOKE_EFFECT | MASKINTERNALS
+	clothing_flags = BLOCK_GAS_SMOKE_EFFECT | ALLOWINTERNALS
 	flags_inv = HIDEEARS|HIDEEYES|HIDEFACE|HIDEFACIALHAIR
 	gas_transfer_coefficient = 0.01
 	permeability_coefficient = 0.01
 	flags_cover = MASKCOVERSEYES | MASKCOVERSMOUTH
 
-	var/vchange = 1
+	var/voice_change = 1 ///This determines if the voice changer is on or off.
 
 	var/datum/action/item_action/chameleon/change/chameleon_action
 
@@ -453,19 +470,18 @@
 	chameleon_action.emp_randomise(INFINITY)
 
 /obj/item/clothing/mask/chameleon/attack_self(mob/user)
-	vchange = !vchange
-	to_chat(user, "<span class='notice'>The voice changer is now [vchange ? "on" : "off"]!</span>")
-
+	voice_change = !voice_change
+	to_chat(user, "<span class='notice'>The voice changer is now [voice_change ? "on" : "off"]!</span>")
 
 /obj/item/clothing/mask/chameleon/drone
 	//Same as the drone chameleon hat, undroppable and no protection
-	item_flags = NODROP
 	armor = list("melee" = 0, "bullet" = 0, "laser" = 0, "energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
 	// Can drones use the voice changer part? Let's not find out.
-	vchange = 0
+	voice_change = 0
 
 /obj/item/clothing/mask/chameleon/drone/Initialize()
 	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, ABSTRACT_ITEM_TRAIT)
 	chameleon_action.random_look()
 	var/datum/action/item_action/chameleon/drone/togglehatmask/togglehatmask_action = new(src)
 	togglehatmask_action.UpdateButtonIcon()
@@ -548,7 +564,7 @@
 
 /obj/item/storage/belt/chameleon/ComponentInitialize()
 	. = ..()
-	GET_COMPONENT(STR, /datum/component/storage)
+	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
 	STR.silent = TRUE
 
 /obj/item/storage/belt/chameleon/emp_act(severity)
@@ -584,7 +600,7 @@
 
 /obj/item/pda/chameleon
 	name = "PDA"
-	var/datum/action/item_action/chameleon/change/chameleon_action
+	var/datum/action/item_action/chameleon/change/pda/chameleon_action
 
 /obj/item/pda/chameleon/Initialize()
 	. = ..()
@@ -617,3 +633,28 @@
 /obj/item/stamp/chameleon/broken/Initialize()
 	. = ..()
 	chameleon_action.emp_randomise(INFINITY)
+
+/obj/item/clothing/neck/cloak/chameleon
+	name = "black tie"
+	desc = "A neosilk clip-on tie."
+	icon = 'icons/obj/clothing/neck.dmi'
+	icon_state = "blacktie"
+	item_color = "blacktie"
+	resistance_flags = NONE
+	armor = list("melee" = 0, "bullet" = 0, "laser" = 0, "energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 50, "acid" = 50)
+
+/obj/item/clothing/neck/cloak/chameleon
+	var/datum/action/item_action/chameleon/change/chameleon_action
+
+/obj/item/clothing/neck/cloak/chameleon/Initialize()
+	. = ..()
+	chameleon_action = new(src)
+	chameleon_action.chameleon_type = /obj/item/clothing/neck
+	chameleon_action.chameleon_name = "Cloak"
+	chameleon_action.initialize_disguises()
+
+/obj/item/clothing/neck/cloak/chameleon/emp_act(severity)
+	. = ..()
+	if(. & EMP_PROTECT_SELF)
+		return
+	chameleon_action.emp_randomise()

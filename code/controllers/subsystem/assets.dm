@@ -11,10 +11,11 @@ SUBSYSTEM_DEF(assets)
 		/datum/asset/simple/oui_theme_nano,
 		/datum/asset/simple/goonchat
 		)
+
 	for(var/type in priority_assets)
 		var/datum/asset/A = new type()
 		A.register()
-
+	
 	for(var/type in typesof(/datum/asset) - (priority_assets | list(/datum/asset, /datum/asset/simple)))
 		var/datum/asset/A = type
 		if (type != initial(A._abstract))

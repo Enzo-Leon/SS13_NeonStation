@@ -31,7 +31,7 @@ GLOBAL_VAR_INIT(normal_aooc_colour, "#ce254f")
 	if(QDELETED(src))
 		return
 
-	msg = copytext(sanitize(msg), 1, MAX_MESSAGE_LEN)
+	msg = copytext_char(sanitize(msg), 1, MAX_MESSAGE_LEN)
 	var/raw_msg = msg
 
 	if(!msg)
@@ -51,19 +51,9 @@ GLOBAL_VAR_INIT(normal_aooc_colour, "#ce254f")
 	mob.log_talk(raw_msg,LOG_OOC, tag="(AOOC)")
 
 	var/keyname = key
-	if((prefs.unlock_content) && (prefs.donor_lvl != "0"))
-		if(prefs.toggles & MEMBER_PUBLIC & DONOR_PUBLIC)
-			keyname = "<font color='[prefs.ooccolor ? prefs.ooccolor : GLOB.normal_ooc_colour]'>[icon2html('icons/member_content.dmi', world, "blag")][icon2html('icons/member_content.dmi', world, "donor")][keyname]</font>"
+	if(prefs.unlock_content)
 		if(prefs.toggles & MEMBER_PUBLIC)
-			keyname = "<font color='[prefs.ooccolor ? prefs.ooccolor : GLOB.normal_ooc_colour]'>[icon2html('icons/member_content.dmi', world, "blag")][keyname]</font>"
-		if(prefs.toggles & DONOR_PUBLIC)
-			keyname = "<font color='[prefs.ooccolor ? prefs.ooccolor : GLOB.normal_ooc_colour]'>[icon2html('icons/member_content.dmi', world, "donor")][keyname]</font>"
-	else if((prefs.unlock_content) && (prefs.donor_lvl == "0"))
-		if(prefs.toggles & MEMBER_PUBLIC)
-			keyname = "<font color='[prefs.ooccolor ? prefs.ooccolor : GLOB.normal_ooc_colour]'>[icon2html('icons/member_content.dmi', world, "blag")][keyname]</font>"
-	else if((!prefs.unlock_content) && (prefs.donor_lvl != "0"))
-		if(prefs.toggles & DONOR_PUBLIC)
-			keyname = "<font color='[prefs.ooccolor ? prefs.ooccolor : GLOB.normal_ooc_colour]'>[icon2html('icons/member_content.dmi', world, "donor")][keyname]</font>"
+			keyname = "<font color='[prefs.aooccolor ? prefs.aooccolor : GLOB.normal_aooc_colour]'>[icon2html('icons/member_content.dmi', world, "blag")][keyname]</font>"
 	//The linkify span classes and linkify=TRUE below make ooc text get clickable chat href links if you pass in something resembling a url
 
 	var/antaglisting = list()
@@ -126,7 +116,7 @@ GLOBAL_VAR_INIT(normal_aooc_colour, "#ce254f")
 		antaglisting |= M.current.client
 
 	for(var/mob/M in GLOB.player_list)
-		if(M.client && (M.stat == DEAD || M.client.holder))
+		if(M.client && (M.stat == DEAD || M.client.holder || is_special_character(M)))
 			antaglisting |= M.client
 
 	for(var/client/C in antaglisting)

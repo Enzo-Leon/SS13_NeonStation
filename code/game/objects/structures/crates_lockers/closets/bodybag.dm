@@ -38,16 +38,22 @@
 		tagged = 0
 		update_icon()
 
-/obj/structure/closet/body_bag/update_icon()
-	..()
+/obj/structure/closet/body_bag/update_overlays()
+	. = ..()
 	if (tagged)
-		add_overlay("bodybag_label")
+		. += "bodybag_label"
 
 /obj/structure/closet/body_bag/close()
 	if(..())
 		density = FALSE
 		return 1
 	return 0
+
+/obj/structure/closet/body_bag/handle_lock_addition()
+	return
+
+/obj/structure/closet/body_bag/handle_lock_removal()
+	return
 
 /obj/structure/closet/body_bag/MouseDrop(over_object, src_location, over_location)
 	. = ..()

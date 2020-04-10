@@ -18,17 +18,18 @@
 		if(health<= -maxHealth || !getorgan(/obj/item/organ/brain))
 			death()
 			return
-		if(IsUnconscious() || IsSleeping() || getOxyLoss() > 50 || (has_trait(TRAIT_DEATHCOMA)) || health <= crit_threshold)
+		if(IsUnconscious() || IsSleeping() || getOxyLoss() > 50 || (HAS_TRAIT(src, TRAIT_DEATHCOMA)) || health <= crit_threshold)
 			if(stat == CONSCIOUS)
 				stat = UNCONSCIOUS
-				blind_eyes(1)
-				update_canmove()
+				if(!eye_blind)
+					blind_eyes(1)
+				update_mobility()
 		else
 			if(stat == UNCONSCIOUS)
 				stat = CONSCIOUS
-				if(!recoveringstam)
-					resting = 0
+				if(!(combat_flags & COMBAT_FLAG_HARD_STAMCRIT))
+					set_resting(FALSE, TRUE)
 				adjust_blindness(-1)
-				update_canmove()
+				update_mobility()
 	update_damage_hud()
 	update_health_hud()

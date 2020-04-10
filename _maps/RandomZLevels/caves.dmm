@@ -103,7 +103,7 @@
 	},
 /area/awaymission/caves/BMP_asteroid/level_four)
 "at" = (
-/mob/living/simple_animal/hostile/spawner/skeleton,
+/obj/structure/spawner/skeleton,
 /turf/open/floor/plating/asteroid/basalt/lava{
 	initial_gas_mix = "n2=23;o2=14"
 	},
@@ -164,7 +164,7 @@
 	},
 /area/awaymission/caves/BMP_asteroid/level_four)
 "aB" = (
-/mob/living/simple_animal/hostile/spawner/skeleton,
+/obj/structure/spawner/skeleton,
 /turf/open/floor/engine/cult{
 	initial_gas_mix = "n2=23;o2=14"
 	},
@@ -374,7 +374,7 @@
 	},
 /area/awaymission/caves/BMP_asteroid/level_three)
 "be" = (
-/mob/living/simple_animal/hostile/spawner/mining/goliath,
+/obj/structure/spawner/mining/goliath,
 /turf/open/floor/plating/asteroid/basalt{
 	initial_gas_mix = "n2=23;o2=14"
 	},
@@ -504,7 +504,7 @@
 /area/awaymission/caves/BMP_asteroid/level_three)
 "bw" = (
 /obj/effect/decal/cleanable/blood,
-/mob/living/simple_animal/hostile/spawner/skeleton,
+/obj/structure/spawner/skeleton,
 /turf/open/floor/engine/cult{
 	initial_gas_mix = "n2=23;o2=14"
 	},
@@ -580,7 +580,7 @@
 /area/awaymission/caves/BMP_asteroid/level_four)
 "bH" = (
 /obj/effect/decal/remains/human,
-/obj/item/clothing/under/patriotsuit,
+/obj/item/clothing/under/misc/patriotsuit,
 /turf/open/floor/plating/asteroid/basalt/lava{
 	initial_gas_mix = "n2=23;o2=14"
 	},
@@ -873,7 +873,7 @@
 /obj/structure/window/reinforced{
 	dir = 4
 	},
-/obj/effect/decal/cleanable/xenoblood,
+/obj/effect/decal/cleanable/blood/xeno,
 /turf/open/floor/plating{
 	initial_gas_mix = "n2=23;o2=14"
 	},
@@ -924,13 +924,13 @@
 /area/awaymission/caves/BMP_asteroid/level_two)
 "cK" = (
 /obj/structure/sign/warning/securearea{
-	desc = "A warning sign which reads 'What are you doing man'.";
-	name = "\improper What are you doing man"
+	desc = "A warning sign which reads 'HOLY SHIT DUDE WHAT ARE YOU DOING'.";
+	name = "\improper HOLY SHIT DUDE WHAT ARE YOU DOING"
 	},
 /turf/closed/wall,
 /area/awaymission/caves/BMP_asteroid/level_two)
 "cL" = (
-/mob/living/simple_animal/hostile/spawner/mining/basilisk,
+/obj/structure/spawner/mining/basilisk,
 /turf/open/floor/plating/asteroid/basalt{
 	initial_gas_mix = "n2=23;o2=14"
 	},
@@ -945,7 +945,7 @@
 /area/awaymission/caves/research)
 "cN" = (
 /obj/machinery/door/window/eastleft,
-/obj/effect/decal/cleanable/xenoblood/xgibs,
+/obj/effect/decal/cleanable/blood/gibs/xeno,
 /turf/open/floor/plating{
 	initial_gas_mix = "n2=23;o2=14"
 	},
@@ -1015,7 +1015,7 @@
 	},
 /area/awaymission/caves/BMP_asteroid/level_two)
 "cV" = (
-/obj/effect/decal/cleanable/xenoblood/xgibs,
+/obj/effect/decal/cleanable/blood/gibs/xeno,
 /turf/open/floor/plating{
 	initial_gas_mix = "n2=23;o2=14"
 	},
@@ -1644,7 +1644,7 @@
 /turf/open/floor/plasteel,
 /area/awaymission/caves/listeningpost)
 "fb" = (
-/mob/living/simple_animal/hostile/spawner/mining/hivelord,
+/obj/structure/spawner/mining/hivelord,
 /turf/open/floor/plating/asteroid/basalt{
 	initial_gas_mix = "n2=23;o2=14"
 	},
@@ -1699,6 +1699,14 @@
 /obj/machinery/door/airlock/external,
 /turf/open/floor/plating,
 /area/awaymission/caves/listeningpost)
+"fj" = (
+/obj/effect/mob_spawn/human/skeleton/alive{
+	name = "spooky skeleton remains"
+	},
+/turf/open/floor/plating/asteroid/basalt{
+	initial_gas_mix = "n2=23;o2=14"
+	},
+/area/awaymission/caves/BMP_asteroid/level_two)
 "fk" = (
 /obj/item/grenade/syndieminibomb/concussion,
 /turf/open/floor/plating/asteroid/basalt{
@@ -2125,7 +2133,7 @@
 /turf/open/floor/plasteel/recharge_floor,
 /area/awaymission/caves/BMP_asteroid)
 "gD" = (
-/mob/living/simple_animal/hostile/spawner/mining/hivelord,
+/obj/structure/spawner/mining/hivelord,
 /turf/open/floor/plating/asteroid/basalt{
 	initial_gas_mix = "n2=23;o2=14"
 	},
@@ -2198,7 +2206,7 @@
 	},
 /area/awaymission/caves/BMP_asteroid)
 "gQ" = (
-/mob/living/simple_animal/hostile/spawner/mining/basilisk,
+/obj/structure/spawner/mining/basilisk,
 /turf/open/floor/plating/asteroid/basalt{
 	initial_gas_mix = "n2=23;o2=14"
 	},
@@ -2243,10 +2251,6 @@
 	initial_gas_mix = "n2=23;o2=14"
 	},
 /area/awaymission/caves/BMP_asteroid)
-"gW" = (
-/obj/effect/mapping_helpers/planet_z,
-/turf/closed/indestructible/rock,
-/area/space/nearstation)
 "gX" = (
 /obj/effect/baseturf_helper/lava,
 /turf/closed/mineral/volcanic,
@@ -2272,12 +2276,6 @@
 /obj/effect/baseturf_helper/asteroid/basalt,
 /turf/closed/wall,
 /area/awaymission/caves/northblock)
-"Td" = (
-/mob/living/simple_animal/hostile/skeleton,
-/turf/open/floor/plating/asteroid/basalt{
-	initial_gas_mix = "n2=23;o2=14"
-	},
-/area/awaymission/caves/BMP_asteroid/level_two)
 
 (1,1,1) = {"
 aa
@@ -2534,7 +2532,7 @@ aa
 aa
 aa
 aa
-gW
+aa
 "}
 (2,1,1) = {"
 aa
@@ -59793,7 +59791,7 @@ bK
 bK
 bK
 bJ
-Td
+bJ
 cq
 bJ
 bJ
@@ -60050,7 +60048,7 @@ bK
 bK
 bJ
 bJ
-fl
+fj
 fd
 bK
 bK

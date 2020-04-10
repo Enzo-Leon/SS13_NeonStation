@@ -172,8 +172,8 @@
 		var/datum/gas_mixture/GM = T.air
 		if(!GM.gases[/datum/gas/oxygen])
 			return
-		GM.gases[/datum/gas/oxygen][MOLES] = max(GM.gases[/datum/gas/oxygen][MOLES] - severity * holder.energy, 0)
-		GM.garbage_collect()
+		GM.gases[/datum/gas/oxygen] = max(GM.gases[/datum/gas/oxygen] - severity * holder.energy, 0)
+		GAS_GARBAGE_COLLECT(GM.gases)
 
 /datum/spacevine_mutation/nitro_eater
 	name = "nitrogen consuming"
@@ -187,8 +187,8 @@
 		var/datum/gas_mixture/GM = T.air
 		if(!GM.gases[/datum/gas/nitrogen])
 			return
-		GM.gases[/datum/gas/nitrogen][MOLES] = max(GM.gases[/datum/gas/nitrogen][MOLES] - severity * holder.energy, 0)
-		GM.garbage_collect()
+		GM.gases[/datum/gas/nitrogen] = max(GM.gases[/datum/gas/nitrogen] - severity * holder.energy, 0)
+		GAS_GARBAGE_COLLECT(GM.gases)
 
 /datum/spacevine_mutation/carbondioxide_eater
 	name = "CO2 consuming"
@@ -202,8 +202,8 @@
 		var/datum/gas_mixture/GM = T.air
 		if(!GM.gases[/datum/gas/carbon_dioxide])
 			return
-		GM.gases[/datum/gas/carbon_dioxide][MOLES] = max(GM.gases[/datum/gas/carbon_dioxide][MOLES] - severity * holder.energy, 0)
-		GM.garbage_collect()
+		GM.gases[/datum/gas/carbon_dioxide] = max(GM.gases[/datum/gas/carbon_dioxide] - severity * holder.energy, 0)
+		GAS_GARBAGE_COLLECT(GM.gases)
 
 /datum/spacevine_mutation/plasma_eater
 	name = "toxins consuming"
@@ -217,8 +217,8 @@
 		var/datum/gas_mixture/GM = T.air
 		if(!GM.gases[/datum/gas/plasma])
 			return
-		GM.gases[/datum/gas/plasma][MOLES] = max(GM.gases[/datum/gas/plasma][MOLES] - severity * holder.energy, 0)
-		GM.garbage_collect()
+		GM.gases[/datum/gas/plasma] = max(GM.gases[/datum/gas/plasma] - severity * holder.energy, 0)
+		GAS_GARBAGE_COLLECT(GM.gases)
 
 /datum/spacevine_mutation/thorns
 	name = "thorny"
@@ -251,7 +251,7 @@
 	holder.obj_integrity = holder.max_integrity
 
 /datum/spacevine_mutation/woodening/on_hit(obj/structure/spacevine/holder, mob/living/hitter, obj/item/I, expected_damage)
-	if(I.is_sharp())
+	if(I.get_sharpness())
 		. = expected_damage * 0.5
 	else
 		. = expected_damage
@@ -292,7 +292,7 @@
 	add_atom_colour("#ffffff", FIXED_COLOUR_PRIORITY)
 
 /obj/structure/spacevine/examine(mob/user)
-	..()
+	. = ..()
 	var/text = "This one is a"
 	if(mutations.len)
 		for(var/A in mutations)
@@ -301,7 +301,7 @@
 	else
 		text += " normal"
 	text += " vine."
-	to_chat(user, text)
+	. += text
 
 /obj/structure/spacevine/Destroy()
 	for(var/datum/spacevine_mutation/SM in mutations)
@@ -331,7 +331,7 @@
 
 /obj/structure/spacevine/attacked_by(obj/item/I, mob/living/user)
 	var/damage_dealt = I.force
-	if(I.is_sharp())
+	if(I.get_sharpness())
 		damage_dealt *= 4
 	if(I.damtype == BURN)
 		damage_dealt *= 4
@@ -393,17 +393,13 @@
 
 /datum/spacevine_controller/vv_get_dropdown()
 	. = ..()
-	. += "---"
-	.["Delete Vines"] = "?_src_=[REF(src)];[HrefToken()];purge_vines=1"
+	VV_DROPDOWN_OPTION(VV_HK_SPACEVINE_PURGE, "Delete Vines")
 
-/datum/spacevine_controller/Topic(href, href_list)
-	if(..() || !check_rights(R_ADMIN, FALSE) || !usr.client.holder.CheckAdminHref(href, href_list))
-		return
-
-	if(href_list["purge_vines"])
-		if(alert(usr, "Are you sure you want to delete this spacevine cluster?", "Delete Vines", "Yes", "No") != "Yes")
-			return
-		DeleteVines()
+/datum/spacevine_controller/vv_do_topic(href_list)
+	. = ..()
+	if(href_list[VV_HK_SPACEVINE_PURGE])
+		if(alert(usr, "Are you sure you want to delete this spacevine cluster?", "Delete Vines", "Yes", "No") == "Yes")
+			DeleteVines()
 
 /datum/spacevine_controller/proc/DeleteVines()	//this is kill
 	QDEL_LIST(vines)	//this will also qdel us

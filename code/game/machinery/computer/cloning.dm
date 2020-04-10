@@ -1,4 +1,4 @@
-#define AUTOCLONING_MINIMAL_LEVEL 3
+#define AUTOCLONING_MINIMAL_LEVEL 4
 
 /obj/machinery/computer/cloning
 	name = "cloning console"
@@ -13,17 +13,20 @@
 	var/scantemp_ckey
 	var/scantemp = "Ready to Scan"
 	var/menu = 1 //Which menu screen to display
-	var/list/records = list()
 	var/datum/data/record/active_record = null
 	var/obj/item/disk/data/diskette = null //Mostly so the geneticist can steal everything.
 	var/loading = 0 // Nice loading text
 	var/autoprocess = 0
+	var/list/records = list()
 
 	light_color = LIGHT_COLOR_BLUE
 
 /obj/machinery/computer/cloning/Initialize()
 	. = ..()
 	updatemodules(TRUE)
+	var/obj/item/circuitboard/computer/cloning/board = circuit
+	records = board.records
+
 
 /obj/machinery/computer/cloning/Destroy()
 	if(pods)
@@ -60,9 +63,6 @@
 /obj/machinery/computer/cloning/process()
 	if(!(scanner && LAZYLEN(pods) && autoprocess))
 		return
-
-	if(scanner.occupant && scanner.scan_level > 2)
-		scan_occupant(scanner.occupant)
 
 	for(var/datum/data/record/R in records)
 		var/obj/machinery/clonepod/pod = GetAvailableEfficientPod(R.fields["mind"])
@@ -159,11 +159,11 @@
 
 	if(scanner && HasEfficientPod() && scanner.scan_level >= AUTOCLONING_MINIMAL_LEVEL)
 		if(!autoprocess)
-			dat += "<a href='byond://?src=[REF(src)];task=autoprocess'>Autoprocess</a>"
+			dat += "<a href='byond://?src=[REF(src)];task=autoprocess'>Autoclone</a>"
 		else
-			dat += "<a href='byond://?src=[REF(src)];task=stopautoprocess'>Stop autoprocess</a>"
+			dat += "<a href='byond://?src=[REF(src)];task=stopautoprocess'>Stop autoclone</a>"
 	else
-		dat += "<span class='linkOff'>Autoprocess</span>"
+		dat += "<span class='linkOff'>Autoclone</span>"
 	dat += "<h3>Cloning Pod Status</h3>"
 	dat += "<div class='statusDisplay'>[temp]&nbsp;</div>"
 
@@ -228,7 +228,7 @@
 				dat += "<h4>[src.active_record.fields["name"]]</h4>"
 				dat += "Scan ID [src.active_record.fields["id"]] <a href='byond://?src=[REF(src)];clone=[active_record.fields["id"]]'>Clone</a><br>"
 
-				var/obj/item/implant/health/H = locate(src.active_record.fields["imp"])
+				var/obj/item/implant/health/H = locate(active_record.fields["imp"])
 
 				if ((H) && (istype(H)))
 					dat += "<b>Health Implant Data:</b><br />[H.sensehealth()]<br><br />"
@@ -298,13 +298,15 @@
 		src.updateUsrDialog()
 		playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
 		say("Initiating scan...")
-
+		var/prev_locked = scanner.locked
+		scanner.locked = TRUE
 		spawn(20)
 			src.scan_occupant(scanner.occupant)
 
 			loading = 0
 			src.updateUsrDialog()
 			playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, 0)
+			scanner.locked = prev_locked
 
 
 		//No locking an open scanner.
@@ -346,6 +348,8 @@
 					active_record = null
 					playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, 0)
 					src.menu = 2
+					var/obj/item/circuitboard/computer/cloning/board = circuit
+					board.records = records
 				else
 					src.temp = "<font class='bad'>Access Denied.</font>"
 					playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, 0)
@@ -368,6 +372,8 @@
 				for(var/key in diskette.fields)
 					src.active_record.fields[key] = diskette.fields[key]
 				src.temp = "Load successful."
+				var/obj/item/circuitboard/computer/cloning/board = circuit
+				board.records = records
 				playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, 0)
 
 			if("eject")
@@ -442,10 +448,6 @@
 		var/mob/living/brain/B = mob_occupant
 		dna = B.stored_dna
 
-	if(mob_occupant.has_trait(TRAIT_NEVER_CLONE))
-		scantemp = "<font class='bad'>Subject has an active DNC record on file. Unable to clone.</font>"
-		playsound(src, 'sound/machines/terminal_alert.ogg', 50, 0)
-		return
 	if(!istype(dna))
 		scantemp = "<font class='bad'>Unable to locate valid genetic data.</font>"
 		playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, 0)
@@ -454,8 +456,8 @@
 		scantemp = "<font class='bad'>Subject's brain is not responding to scanning stimuli.</font>"
 		playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, 0)
 		return
-	if((mob_occupant.has_trait(TRAIT_NOCLONE)) && (src.scanner.scan_level < 2))
-		scantemp = "<font class='bad'>Subject either has a DNR record on file or no longer contains the fundamental materials required to create a living clone.</font>"
+	if((HAS_TRAIT(mob_occupant, TRAIT_NOCLONE)) && (src.scanner.scan_level < 2))
+		scantemp = "<font class='bad'>Subject no longer contains the fundamental materials required to create a living clone.</font>"
 		playsound(src, 'sound/machines/terminal_alert.ogg', 50, 0)
 		return
 	if ((!mob_occupant.ckey) || (!mob_occupant.client))
@@ -480,10 +482,10 @@
 
 	R.fields["ckey"] = mob_occupant.ckey
 	R.fields["name"] = mob_occupant.real_name
-	R.fields["id"] = copytext(md5(mob_occupant.real_name), 2, 6)
+	R.fields["id"] = copytext_char(md5(mob_occupant.real_name), 2, 6)
 	R.fields["UE"] = dna.unique_enzymes
 	R.fields["UI"] = dna.uni_identity
-	R.fields["SE"] = dna.struc_enzymes
+	R.fields["SE"] = dna.mutation_index
 	R.fields["blood_type"] = dna.blood_type
 	R.fields["features"] = dna.features
 	R.fields["factions"] = mob_occupant.faction
@@ -506,5 +508,7 @@
 	R.fields["imp"] = "[REF(imp)]"
 
 	src.records += R
+	var/obj/item/circuitboard/computer/cloning/board = circuit
+	board.records = records
 	scantemp = "Subject successfully scanned."
 	playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, 0)

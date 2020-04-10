@@ -85,7 +85,7 @@ GLOBAL_LIST(round_end_notifiees)
 		return "[sender.mention], the round has already ended!"
 	LAZYINITLIST(GLOB.round_end_notifiees)
 	GLOB.round_end_notifiees["<@[sender.mention]>"] = TRUE
-	return "I will notify <@[sender.mention]> when the round ends."
+	return "I will notify [sender.mention] when the round ends."
 
 /datum/tgs_chat_command/sdql
 	name = "sdql"
@@ -137,7 +137,8 @@ GLOBAL_LIST(round_end_notifiees)
 		return "The Database is not enabled!"
 
 	GLOB.bunker_passthrough |= ckey(params)
-
+	GLOB.bunker_passthrough[ckey(params)] = world.realtime
+	SSpersistence.SavePanicBunker() //we can do this every time, it's okay
 	log_admin("[sender.friendly_name] has added [params] to the current round's bunker bypass list.")
 	message_admins("[sender.friendly_name] has added [params] to the current round's bunker bypass list.")
 	return "[params] has been added to the current round's bunker bypass list."

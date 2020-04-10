@@ -1,10 +1,11 @@
-/mob/living/Life(seconds, times_fired)
+/mob/living/proc/Life(seconds, times_fired)
+	set waitfor = FALSE
 	set invisibility = 0
 
 	if(digitalinvis)
 		handle_diginvis() //AI becomes unable to see mob
 
-	if((movement_type & FLYING) && !floating)	//TODO: Better floating
+	if((movement_type & FLYING) && !(movement_type & FLOATING))	//TODO: Better floating
 		float(on = TRUE)
 
 	if (client)
@@ -109,7 +110,7 @@
 		ExtinguishMob()
 		return
 	var/datum/gas_mixture/G = loc.return_air() // Check if we're standing in an oxygenless environment
-	if(!G.gases[/datum/gas/oxygen] || G.gases[/datum/gas/oxygen][MOLES] < 1)
+	if(G.gases[/datum/gas/oxygen] < 1)
 		ExtinguishMob() //If there's no oxygen in the tile we're on, put out the fire
 		return
 	var/turf/location = get_turf(src)
@@ -126,7 +127,7 @@
 /mob/living/proc/handle_traits()
 	//Eyes
 	if(eye_blind)			//blindness, heals slowly over time
-		if(!stat && !(has_trait(TRAIT_BLIND)))
+		if(!stat && !(HAS_TRAIT(src, TRAIT_BLIND)))
 			eye_blind = max(eye_blind-1,0)
 			if(client && !eye_blind)
 				clear_alert("blind")

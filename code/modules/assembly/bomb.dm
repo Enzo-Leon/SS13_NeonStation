@@ -19,15 +19,17 @@
 /obj/item/onetankbomb/examine(mob/user)
 	bombtank.examine(user)
 
-/obj/item/onetankbomb/update_icon()
-	cut_overlays()
+/obj/item/onetankbomb/update_icon_state()
 	if(bombtank)
 		icon = bombtank.icon
 		icon_state = bombtank.icon_state
+
+/obj/item/onetankbomb/update_overlays()
+	. = ..()
 	if(bombassembly)
-		add_overlay(bombassembly.icon_state)
-		copy_overlays(bombassembly)
-		add_overlay("bomb_assembly")
+		. += bombassembly.icon_state
+		. += bombassembly.overlays
+		. += "bomb_assembly"
 
 /obj/item/onetankbomb/wrench_act(mob/living/user, obj/item/I)
 	to_chat(user, "<span class='notice'>You disassemble [src]!</span>")
@@ -101,10 +103,10 @@
 		bombassembly.setDir(dir)
 		bombassembly.Move()
 
-/obj/item/onetankbomb/dropped()
+/obj/item/onetankbomb/dropped(mob/user)
 	. = ..()
 	if(bombassembly)
-		bombassembly.dropped()
+		bombassembly.dropped(user)
 
 
 
@@ -143,9 +145,8 @@
 	return
 
 /obj/item/tank/proc/ignite()	//This happens when a bomb is told to explode
-	air_contents.assert_gases(/datum/gas/plasma, /datum/gas/oxygen)
-	var/fuel_moles = air_contents.gases[/datum/gas/plasma][MOLES] + air_contents.gases[/datum/gas/oxygen][MOLES]/6
-	air_contents.garbage_collect()
+	var/fuel_moles = air_contents.gases[/datum/gas/plasma] + air_contents.gases[/datum/gas/oxygen]/6
+	GAS_GARBAGE_COLLECT(air_contents.gases)
 	var/datum/gas_mixture/bomb_mixture = air_contents.copy()
 	var/strength = 1
 

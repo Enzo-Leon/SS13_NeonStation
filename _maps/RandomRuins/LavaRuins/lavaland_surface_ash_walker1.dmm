@@ -209,6 +209,8 @@
 	dir = 8
 	},
 /obj/item/malf_upgrade,
+/obj/item/disk/tech_disk/illegal,
+/obj/structure/safe,
 /turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /area/ruin/unpowered/ash_walkers)
 "aB" = (
@@ -264,7 +266,7 @@
 /turf/open/indestructible/boss,
 /area/ruin/unpowered/ash_walkers)
 "aH" = (
-/mob/living/simple_animal/hostile/spawner/lavaland/ash_walker,
+/obj/structure/lavaland/ash_walker,
 /turf/open/lava/smooth{
 	initial_gas_mix = "o2=14;n2=23;TEMP=300"
 	},
@@ -473,6 +475,8 @@
 	dir = 4
 	},
 /obj/item/storage/bag/plants/portaseeder,
+/obj/item/seeds/cotton,
+/obj/item/seeds/cotton,
 /turf/open/indestructible/boss,
 /area/ruin/unpowered/ash_walkers)
 "bk" = (
@@ -506,7 +510,9 @@
 /obj/structure/stone_tile/cracked{
 	dir = 4
 	},
-/obj/item/construction/rcd/loaded,
+/obj/item/construction/rcd/loaded/upgraded{
+	
+	},
 /turf/open/indestructible/boss,
 /area/ruin/unpowered/ash_walkers)
 "bn" = (

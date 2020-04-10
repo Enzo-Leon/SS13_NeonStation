@@ -15,10 +15,10 @@ Charged extracts:
 	create_reagents(10, INJECTABLE | DRAWABLE)
 
 /obj/item/slimecross/charged/attack_self(mob/user)
-	if(!reagents.has_reagent("plasma",10))
+	if(!reagents.has_reagent(/datum/reagent/toxin/plasma,10))
 		to_chat(user, "<span class='warning'>This extract needs to be full of plasma to activate!</span>")
 		return
-	reagents.remove_reagent("plasma",10)
+	reagents.remove_reagent(/datum/reagent/toxin/plasma,10)
 	to_chat(user, "<span class='notice'>You squeeze the extract, and it absorbs the plasma!</span>")
 	playsound(src, 'sound/effects/bubbles.ogg', 50, 1)
 	playsound(src, 'sound/effects/light_flicker.ogg', 50, 1)
@@ -426,7 +426,7 @@ Charged extracts:
 	else
 		to_chat(user, "<span class='warning'>You drink the pacification potion!</span>")
 	if(isanimal(M))
-		M.add_trait(TRAIT_PACIFISM, MAGIC_TRAIT)
+		ADD_TRAIT(M, TRAIT_PACIFISM, MAGIC_TRAIT)
 	else if(iscarbon(M))
 		var/mob/living/carbon/C = M
 		C.gain_trauma(/datum/brain_trauma/severe/pacifism, TRAUMA_RESILIENCE_SURGERY)

@@ -144,7 +144,7 @@
 /datum/outfit/syndicate/no_crystals
 	tc = 0
 
-/datum/outfit/syndicate/post_equip(mob/living/carbon/human/H)
+/datum/outfit/syndicate/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE, client/preference_source)
 	var/obj/item/radio/R = H.ears
 	R.set_frequency(FREQ_SYNDICATE)
 	R.freqlock = TRUE
@@ -155,9 +155,9 @@
 		var/obj/item/U = new uplink_type(H, H.key, tc)
 		H.equip_to_slot_or_del(U, SLOT_IN_BACKPACK)
 
-	var/obj/item/implant/weapons_auth/W = new/obj/item/implant/weapons_auth(H)
+	var/obj/item/implant/weapons_auth/W = new
 	W.implant(H)
-	var/obj/item/implant/explosive/E = new/obj/item/implant/explosive(H)
+	var/obj/item/implant/explosive/E = new
 	E.implant(H)
 	H.faction |= ROLE_SYNDICATE
 	H.update_icons()
@@ -165,7 +165,7 @@
 /datum/outfit/syndicate/full
 	name = "Syndicate Operative - Full Kit"
 
-	glasses = /obj/item/clothing/glasses/night
+	glasses = /obj/item/clothing/glasses/night/syndicate
 	mask = /obj/item/clothing/mask/gas/syndicate
 	suit = /obj/item/clothing/suit/space/hardsuit/syndi
 	r_pocket = /obj/item/tank/internals/emergency_oxygen/engi
@@ -180,7 +180,7 @@
 /datum/outfit/syndicate/lone
 	name = "Syndicate Operative - Lone"
 
-	glasses = /obj/item/clothing/glasses/night
+	glasses = /obj/item/clothing/glasses/night/syndicate
 	mask = /obj/item/clothing/mask/gas/syndicate
 	suit = /obj/item/clothing/suit/space/syndicate/black/red
 	head = /obj/item/clothing/head/helmet/space/syndicate/black/red

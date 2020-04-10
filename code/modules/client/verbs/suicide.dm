@@ -66,13 +66,11 @@
 		if(a_intent == INTENT_HELP)
 			suicide_message = pick("[src] is hugging [p_them()]self to death! It looks like [p_theyre()] trying to commit suicide.", \
 									"[src] is high-fiving [p_them()]self to death! It looks like [p_theyre()] trying to commit suicide.", \
-									"[src] is fisting [p_them()]self violently! It looks like [p_theyre()] trying to commit suicide.", \
 									"[src] is getting too high on life! It looks like [p_theyre()] trying to commit suicide.")
 		else
 			suicide_message = pick("[src] is attempting to bite [p_their()] tongue off! It looks like [p_theyre()] trying to commit suicide.", \
 								"[src] is jamming [p_their()] thumbs into [p_their()] eye sockets! It looks like [p_theyre()] trying to commit suicide.", \
 								"[src] is twisting [p_their()] own neck! It looks like [p_theyre()] trying to commit suicide.", \
-								"[src] is fisting [p_them()]self violently! It looks like [p_theyre()] trying to commit suicide.", \
 								"[src] is holding [p_their()] breath! It looks like [p_theyre()] trying to commit suicide.")
 
 		visible_message("<span class='danger'>[suicide_message]</span>", "<span class='userdanger'>[suicide_message]</span>")
@@ -209,6 +207,9 @@
 	message_admins("[key_name(src)] (job: [src.job ? "[src.job]" : "None"]) [is_special_character(src) ? "(ANTAG!) " : ""][ghosting ? "ghosted" : "committed suicide"] at [AREACOORD(src)].")
 
 /mob/living/proc/canSuicide()
+	if(!CONFIG_GET(flag/suicide_allowed))
+		to_chat(src, "Suicide is not enabled in the config.")
+		return FALSE
 	switch(stat)
 		if(CONSCIOUS)
 			return TRUE
@@ -223,7 +224,7 @@
 /mob/living/carbon/canSuicide()
 	if(!..())
 		return
-	if(IsStun() || IsKnockdown())	//just while I finish up the new 'fun' suiciding verb. This is to prevent metagaming via suicide
+	if(!CHECK_MULTIPLE_BITFIELDS(mobility_flags, MOBILITY_MOVE|MOBILITY_USE))	//just while I finish up the new 'fun' suiciding verb. This is to prevent metagaming via suicide
 		to_chat(src, "You can't commit suicide while stunned! ((You can type Ghost instead however.))")
 		return
 	if(restrained())

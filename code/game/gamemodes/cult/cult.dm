@@ -16,7 +16,7 @@
 	if(!istype(M))
 		return FALSE
 	if(M.mind)
-		if(ishuman(M) && (M.mind.assigned_role in list("Captain", "Chaplain")))
+		if(M.mind.assigned_role in list("Captain", "Chaplain"))
 			return FALSE
 		if(specific_cult && specific_cult.is_sacrifice_target(M.mind))
 			return FALSE
@@ -26,7 +26,7 @@
 			return FALSE
 	else
 		return FALSE
-	if(M.has_trait(TRAIT_MINDSHIELD) || issilicon(M) || isbot(M) || isdrone(M) || is_servant_of_ratvar(M) || !M.client)
+	if(HAS_TRAIT(M, TRAIT_MINDSHIELD) || issilicon(M) || isbot(M) || isdrone(M) || is_servant_of_ratvar(M) || !M.client)
 		return FALSE //can't convert machines, shielded, braindead, or ratvar's dogs
 	return TRUE
 
@@ -36,7 +36,7 @@
 	antag_flag = ROLE_CULTIST
 	false_report_weight = 10
 	restricted_jobs = list("AI", "Cyborg")
-	protected_jobs = list("Security Officer", "Warden", "Detective", "Head of Security", "Captain", "Head of Personnel", "Chief Engineer", "Chief Medical Officer", "Research Director")
+	protected_jobs = list("Security Officer", "Warden", "Detective", "Head of Security", "Captain", "Head of Personnel", "Chief Engineer", "Chief Medical Officer", "Research Director", "Quartermaster")
 	required_players = 30
 	required_enemies = 3
 	recommended_enemies = 5

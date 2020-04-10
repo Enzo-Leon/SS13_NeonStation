@@ -1,26 +1,27 @@
-
-##Shadow Station<BR>
-Forked from Citadel Station 13 and Based/maintained from Citadel Station 13 & /tg/station.<BR>
+## Citadel Station 13
+Based and maintained from /tg/station.
 
 [![forthebadge](http://forthebadge.com/images/badges/60-percent-of-the-time-works-every-time.svg)](https://forthebadge.com) [![forthebadge](http://forthebadge.com/images/badges/pretty-risque.svg)](https://forthebadge.com) [![forthebadge](http://forthebadge.com/images/badges/you-didnt-ask-for-this.svg)](http://forthebadge.com)
 
 [![forinfinityandbyond](https://user-images.githubusercontent.com/5211576/29499758-4efff304-85e6-11e7-8267-62919c3688a9.gif)](https://www.reddit.com/r/SS13/comments/5oplxp/what_is_the_main_problem_with_byond_as_an_engine/dclbu1a)
 
-[![Build Status](https://api.travis-ci.org/ShadowStation/ShadowStation.png)](https://travis-ci.org/ShadowStation/ShadowStation) [![Krihelimeter](http://www.krihelinator.xyz/badge/ShadowStation/ShadowStation)](http://www.krihelinator.xyz)
+[![Build Status](https://api.travis-ci.org/Citadel-Station-13/Citadel-Station-13.png)](https://travis-ci.org/Citadel-Station-13/Citadel-Station-13) [![Krihelimeter](http://www.krihelinator.xyz/badge/Citadel-Station-13/Citadel-Station-13)](http://www.krihelinator.xyz)
 
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/ShadowStation/ShadowStation.svg)](http://isitmaintained.com/project/ShadowStation/ShadowStation "Percentage of issues still open") [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/ShadowStation/ShadowStation.svg)](http://isitmaintained.com/project/ShadowStation/ShadowStation "Average time to resolve an issue")
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/Citadel-Station-13/Citadel-Station-13.svg)](http://isitmaintained.com/project/Citadel-Station-13/Citadel-Station-13 "Percentage of issues still open") [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/Citadel-Station-13/Citadel-Station-13.svg)](http://isitmaintained.com/project/Citadel-Station-13/Citadel-Station-13 "Average time to resolve an issue")
 
-**Upstream Information** <BR>
-**Website:** http://www.tgstation13.org <BR>
-**Code:** https://github.com/tgstation/tgstation <BR>
-**Wiki** http://tgstation13.org/wiki/Main_Page <BR>
-**IRC:** irc://irc.rizon.net/coderbus or if you dont have an IRC client, you can click  [here](https://kiwiirc.com/client/irc.rizon.net:6667/?&theme=cli#coderbus).<BR>
-
-**Shadow Station Information** <BR>
-**Website:** https://shadow-station.com <BR>
-**Code:** https://github.com/ShadowStation/ShadowStation <BR>
-**Discord:**  [Here](https://discord.gg/cHG9yRr). <BR>
-
+**Upstream Information**  
+**Website:** https://tgstation13.org  
+**Code:** https://github.com/tgstation/tgstation  
+**Wiki** https://tgstation13.org/wiki/Main_Page  
+**IRC:** irc://irc.rizon.net/coderbus or if you dont have an IRC client, you can click  [here](https://kiwiirc.com/client/irc.rizon.net:6667/?&theme=cli#coderbus).  
+  
+**Citadel Station Information**  
+**Website:** http://citadel-station.net  
+**Forums:** http://citadel-station.net/forum  
+**Ban Appeals:** http://citadel-station.net/forum/forumdisplay.php?fid=8  
+**Code:** https://github.com/Citadel-Station-13/Citadel-Station-13  
+**Discord:**  [Here](https://discord.gg/E6SQuhz)  
+  
 ## DOWNLOADING
 
 There are a number of ways to download the source code. Some are described here, an alternative all-inclusive guide is also located at http://www.tgstation13.org/wiki/Downloading_the_source_code

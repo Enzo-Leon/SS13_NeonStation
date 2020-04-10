@@ -25,7 +25,8 @@ GLOBAL_VAR_INIT(midnight_rollovers, 0)
 GLOBAL_VAR_INIT(rollovercheck_last_timeofday, 0)
 /proc/update_midnight_rollover()
 	if (world.timeofday < GLOB.rollovercheck_last_timeofday) //TIME IS GOING BACKWARDS!
-		return GLOB.midnight_rollovers++
+		GLOB.midnight_rollovers++
+	GLOB.rollovercheck_last_timeofday = world.timeofday
 	return GLOB.midnight_rollovers
 
 /proc/weekdayofthemonth()
@@ -71,34 +72,8 @@ GLOBAL_VAR_INIT(rollovercheck_last_timeofday, 0)
 		hourT = " and [hour] hour[(hour != 1)? "s":""]"
 	return "[day] day[(day != 1)? "s":""][hourT][minuteT][secondT]"
 
-//Takes a value of time in deciseconds.
-//Returns a text value of that number in hours, minutes, or seconds. Formatted as hh:mm:ss.
-/proc/DisplayTimeTextHMS(time_value, round_seconds_to = 0.1)
-	var/second = FLOOR(time_value * 0.1, round_seconds_to)
-	if(!second)
-		return "right now"
-	if(second < 60)
-		return "[second]"
-	var/minute = FLOOR(second / 60, 1)
-	second = FLOOR(MODULUS(second, 60), round_seconds_to)
-	var/secondT
-	if(second)
-		secondT = "[second]"
-	if(minute < 60)
-		return "[minute]:[secondT]"
-	var/hour = FLOOR(minute / 60, 1)
-	minute = MODULUS(minute, 60)
-	var/minuteT
-	if(minute)
-		minuteT = "[minute]"
-	if(hour < 24)
-		return "[hour]:[minuteT]:[secondT]"
-	var/day = FLOOR(hour / 24, 1)
-	hour = MODULUS(hour, 24)
-	var/hourT
-	if(hour)
-		hourT = "[hour]"
-	return "[day]:[hourT]:[minuteT]:[secondT]"
+/proc/daysSince(realtimev)
+	return round((world.realtime - realtimev) / (24 HOURS))
 
 /proc/worldtime2text()
 	return gameTimestamp("hh:mm:ss", world.time)

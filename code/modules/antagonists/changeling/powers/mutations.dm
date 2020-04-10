@@ -155,20 +155,23 @@
 	item_state = "arm_blade"
 	lefthand_file = 'icons/mob/inhands/antag/changeling_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/antag/changeling_righthand.dmi'
-	item_flags = NEEDS_PERMIT | ABSTRACT | NODROP | DROPDEL
+	item_flags = NEEDS_PERMIT | ABSTRACT | DROPDEL
 	w_class = WEIGHT_CLASS_HUGE
 	force = 25
 	throwforce = 0 //Just to be on the safe side
 	throw_range = 0
 	throw_speed = 0
+	armour_penetration = 20
 	hitsound = 'sound/weapons/bladeslice.ogg'
 	attack_verb = list("attacked", "slashed", "stabbed", "sliced", "torn", "ripped", "diced", "cut")
 	sharpness = IS_SHARP
 	var/can_drop = FALSE
 	var/fake = FALSE
+	total_mass = TOTAL_MASS_HAND_REPLACEMENT
 
 /obj/item/melee/arm_blade/Initialize(mapload,silent,synthetic)
 	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, CHANGELING_TRAIT)
 	if(ismob(loc) && !silent)
 		loc.visible_message("<span class='warning'>A grotesque blade forms around [loc.name]\'s arm!</span>", "<span class='warning'>Our arm twists and mutates, transforming it into a deadly blade.</span>", "<span class='italics'>You hear organic matter ripping and tearing!</span>")
 	if(synthetic)
@@ -242,7 +245,8 @@
 	item_state = "tentacle"
 	lefthand_file = 'icons/mob/inhands/antag/changeling_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/antag/changeling_righthand.dmi'
-	item_flags = NEEDS_PERMIT | ABSTRACT | NODROP | DROPDEL | NOBLUDGEON
+	item_flags = NEEDS_PERMIT | ABSTRACT | DROPDEL | NOBLUDGEON
+	slot_flags = NONE
 	flags_1 = NONE
 	w_class = WEIGHT_CLASS_HUGE
 	ammo_type = /obj/item/ammo_casing/magic/tentacle
@@ -256,6 +260,7 @@
 
 /obj/item/gun/magic/tentacle/Initialize(mapload, silent)
 	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, CHANGELING_TRAIT)
 	if(ismob(loc))
 		if(!silent)
 			loc.visible_message("<span class='warning'>[loc.name]\'s arm starts stretching inhumanly!</span>", "<span class='warning'>Our arm twists and mutates, transforming it into a tentacle.</span>", "<span class='italics'>You hear organic matter ripping and tearing!</span>")
@@ -329,7 +334,7 @@
 /obj/item/projectile/tentacle/proc/tentacle_stab(mob/living/carbon/human/H, mob/living/carbon/C)
 	if(H.Adjacent(C))
 		for(var/obj/item/I in H.held_items)
-			if(I.is_sharp())
+			if(I.get_sharpness())
 				C.visible_message("<span class='danger'>[H] impales [C] with [H.p_their()] [I.name]!</span>", "<span class='userdanger'>[H] impales you with [H.p_their()] [I.name]!</span>")
 				C.apply_damage(I.force, BRUTE, BODY_ZONE_CHEST)
 				H.do_item_attack_animation(C, used_item = I)
@@ -340,14 +345,13 @@
 /obj/item/projectile/tentacle/on_hit(atom/target, blocked = FALSE)
 	var/mob/living/carbon/human/H = firer
 	if(blocked >= 100)
-		return 0
+		return BULLET_ACT_BLOCK
 	if(isitem(target))
 		var/obj/item/I = target
 		if(!I.anchored)
-			to_chat(firer, "<span class='notice'>You pull [I] towards yourself.</span>")
-			H.throw_mode_on()
-			I.throw_at(H, 10, 2)
-			. = 1
+			to_chat(firer, "<span class='notice'>You pull [I] right into your grasp.</span>")
+			H.put_in_hands(I) //Because throwing it is goofy as fuck and unreliable. If you land the tentacle despite the penalties to accuracy, you should have your reward.
+			. = BULLET_ACT_HIT
 
 	else if(isliving(target))
 		var/mob/living/L = target
@@ -362,7 +366,7 @@
 					if(INTENT_HELP)
 						C.visible_message("<span class='danger'>[L] is pulled by [H]'s tentacle!</span>","<span class='userdanger'>A tentacle grabs you and pulls you towards [H]!</span>")
 						C.throw_at(get_step_towards(H,C), 8, 2)
-						return 1
+						return BULLET_ACT_HIT
 
 					if(INTENT_DISARM)
 						var/obj/item/I = C.get_active_held_item()
@@ -370,27 +374,27 @@
 							if(C.dropItemToGround(I))
 								C.visible_message("<span class='danger'>[I] is yanked off [C]'s hand by [src]!</span>","<span class='userdanger'>A tentacle pulls [I] away from you!</span>")
 								on_hit(I) //grab the item as if you had hit it directly with the tentacle
-								return 1
+								return BULLET_ACT_HIT
 							else
 								to_chat(firer, "<span class='danger'>You can't seem to pry [I] off [C]'s hands!</span>")
-								return 0
+								return BULLET_ACT_BLOCK
 						else
 							to_chat(firer, "<span class='danger'>[C] has nothing in hand to disarm!</span>")
-							return 0
+							return BULLET_ACT_HIT
 
 					if(INTENT_GRAB)
 						C.visible_message("<span class='danger'>[L] is grabbed by [H]'s tentacle!</span>","<span class='userdanger'>A tentacle grabs you and pulls you towards [H]!</span>")
 						C.throw_at(get_step_towards(H,C), 8, 2, H, TRUE, TRUE, callback=CALLBACK(src, .proc/tentacle_grab, H, C))
-						return 1
+						return BULLET_ACT_HIT
 
 					if(INTENT_HARM)
 						C.visible_message("<span class='danger'>[L] is thrown towards [H] by a tentacle!</span>","<span class='userdanger'>A tentacle grabs you and throws you towards [H]!</span>")
 						C.throw_at(get_step_towards(H,C), 8, 2, H, TRUE, TRUE, callback=CALLBACK(src, .proc/tentacle_stab, H, C))
-						return 1
+						return BULLET_ACT_HIT
 			else
 				L.visible_message("<span class='danger'>[L] is pulled by [H]'s tentacle!</span>","<span class='userdanger'>A tentacle grabs you and pulls you towards [H]!</span>")
 				L.throw_at(get_step_towards(H,L), 8, 2)
-				. = 1
+				. = BULLET_ACT_HIT
 
 /obj/item/projectile/tentacle/Destroy()
 	qdel(chain)
@@ -428,7 +432,7 @@
 /obj/item/shield/changeling
 	name = "shield-like mass"
 	desc = "A mass of tough, boney tissue. You can still see the fingers as a twisted pattern in the shield."
-	item_flags = ABSTRACT | NODROP | DROPDEL
+	item_flags = ABSTRACT | DROPDEL
 	icon = 'icons/obj/items_and_weapons.dmi'
 	icon_state = "ling_shield"
 	lefthand_file = 'icons/mob/inhands/antag/changeling_lefthand.dmi'
@@ -437,22 +441,23 @@
 
 	var/remaining_uses //Set by the changeling ability.
 
-/obj/item/shield/changeling/Initialize()
+/obj/item/shield/changeling/Initialize(mapload)
 	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, CHANGELING_TRAIT)
 	if(ismob(loc))
 		loc.visible_message("<span class='warning'>The end of [loc.name]\'s hand inflates rapidly, forming a huge shield-like mass!</span>", "<span class='warning'>We inflate our hand into a strong shield.</span>", "<span class='italics'>You hear organic matter ripping and tearing!</span>")
 
-/obj/item/shield/changeling/hit_reaction(mob/living/carbon/human/owner, atom/movable/hitby, attack_text = "the attack", final_block_chance = 0, damage = 0, attack_type = MELEE_ATTACK)
-	if(remaining_uses < 1)
+/obj/item/shield/changeling/check_block(mob/living/owner, atom/object, damage, attack_text, attack_type, armour_penetration, mob/attacker, def_zone, final_block_chance, list/block_return)
+	block_return[BLOCK_RETURN_BLOCK_CAPACITY] = (block_return[BLOCK_RETURN_BLOCK_CAPACITY] || 0) + remaining_uses
+	return ..()
+
+/obj/item/shield/changeling/run_block(mob/living/owner, atom/object, damage, attack_text, attack_type, armour_penetration, mob/attacker, def_zone, final_block_chance, list/block_return)
+	. = ..()
+	if(--remaining_uses < 1)
 		if(ishuman(loc))
 			var/mob/living/carbon/human/H = loc
 			H.visible_message("<span class='warning'>With a sickening crunch, [H] reforms [H.p_their()] shield into an arm!</span>", "<span class='notice'>We assimilate our shield into our body</span>", "<span class='italics>You hear organic matter ripping and tearing!</span>")
 		qdel(src)
-		return 0
-	else
-		remaining_uses--
-		return ..()
-
 
 /***************************************\
 |*********SPACE SUIT + HELMET***********|
@@ -480,13 +485,14 @@
 	name = "flesh mass"
 	icon_state = "lingspacesuit"
 	desc = "A huge, bulky mass of pressure and temperature-resistant organic tissue, evolved to facilitate space travel."
-	item_flags = NODROP | DROPDEL
+	item_flags = DROPDEL
 	clothing_flags = STOPSPRESSUREDAMAGE //Not THICKMATERIAL because it's organic tissue, so if somebody tries to inject something into it, it still ends up in your blood. (also balance but muh fluff)
 	allowed = list(/obj/item/flashlight, /obj/item/tank/internals/emergency_oxygen, /obj/item/tank/internals/oxygen)
 	armor = list("melee" = 0, "bullet" = 0, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 90, "acid" = 90) //No armor at all.
 
 /obj/item/clothing/suit/space/changeling/Initialize()
 	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, CHANGELING_TRAIT)
 	if(ismob(loc))
 		loc.visible_message("<span class='warning'>[loc.name]\'s flesh rapidly inflates, forming a bloated mass around [loc.p_their()] body!</span>", "<span class='warning'>We inflate our flesh, creating a spaceproof suit!</span>", "<span class='italics'>You hear organic matter ripping and tearing!</span>")
 	START_PROCESSING(SSobj, src)
@@ -494,16 +500,20 @@
 /obj/item/clothing/suit/space/changeling/process()
 	if(ishuman(loc))
 		var/mob/living/carbon/human/H = loc
-		H.reagents.add_reagent("salbutamol", REAGENTS_METABOLISM)
+		H.reagents.add_reagent(/datum/reagent/medicine/salbutamol, REAGENTS_METABOLISM)
 
 /obj/item/clothing/head/helmet/space/changeling
 	name = "flesh mass"
 	icon_state = "lingspacehelmet"
 	desc = "A covering of pressure and temperature-resistant organic tissue with a glass-like chitin front."
-	item_flags = NODROP | DROPDEL
+	item_flags = DROPDEL
 	clothing_flags = STOPSPRESSUREDAMAGE
 	armor = list("melee" = 0, "bullet" = 0, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 90, "acid" = 90)
 	flags_cover = HEADCOVERSEYES | HEADCOVERSMOUTH
+
+/obj/item/clothing/head/helmet/space/changeling/Initialize()
+	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, CHANGELING_TRAIT)
 
 /***************************************\
 |*****************ARMOR*****************|
@@ -530,7 +540,7 @@
 	name = "chitinous mass"
 	desc = "A tough, hard covering of black chitin."
 	icon_state = "lingarmor"
-	item_flags = NODROP | DROPDEL
+	item_flags = DROPDEL
 	body_parts_covered = CHEST|GROIN|LEGS|FEET|ARMS|HANDS
 	armor = list("melee" = 40, "bullet" = 40, "laser" = 40, "energy" = 20, "bomb" = 10, "bio" = 4, "rad" = 0, "fire" = 90, "acid" = 90)
 	flags_inv = HIDEJUMPSUIT
@@ -539,6 +549,7 @@
 
 /obj/item/clothing/suit/armor/changeling/Initialize()
 	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, CHANGELING_TRAIT)
 	if(ismob(loc))
 		loc.visible_message("<span class='warning'>[loc.name]\'s flesh turns black, quickly transforming into a hard, chitinous mass!</span>", "<span class='warning'>We harden our flesh, creating a suit of armor!</span>", "<span class='italics'>You hear organic matter ripping and tearing!</span>")
 
@@ -546,6 +557,10 @@
 	name = "chitinous mass"
 	desc = "A tough, hard covering of black chitin with transparent chitin in front."
 	icon_state = "lingarmorhelmet"
-	item_flags = NODROP | DROPDEL
+	item_flags = DROPDEL
 	armor = list("melee" = 40, "bullet" = 40, "laser" = 40, "energy" = 20, "bomb" = 10, "bio" = 4, "rad" = 0, "fire" = 90, "acid" = 90)
 	flags_inv = HIDEEARS|HIDEHAIR|HIDEEYES|HIDEFACIALHAIR|HIDEFACE
+
+/obj/item/clothing/head/helmet/changeling/Initialize()
+	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, CHANGELING_TRAIT)

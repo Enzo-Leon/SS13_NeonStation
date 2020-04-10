@@ -11,7 +11,7 @@
 	cooldown_min = 300
 	level_max = 0
 
-/obj/effect/proc_holder/spell/spacetime_dist/can_cast(mob/user = usr)
+/obj/effect/proc_holder/spell/spacetime_dist/can_cast(mob/user = usr, skipcharge = FALSE, silent = FALSE)
 	if(ready)
 		return ..()
 	return FALSE
@@ -86,7 +86,7 @@
 /obj/effect/cross_action/spacetime_dist/proc/walk_link(atom/movable/AM)
 	if(ismob(AM))
 		var/mob/M = AM
-		if(M.anti_magic_check())
+		if(M.anti_magic_check(chargecost = 0))
 			return
 	if(linked_dist && walks_left > 0)
 		flick("purplesparkles", src)

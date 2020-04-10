@@ -8,6 +8,7 @@
 	antagpanel_category = "Changeling"
 	job_rank = ROLE_CHANGELING
 	antag_moodlet = /datum/mood_event/focused
+	threat = 10
 
 	var/you_are_greet = TRUE
 	var/give_objectives = TRUE
@@ -54,8 +55,10 @@
 	var/honorific
 	if(owner.current.gender == FEMALE)
 		honorific = "Ms."
-	else
+	else if(owner.current.gender == MALE)
 		honorific = "Mr."
+	else
+		honorific = "Mx."
 	if(GLOB.possible_changeling_IDs.len)
 		changelingID = pick(GLOB.possible_changeling_IDs)
 		GLOB.possible_changeling_IDs -= changelingID
@@ -83,7 +86,7 @@
 	if(istype(C))
 		var/obj/item/organ/brain/B = C.getorganslot(ORGAN_SLOT_BRAIN)
 		if(B && (B.decoy_override != initial(B.decoy_override)))
-			B.vital = TRUE
+			B.organ_flags |= ORGAN_VITAL
 			B.decoy_override = FALSE
 	remove_changeling_powers()
 	. = ..()
@@ -169,7 +172,7 @@
 		to_chat(owner.current, "We have reached our capacity for abilities.")
 		return
 
-	if(owner.current.has_trait(TRAIT_DEATHCOMA))//To avoid potential exploits by buying new powers while in stasis, which clears your verblist.
+	if(HAS_TRAIT(owner.current, TRAIT_DEATHCOMA))//To avoid potential exploits by buying new powers while in stasis, which clears your verblist.
 		to_chat(owner.current, "We lack the energy to evolve new abilities right now.")
 		return
 
@@ -239,7 +242,7 @@
 		if(verbose)
 			to_chat(user, "<span class='warning'>[target] is not compatible with our biology.</span>")
 		return
-	if((target.has_trait(TRAIT_NOCLONE)) || (target.has_trait(TRAIT_NOCLONE)))
+	if((HAS_TRAIT(target, TRAIT_NOCLONE)) || (HAS_TRAIT(target, TRAIT_NOCLONE)))
 		if(verbose)
 			to_chat(user, "<span class='warning'>DNA of [target] is ruined beyond usability!</span>")
 		return
@@ -269,8 +272,11 @@
 	prof.protected = protect
 
 	prof.underwear = H.underwear
+	prof.undie_color = H.undie_color
 	prof.undershirt = H.undershirt
+	prof.shirt_color = H.shirt_color
 	prof.socks = H.socks
+	prof.socks_color = H.socks_color
 
 	var/list/slots = list("head", "wear_mask", "back", "wear_suit", "w_uniform", "shoes", "belt", "gloves", "glasses", "ears", "wear_id", "s_store")
 	for(var/slot in slots)
@@ -337,7 +343,7 @@
 	if(istype(C))
 		var/obj/item/organ/brain/B = C.getorganslot(ORGAN_SLOT_BRAIN)
 		if(B)
-			B.vital = FALSE
+			B.organ_flags &= ~ORGAN_VITAL
 			B.decoy_override = TRUE
 	update_changeling_icons_added()
 	return
@@ -456,8 +462,6 @@
 			objectives += identity_theft
 		escape_objective_possible = FALSE
 
-	owner.objectives |= objectives
-
 /datum/antagonist/changeling/proc/update_changeling_icons_added()
 	var/datum/atom_hud/antag/hud = GLOB.huds[ANTAG_HUD_CHANGELING]
 	hud.join_hud(owner.current)
@@ -503,8 +507,11 @@
 	var/list/item_state_list = list()
 
 	var/underwear
+	var/undie_color
 	var/undershirt
+	var/shirt_color
 	var/socks
+	var/socks_color
 
 /datum/changelingprofile/Destroy()
 	qdel(dna)
@@ -548,11 +555,17 @@
 	if(objectives.len)
 		var/count = 1
 		for(var/datum/objective/objective in objectives)
-			if(objective.check_completion())
-				parts += "<b>Objective #[count]</b>: [objective.explanation_text] <span class='greentext'>Success!</b></span>"
+			if(objective.completable)
+				var/completion = objective.check_completion()
+				if(completion >= 1)
+					parts += "<B>Objective #[count]</B>: [objective.explanation_text] <span class='greentext'><B>Success!</span>"
+				else if(completion <= 0)
+					parts += "<B>Objective #[count]</B>: [objective.explanation_text] <span class='redtext'>Fail.</span>"
+					changelingwin = FALSE
+				else
+					parts += "<B>Objective #[count]</B>: [objective.explanation_text] <span class='yellowtext'>[completion*100]%</span>"
 			else
-				parts += "<b>Objective #[count]</b>: [objective.explanation_text] <span class='redtext'>Fail.</span>"
-				changelingwin = 0
+				parts += "<B>Objective #[count]</B>: [objective.explanation_text]"
 			count++
 
 	if(changelingwin)

@@ -61,7 +61,7 @@
 			<A href='?src=[REF(src)];[HrefToken()];secrets=events'>Summon Events (Toggle)</A><BR>
 			<A href='?src=[REF(src)];[HrefToken()];secrets=onlyone'>There can only be one!</A><BR>
 			<A href='?src=[REF(src)];[HrefToken()];secrets=delayed_onlyone'>There can only be one! (40-second delay)</A><BR>
-			<A href='?src=[REF(src)];[HrefToken()];secrets=disablify'>Make all players mentally disabled</A><BR>
+			<A href='?src=[REF(src)];[HrefToken()];secrets=retardify'>Make all players retarded</A><BR>
 			<A href='?src=[REF(src)];[HrefToken()];secrets=eagles'>Egalitarian Station Mode</A><BR>
 			<A href='?src=[REF(src)];[HrefToken()];secrets=blackout'>Break all lights</A><BR>
 			<A href='?src=[REF(src)];[HrefToken()];secrets=whiteout'>Fix all lights</A><BR>
@@ -345,7 +345,7 @@
 			if(!SSticker.HasRoundStarted())
 				alert("The game hasn't started yet!")
 				return
-			var/objective = copytext(sanitize(input("Enter an objective")),1,MAX_MESSAGE_LEN)
+			var/objective = stripped_input(usr, "Enter an objective")
 			if(!objective)
 				return
 			SSblackbox.record_feedback("nested tally", "admin_secrets_fun_used", 1, list("Traitor All", "[objective]"))
@@ -400,7 +400,7 @@
 			SSblackbox.record_feedback("nested tally", "admin_secrets_fun_used", 1, list("Chinese Cartoons"))
 			message_admins("[key_name_admin(usr)] made everything kawaii.")
 			for(var/mob/living/carbon/human/H in GLOB.carbon_list)
-				SEND_SOUND(H, sound('sound/ai/animes.ogg'))
+				SEND_SOUND(H, sound(get_announcer_sound("animes")))
 
 				if(H.dna.species.id == "human")
 					if(H.dna.features["tail_human"] == "None" || H.dna.features["ears"] == "None")
@@ -408,21 +408,21 @@
 						var/obj/item/organ/tail/cat/tail = new
 						ears.Insert(H, drop_if_replaced=FALSE)
 						tail.Insert(H, drop_if_replaced=FALSE)
-					var/list/honorifics = list("[MALE]" = list("kun"), "[FEMALE]" = list("chan","tan"), "[NEUTER]" = list("san")) //John Robust -> Robust-kun
+					var/list/honorifics = list("[MALE]" = list("kun"), "[FEMALE]" = list("chan","tan"), "[NEUTER]" = list("san"), "[PLURAL]" = list("san")) //John Robust -> Robust-kun
 					var/list/names = splittext(H.real_name," ")
 					var/forename = names.len > 1 ? names[2] : names[1]
 					var/newname = "[forename]-[pick(honorifics["[H.gender]"])]"
 					H.fully_replace_character_name(H.real_name,newname)
 					H.update_mutant_bodyparts()
 					if(animetype == "Yes")
-						var/seifuku = pick(typesof(/obj/item/clothing/under/schoolgirl))
-						var/obj/item/clothing/under/schoolgirl/I = new seifuku
+						var/seifuku = pick(typesof(/obj/item/clothing/under/costume/schoolgirl))
+						var/obj/item/clothing/under/costume/schoolgirl/I = new seifuku
 						var/olduniform = H.w_uniform
 						H.temporarilyRemoveItemFromInventory(H.w_uniform, TRUE, FALSE)
 						H.equip_to_slot_or_del(I, SLOT_W_UNIFORM)
 						qdel(olduniform)
 						if(droptype == "Yes")
-							I.item_flags |= NODROP
+							ADD_TRAIT(I, TRAIT_NODROP, ADMIN_TRAIT)
 				else
 					to_chat(H, "You're not kawaii enough for this.")
 
@@ -452,14 +452,14 @@
 					var/datum/round_event/disease_outbreak/DO = E
 					DO.virus_type = virus
 
-		if("disablify")
+		if("retardify")
 			if(!check_rights(R_FUN))
 				return
 			SSblackbox.record_feedback("nested tally", "admin_secrets_fun_used", 1, list("Mass Braindamage"))
 			for(var/mob/living/carbon/human/H in GLOB.player_list)
 				to_chat(H, "<span class='boldannounce'>You suddenly feel stupid.</span>")
-				H.adjustBrainLoss(60, 80)
-			message_admins("[key_name_admin(usr)] made everybody mentally disabled.")
+				H.adjustOrganLoss(ORGAN_SLOT_BRAIN, 60, 80)
+			message_admins("[key_name_admin(usr)] made everybody retarded")
 
 		if("eagles")//SCRAW
 			if(!check_rights(R_FUN))
@@ -469,7 +469,7 @@
 				if(is_station_level(W.z) && !istype(get_area(W), /area/bridge) && !istype(get_area(W), /area/crew_quarters) && !istype(get_area(W), /area/security/prison))
 					W.req_access = list()
 			message_admins("[key_name_admin(usr)] activated Egalitarian Station mode")
-			priority_announce("CentCom airlock control override activated. Please take this time to get acquainted with your coworkers.", null, 'sound/ai/commandreport.ogg')
+			priority_announce("CentCom airlock control override activated. Please take this time to get acquainted with your coworkers.", null, "commandreport")
 
 		if("ak47s")
 			if(!check_rights(R_FUN))
@@ -744,7 +744,7 @@
 			var/mob/chosen = players[1]
 			if (chosen.client)
 				chosen.client.prefs.copy_to(spawnedMob)
-				spawnedMob.key = chosen.key
+				chosen.transfer_ckey(spawnedMob)
 			players -= chosen
 		if (ishuman(spawnedMob) && ispath(humanoutfit, /datum/outfit))
 			var/mob/living/carbon/human/H = spawnedMob

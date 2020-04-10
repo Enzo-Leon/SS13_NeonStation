@@ -14,6 +14,10 @@
 	var/jobbancache = null //Used to cache this client's jobbans to save on DB queries
 	var/last_message	= "" //Contains the last message sent by this client - used to protect against copy-paste spamming.
 	var/last_message_count = 0 //contins a number of how many times a message identical to last_message was sent.
+	///How many messages sent in the last 10 seconds
+	var/total_message_count = 0
+	///Next tick to reset the total message counter
+	var/total_count_reset = 0
 	var/ircreplyamount = 0
 
 		/////////
@@ -75,3 +79,8 @@
 	var/datum/player_details/player_details //these persist between logins/logouts during the same round.
 
 	var/list/char_render_holders			//Should only be a key-value list of north/south/east/west = obj/screen.
+
+	var/client_keysend_amount = 0
+	var/next_keysend_reset = 0
+	var/next_keysend_trip_reset = 0
+	var/keysend_tripped = FALSE

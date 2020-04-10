@@ -1,1 +1,1 @@
-DONORTEST|WHITELIST=Jizzard
+DONORTEST|WHITELIST=jayehh,deathride58,poojawa

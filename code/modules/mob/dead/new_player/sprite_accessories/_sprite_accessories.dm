@@ -16,7 +16,7 @@
 	from doing this unless you absolutely know what you are doing, and have defined a
 	conversion in savefile.dm
 */
-/proc/init_sprite_accessory_subtypes(prototype, list/L, list/male, list/female,var/roundstart = FALSE)//Roundstart argument builds a specific list for roundstart parts where some parts may be locked
+/proc/init_sprite_accessory_subtypes(prototype, list/L, list/male, list/female, roundstart = FALSE, skip_prototype = TRUE)//Roundstart argument builds a specific list for roundstart parts where some parts may be locked
 	if(!istype(L))
 		L = list()
 	if(!istype(male))
@@ -25,7 +25,7 @@
 		female = list()
 
 	for(var/path in typesof(prototype))
-		if(path == prototype)
+		if(path == prototype && skip_prototype)
 			continue
 		if(roundstart)
 			var/datum/sprite_accessory/P = path
@@ -60,3 +60,24 @@
 	var/dimension_x = 32
 	var/dimension_y = 32
 	var/center = FALSE	//Should we center the sprite?
+
+	//Special / holdover traits for Citadel specific sprites.
+	var/extra = FALSE
+	var/extra_color_src = MUTCOLORS2						//The color source for the extra overlay.
+	var/extra_icon = 'modular_citadel/icons/mob/mam_tails.dmi'
+	var/extra2 = FALSE
+	var/extra2_color_src = MUTCOLORS3
+	var/extra2_icon = 'modular_citadel/icons/mob/mam_tails.dmi'
+
+	//for snowflake/donor specific sprites
+	var/list/ckeys_allowed
+
+	//For soft-restricting markings to species IDs
+	var/list/recommended_species
+
+/datum/sprite_accessory/underwear
+	icon = 'icons/mob/underwear.dmi'
+	var/has_color = FALSE
+	var/has_digitigrade = FALSE
+	var/covers_groin = FALSE
+	var/covers_chest = FALSE

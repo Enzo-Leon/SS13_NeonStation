@@ -13,7 +13,7 @@
 
 	var/alt_inhands_file = 'icons/mob/alienqueen.dmi'
 
-/mob/living/carbon/alien/humanoid/royal/can_inject()
+/mob/living/carbon/alien/humanoid/royal/can_inject(mob/user, error_msg, target_zone, penetrate_thick = FALSE, bypass_immunity = FALSE)
 	return 0
 
 /mob/living/carbon/alien/humanoid/royal/queen
@@ -103,8 +103,12 @@
 	name = "\improper royal parasite"
 	desc = "Inject this into one of your grown children to promote her to a Praetorian!"
 	icon_state = "alien_medal"
-	item_flags = ABSTRACT | NODROP | DROPDEL
+	item_flags = ABSTRACT | DROPDEL
 	icon = 'icons/mob/alien.dmi'
+
+/obj/item/queenpromote/Initialize()
+	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, ABSTRACT_ITEM_TRAIT)
 
 /obj/item/queenpromote/attack(mob/living/M, mob/living/carbon/alien/humanoid/user)
 	if(!isalienadult(M) || isalienroyal(M))

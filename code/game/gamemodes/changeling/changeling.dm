@@ -86,12 +86,15 @@ GLOBAL_VAR(changeling_team_objective_type) //If this is not null, we hand our th
 	var/datum/dna/chosen_dna = chosen_prof.dna
 	user.real_name = chosen_prof.name
 	user.underwear = chosen_prof.underwear
+	user.undie_color = chosen_prof.undie_color
 	user.undershirt = chosen_prof.undershirt
+	user.shirt_color = chosen_prof.shirt_color
 	user.socks = chosen_prof.socks
+	user.socks_color =chosen_prof.socks_color
 
 	chosen_dna.transfer_identity(user, 1)
 	user.updateappearance(mutcolor_update=1)
-	user.update_body()
+	user.update_body(TRUE)
 	user.domutcheck()
 
 	//vars hackery. not pretty, but better than the alternative.
