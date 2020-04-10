@@ -761,6 +761,10 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 	icon_state = "medbay3"
 	music = 'sound/ambience/signal.ogg'
 
+/area/medical/medbay/emtoffice
+	name = "EMT Office"
+	icon_state = "medbay3"
+
 /area/medical/storage
 	name = "Medbay Storage"
 	icon_state = "medbay2"

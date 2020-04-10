@@ -33268,7 +33268,7 @@
 	},
 /obj/vehicle/ridden/EMTcart,
 /obj/machinery/power/apc{
-	areastring = "/area/medical/medbay/EMT Office";
+	areastring = "/area/medical/medbay/emtoffice";
 	dir = 4;
 	name = "EMT Office APC";
 	pixel_x = 24;

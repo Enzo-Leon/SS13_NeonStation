@@ -546,7 +546,7 @@
 "akA" = (/obj/structure/chair{dir = 8; name = "Defense"},/obj/effect/turf_decal/tile/green,/obj/effect/turf_decal/tile/green{dir = 4},/obj/effect/turf_decal/tile/green{dir = 8},/turf/open/floor/plasteel,/area/security/courtroom)
 "akB" = (/obj/structure/cable{icon_state = "1-2"},/turf/open/floor/plating,/area/maintenance/solars/port/fore)
 "akC" = (/turf/closed/wall,/area/medical/medbay{name = "EMT Office"})
-"akD" = (/obj/machinery/power/apc{areastring = "/area/medical/medbay/EMT Office"; dir = 1; name = "EMT Office APC"; pixel_x = 0; pixel_y = 24; step_y = 0},/obj/effect/turf_decal/tile/blue{dir = 1},/obj/structure/cable{icon_state = "0-2"},/obj/structure/bed/roller,/obj/machinery/light{dir = 8},/turf/open/floor/plasteel/white,/area/medical/medbay{name = "EMT Office"})
+"akD" = (/obj/machinery/power/apc{areastring = "/area/medical/medbay/emtoffice"; dir = 1; name = "EMT Office APC"; pixel_x = 0; pixel_y = 24; step_y = 0},/obj/effect/turf_decal/tile/blue{dir = 1},/obj/structure/cable{icon_state = "0-2"},/obj/structure/bed/roller,/obj/machinery/light{dir = 8},/turf/open/floor/plasteel/white,/area/medical/medbay{name = "EMT Office"})
 "akE" = (/obj/structure/rack,/obj/item/storage/firstaid/emtaid,/obj/machinery/firealarm{pixel_y = 27},/turf/open/floor/plasteel/white,/area/medical/medbay{name = "EMT Office"})
 "akF" = (/obj/machinery/computer/crew{dir = 4},/turf/open/floor/plasteel/white,/area/medical/medbay{name = "EMT Office"})
 "akG" = (/obj/structure/sign/warning/vacuum/external{pixel_y = 32},/obj/effect/spawner/structure/window/reinforced,/turf/open/floor/plating,/area/security/processing)

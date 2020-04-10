@@ -337,7 +337,7 @@
 	pixel_x = -22
 	},
 /obj/machinery/power/apc{
-	areastring = "/area/medical/medbay/EMT Office";
+	areastring = "/area/medical/medbay/emtoffice";
 	dir = 1;
 	name = "EMT Office APC";
 	pixel_x = 0;
