@@ -37,6 +37,7 @@
 	weed_chance = 1
 	product = /obj/item/reagent_containers/food/snacks/grown/onion/red
 	reagents_add = list("vitamin" = 0.04, "nutriment" = 0.1, "tearjuice" = 0.05)
+	mutatelist = list(/obj/item/seeds/onion/burning)
 
 /obj/item/reagent_containers/food/snacks/grown/onion/red
 	seed = /obj/item/seeds/onion/red
@@ -72,3 +73,20 @@
 	icon_state = "onionslice_red"
 	filling_color = "#C29ACF"
 	list_reagents = list("nutriment" = 5, "vitamin" = 2, "tearjuice" = 2.5)
+
+/obj/item/seeds/onion/burning
+	name ="pack of burning onion seeds"
+	desc = "For when you REALLY want to burn your eyes."
+	icon_state = "seed-onionburning"
+	species = "onion_burning"
+	plantname = "Burning Onion Sprouts"
+	product = /obj/item/reagent_containers/food/snacks/grown/onion/burning
+	reagents_add = list("phlogiston" = 0.05,"nutriment" = 0.05, "tearjuice" = 0.1, "condensedcapsaicin" = 0.04)
+
+/obj/item/reagent_containers/food/snacks/grown/onion/burning
+	seed = /obj/item/seeds/onion/burning
+	name = "burning onion"
+	desc = "Warm to the touch. Probably not safe to eat these."
+	icon_state = "onion_burning"
+	filling_color = "#F48E34"
+	list_reagents = list("phlogiston" = 2, "nutriment" = 2, "tearjuice" = 5, "condensedcapsaicin" = 1)
