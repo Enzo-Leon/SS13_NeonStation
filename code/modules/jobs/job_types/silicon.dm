@@ -12,7 +12,7 @@ AI
 	supervisors = "your laws"
 	req_admin_notify = TRUE
 	minimal_player_age = 30
-	exp_requirements = 480
+	exp_requirements = 240
 	exp_type = EXP_TYPE_CREW
 	exp_type_department = EXP_TYPE_SILICON
 	var/do_special_check = TRUE
@@ -79,7 +79,7 @@ Cyborg
 	supervisors = "your laws and the AI"	//Nodrak
 	selection_color = "#ddffdd"
 	minimal_player_age = 21
-	exp_requirements = 120
+	exp_requirements = 60
 	exp_type = EXP_TYPE_CREW
 
 /datum/job/cyborg/equip(mob/living/carbon/human/H, visualsOnly = FALSE, announce = TRUE, latejoin = FALSE, outfit_override = null)
