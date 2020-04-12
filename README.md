@@ -1,14 +1,12 @@
 
-##Shadow Station<BR>
-Forked from Citadel Station 13 and Based/maintained from Citadel Station 13 & /tg/station.<BR>
+##Phoenix Station<BR>
+Forked from Shadow Station, based on Citadel Station 13.<BR>
 
 [![forthebadge](http://forthebadge.com/images/badges/60-percent-of-the-time-works-every-time.svg)](https://forthebadge.com) [![forthebadge](http://forthebadge.com/images/badges/pretty-risque.svg)](https://forthebadge.com) [![forthebadge](http://forthebadge.com/images/badges/you-didnt-ask-for-this.svg)](http://forthebadge.com)
 
 [![forinfinityandbyond](https://user-images.githubusercontent.com/5211576/29499758-4efff304-85e6-11e7-8267-62919c3688a9.gif)](https://www.reddit.com/r/SS13/comments/5oplxp/what_is_the_main_problem_with_byond_as_an_engine/dclbu1a)
 
-[![Build Status](https://api.travis-ci.org/ShadowStation/ShadowStation.png)](https://travis-ci.org/ShadowStation/ShadowStation) [![Krihelimeter](http://www.krihelinator.xyz/badge/ShadowStation/ShadowStation)](http://www.krihelinator.xyz)
-
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/ShadowStation/ShadowStation.svg)](http://isitmaintained.com/project/ShadowStation/ShadowStation "Percentage of issues still open") [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/ShadowStation/ShadowStation.svg)](http://isitmaintained.com/project/ShadowStation/ShadowStation "Average time to resolve an issue")
+[![Build Status](https://travis-ci.com/Enzo-Leon/SS13_NeonStation.svg?branch=master)](https://travis-ci.com/Enzo-Leon/SS13_NeonStation)
 
 **Upstream Information** <BR>
 **Website:** http://www.tgstation13.org <BR>
